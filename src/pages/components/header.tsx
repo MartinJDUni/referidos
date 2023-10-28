@@ -1,41 +1,32 @@
-import Link from 'next/link';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import styles from "@/styles/Header.module.css"; // Estilo personalizado
+// Header.js
+import React from 'react';
+import { Button } from 'antd';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 
-const Header: React.FC = () => {
-  return (
-    <header className={`navbar navbar-expand-lg ${styles.header}`}>
-      <div className="container">
-        <Link href="/" legacyBehavior>
-          <a className="navbar-brand">Your Logo</a>
-        </Link>
+const HeaderComponent = ({ collapsed, onToggle }) => (
+  <header style={{ background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+    <div>
+      <Button
+        type="text"
+        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        onClick={onToggle}
+        style={{
+          fontSize: '16px',
+          width: 64,
+          height: 64,
+          marginRight: 16,
+        }}
+      />
+    </div>
+    <div>
+      <span style={{ fontSize: '16px', marginRight: 16 }}>Nombre de Usuario</span>
+      <UserOutlined style={{ fontSize: '24px' }} />
+    </div>
+  </header>
+);
 
-        <div className={`ml-auto position-relative ${styles.dropdownContainer}`}>
-          <button
-            className="nav-link dropdown-toggle"
-            type="button"
-            id="navbarDropdown"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            User
-          </button>
-          <ul className={`custom-dropdown-menu dropdown-menu ${styles.dropdownMenu}`} aria-labelledby="navbarDropdown">
-            <li>
-              <Link href="/profile" legacyBehavior>
-                <a className="dropdown-item">Profile</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/sign-out" legacyBehavior>
-                <a className="dropdown-item">Sign out</a>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </header>
-  );
-};
-
-export default Header;
+export default HeaderComponent;

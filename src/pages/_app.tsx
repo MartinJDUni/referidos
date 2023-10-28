@@ -2,7 +2,7 @@
 
 import '../styles/globals.css';
 import BootstrapWrapper from './components/BootstrapWrapper';
-
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
 function App({ Component, pageProps }) {
   return (
