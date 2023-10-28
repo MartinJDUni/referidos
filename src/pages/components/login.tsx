@@ -8,14 +8,14 @@ const Login: FC = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Aquí se pretende hacer la autenticación
-    router.push('/Main');
+    router.push('/Graphics');
   };
 
   return (
     <>
       <div className={styles.container}>
         <div className={styles['login-form']}>
-          <img src="./images/logo.png" alt="Logo-login" className={styles['logo-login']} />
+          <img src="../images/logo.png" alt="Logo-login" className={styles['logo-login']} />
           <h2>Inicio de Sesión</h2>
           <form onSubmit={handleLogin}>
             <input className={styles.input} type="text" placeholder="Username" />

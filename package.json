@@ -20,7 +20,8 @@
     "next": "14.0.0",
     "popper.js": "^1.16.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-router-dom": "^6.17.0"
   },
   "devDependencies": {
     "@types/node": "^20",
