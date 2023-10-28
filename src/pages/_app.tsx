@@ -1,6 +1,13 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+// pages/_app.tsx
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+import '../styles/globals.css';
+import BootstrapWrapper from './components/BootstrapWrapper';
+
+
+function App({ Component, pageProps }) {
+  return (
+    <BootstrapWrapper> <Component {...pageProps} /></BootstrapWrapper>
+  );
 }
+
+export default App;
