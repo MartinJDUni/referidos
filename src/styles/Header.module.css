@@ -1,49 +1,31 @@
-/* Header.css */
+/* Header.module.css */
 
-.logo-section {
-    display: flex;
-    align-items: center;
+.header {
+    /* Estilos para el encabezado */
+    background-color: white; /* Cambia el color de fondo a tu preferencia */
+    color: #000000; /* Cambia el color del texto a tu preferencia */
+    padding: 10px; /* Ajusta el espaciado interno del encabezado */
+    display: flex; /* Hace que los elementos del encabezado se muestren en una fila */
+    justify-content: space-between; /* Alinea los elementos en los extremos */
+    align-items: center; /* Centra verticalmente los elementos */
+  
+    /* Agrega estilos adicionales según tus preferencias */
   }
   
-  .logo-section img {
-    margin-right: 10px;
-  }
-  
-  .user-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .user-profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .user-menu {
+  .dropdownContainer {
     position: relative;
-    display: inline-block;
   }
   
-  .user-menu ul {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    display: none;
-    background-color: #fff;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    list-style: none;
-    padding: 0;
-    text-align: right;
-  }
+  .dropdownMenu {
+    /* Estilos para el menú desplegable */
+    display: none; /* Oculta el menú desplegable de forma predeterminada */
+    position: absolute; /* Permite el posicionamiento absoluto */
+    top: 100%; /* Coloca el menú debajo del botón */
+    right: 0; /* Establece la apertura hacia la derecha */
+    background-color: #ffffff; /* Cambia el color de fondo del menú a tu preferencia */
+    max-width: 150px; /* Establece el ancho mínimo del menú */
+    z-index: 1; /* Ajusta la profundidad de apilamiento */
   
-  .user-menu li {
-    padding: 10px;
-  }
-  
-  .user-menu:hover ul {
-    display: block;
+    /* Agrega estilos adicionales según tus preferencias */
   }
   
