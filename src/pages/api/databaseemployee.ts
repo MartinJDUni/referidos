@@ -13,10 +13,15 @@ export async function connectToDatabase() {
 export default async (req, res) => {
   if (req.method === 'GET') {
     const connection = await connectToDatabase();
-    
+
     try {
-      // Realiza la consulta SQL deseada
-      const [rows] = await connection.execute('SELECT * FROM employee');
+      // Realiza la consulta SQL para obtener datos de empleado y nombre del rol
+      const query = `
+              SELECT e.Id, e.Name, e.Password, e.Email, e.state, r.Name AS RoleName
+              FROM employee e
+              INNER JOIN role r ON e.Idrole = r.Id;
+          `;
+      const [rows] = await connection.execute(query);
       connection.end();
       res.status(200).json({ data: rows });
     } catch (error) {
@@ -25,3 +30,4 @@ export default async (req, res) => {
     }
   }
 };
+

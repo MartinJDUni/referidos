@@ -25,7 +25,7 @@ const Tas: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <h1>emplo</h1>
+          <Tabla />
         </Content>
       </Layout>
     </Layout>
