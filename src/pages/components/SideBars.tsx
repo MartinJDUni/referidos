@@ -16,10 +16,10 @@ const SidebarComponent = ({ collapsed }) => (
         <Link href="/Graphics" style={{ textDecoration: 'none' }}>Gráficas</Link>
       </Menu.Item>
       <Menu.Item key="2" icon={<TeamOutlined />}>
-        <Link href="/Equipo"style={{ textDecoration: 'none' }}>Trabajadores</Link>
+        <Link href="/Equipo" style={{ textDecoration: 'none' }}>Trabajadores</Link>
       </Menu.Item>
       <Menu.Item key="3" icon={<ScheduleOutlined />}>
-      <Link href="/Tasks" style={{ textDecoration: 'none' }}>Gráficas</Link>
+        <Link href="/Tasks" style={{ textDecoration: 'none' }}>Gráficas</Link>
       </Menu.Item>
       <Menu.Item key="4" icon={<CommentOutlined />}>
         <Link href="/Comentarios" style={{ textDecoration: 'none' }}>Comentarios</Link>

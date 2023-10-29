@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
 import MainContent from './components/Main';
+import Tabla from './components/tabla';
 
 const { Header, Content } = Layout;
 
@@ -25,7 +26,7 @@ const Tas: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <h1>Task</h1>
+          <Tabla/>
         </Content>
       </Layout>
     </Layout>
