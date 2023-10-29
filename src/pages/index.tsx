@@ -1,10 +1,10 @@
 import React from 'react';
-
-
+import Task from '@/pages/Admin/Tasks'
+import Employee from '@/pages/Admin/Employee'
 const Home: React.FC = () => {
   return (
     <div>
-      <h1>Test</h1>
+      <Employee></Employee>
     </div>
   );
 };

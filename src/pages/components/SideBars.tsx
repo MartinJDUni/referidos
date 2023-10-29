@@ -19,7 +19,7 @@ const SidebarComponent = ({ collapsed }) => (
         <Link href="/Admin/Employee" style={{ textDecoration: 'none' }}>Trabajadores</Link>
       </Menu.Item>
       <Menu.Item key="3" icon={<ScheduleOutlined />}>
-        <Link href="/Admin/Tasks" style={{ textDecoration: 'none' }}>Gráficas</Link>
+        <Link href="/Admin/Tasks" style={{ textDecoration: 'none' }}>Tareas</Link>
       </Menu.Item>
       <Menu.Item key="4" icon={<CommentOutlined />}>
         <Link href="/Admin/Comentarios" style={{ textDecoration: 'none' }}>Comentarios</Link>
