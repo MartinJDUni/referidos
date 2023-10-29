@@ -53,6 +53,7 @@ const Task: React.FC = () => {
             position: 'relative',
           }}
         >
+          <h1>Tareas</h1>
           <Button
             onClick={handleShowAddTaskModal}
             type="primary"
