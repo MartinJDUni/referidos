@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
-import MainContent from './components/Main';
-import Tabla from './components/tabla';
+import Tabla from '../components/tablaTask';
 
 const { Header, Content } = Layout;
 

@@ -1,29 +1,12 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { useDemoData } from '@mui/x-data-grid-generator';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function DataGridPremiumDemo() {
-    const { data, loading } = useDemoData({
-        dataSet: 'Commodity',
-        rowLength: 100,
-        editable: true,
-        visibleFields: [
-            'commodity',
-            'quantity',
-            'filledQuantity',
-            'status',
-            'isFilled',
-            'unitPrice',
-            'unitPriceCurrency',
-            'subTotal',
-            'feeRate',
-            'feeAmount',
-            'incoTerm',
-        ],
-    });
+    const [data, setData] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
 
     const columns = [
         {
@@ -35,18 +18,19 @@ export default function DataGridPremiumDemo() {
                 <div>
                     <EditIcon
                         style={{ cursor: 'pointer', marginRight: '8px' }}
-                        onClick={() => handleEditRow(params.id)}
+                        onClick={() => handleEditRow(params.row.id)}
                     />
                     <DeleteIcon
                         style={{ cursor: 'pointer' }}
-                        onClick={() => handleDeleteRow(params.id)}
+                        onClick={() => handleDeleteRow(params.row.id)}
                     />
-                </div>),
+                </div>
+            ),
         },
         { field: 'id', headerName: 'Id', width: 150 },
-        { field: 'commodity', headerName: 'Commodity', width: 200 },
-        { field: 'quantity', headerName: 'Quantity', width: 150 },
-        // Agrega las columnas que deseas mostrar aquí
+        { field: 'task', headerName: 'Tarea', width: 200 },
+        { field: 'description', headerName: 'Descripcion', width: 200 },
+        { field: 'state', headerName: 'Estado', width: 200 },
     ];
 
     const [selectionModel, setSelectionModel] = React.useState([]);
@@ -61,16 +45,39 @@ export default function DataGridPremiumDemo() {
         console.log('Eliminar fila con ID:', id);
     };
 
+    React.useEffect(() => {
+        // Realiza una solicitud GET a tu API para obtener los datos de la base de datos
+        fetch('/api/databasetask')
+            .then((response) => response.json())
+            .then((result) => {
+                // Mapea los datos para cambiar la propiedad 'Id' a 'id'
+                const mappedData = result.data.map((row) => ({
+                    id: row.Id, // Cambia 'Id' a 'id'
+                    task: row.Name,
+                    description: row.Descrition, // Cambia 'Id' a 'id'
+                    state: row.state, // Mantén 'Name' como 'name'
+                    // Agrega otras propiedades si es necesario
+                }));
+    
+                setData(mappedData); // Establece los datos mapeados en el estado
+                setLoading(false); // Indica que la carga ha terminado
+            })
+            .catch((error) => {
+                console.error('Error al obtener datos de la base de datos:', error);
+                setLoading(false); // Maneja el error
+            });
+    }, []);
+
     return (
         <Box sx={{ height: 520, width: '100%' }}>
             <DataGrid
-                {...data}
+                rows={data}
+                columns={columns}
                 loading={loading}
                 selectionModel={selectionModel}
                 onSelectionModelChange={(newSelection) => {
                     setSelectionModel(newSelection);
                 }}
-                columns={columns}
                 components={{
                     Toolbar: (props) => (
                         <div>

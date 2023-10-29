@@ -8,7 +8,7 @@ const Login: FC = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Aquí se pretende hacer la autenticación
-    router.push('/Graphics');
+    router.push('/Admin/Graphics');
   };
 
   return (

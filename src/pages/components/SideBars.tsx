@@ -13,16 +13,16 @@ const SidebarComponent = ({ collapsed }) => (
       defaultSelectedKeys={['1']}
     >
       <Menu.Item key="1" icon={<BarChartOutlined />}>
-        <Link href="/Graphics" style={{ textDecoration: 'none' }}>Gráficas</Link>
+        <Link href="/Admin/Graphics" style={{ textDecoration: 'none' }}>Gráficas</Link>
       </Menu.Item>
       <Menu.Item key="2" icon={<TeamOutlined />}>
-        <Link href="/Equipo" style={{ textDecoration: 'none' }}>Trabajadores</Link>
+        <Link href="/Admin/Employee" style={{ textDecoration: 'none' }}>Trabajadores</Link>
       </Menu.Item>
       <Menu.Item key="3" icon={<ScheduleOutlined />}>
-        <Link href="/Tasks" style={{ textDecoration: 'none' }}>Gráficas</Link>
+        <Link href="/Admin/Tasks" style={{ textDecoration: 'none' }}>Gráficas</Link>
       </Menu.Item>
       <Menu.Item key="4" icon={<CommentOutlined />}>
-        <Link href="/Comentarios" style={{ textDecoration: 'none' }}>Comentarios</Link>
+        <Link href="/Admin/Comentarios" style={{ textDecoration: 'none' }}>Comentarios</Link>
       </Menu.Item>
     </Menu>
     <Menu

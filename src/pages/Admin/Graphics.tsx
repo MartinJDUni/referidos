@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
-import MainContent from './components/Main';
+
 
 const { Header, Content } = Layout;
 
@@ -25,7 +25,7 @@ const Graphic: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <MainContent/>
+          <h1>Grap</h1>
         </Content>
       </Layout>
     </Layout>
