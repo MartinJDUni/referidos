@@ -1,0 +1,85 @@
+.ReactModal__Overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+
+.ReactModal__Content {
+    position: relative;
+    border: none;
+    border-radius: 4px;
+    background-color: #ffffff;
+    width: 500px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    margin: 30%;
+    height: 460px;
+    overflow-x: hidden;
+}
+
+.h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.input[type="text"],
+.input[type="email"] {
+    width: 80%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+.textarea{
+    width: 100%; 
+    height: 100px; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem; 
+}
+.btnAdd {
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btnCancel {
+    background-color: #fb0000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 10px; 
+  }
+
+
+.form-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+
+.select {
+    margin-right: 10px;
+}
