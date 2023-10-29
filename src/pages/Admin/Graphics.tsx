@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
-
+import PieChart from '../components/graPie';
+import DataGridPremiumDemo from '../components/tablaET';
 
 const { Header, Content } = Layout;
 
@@ -12,6 +13,12 @@ const Graphic: React.FC = () => {
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
   };
+
+  const pieChartData = [12, 19, 3, 17, 6];
+  const pieChartLabels = ['Manzanas', 'Plátanos', 'Uvas', 'Naranjas', 'Cerezas'];
+
+  const barChartData = [10, 15, 8, 25, 12];
+  const barChartLabels = ['Producto A', 'Producto B', 'Producto C', 'Producto D', 'Producto E'];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -25,7 +32,17 @@ const Graphic: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <h1>Grap</h1>
+          <div className="charts-container">
+            <div className="chart">
+              <PieChart data={pieChartData} labels={pieChartLabels} />
+            </div>
+            <div className="chart">
+            </div>
+            {/* Agrega más gráficos o componentes aquí */}
+          </div>
+          <div className="data-grid">
+            <DataGridPremiumDemo />
+          </div>
         </Content>
       </Layout>
     </Layout>

@@ -61,7 +61,6 @@ const Task: React.FC = () => {
           >
             Agregar tarea
           </Button>
-          <Tabla />
 
           <Modal
             title="Agregar Tarea"
@@ -90,6 +89,8 @@ const Task: React.FC = () => {
               </div>
             </form>
           </Modal>
+
+          <Tabla />
         </Content>
       </Layout>
     </Layout>
