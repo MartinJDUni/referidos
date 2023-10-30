@@ -45,8 +45,24 @@ const Worker: React.FC = () => {
       password,
       email,
     };
+    
+    fetch('/api/databaseemployee', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(workerData),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      // Puedes actualizar la tabla aquí si lo deseas
+      console.log('Tarea guardada exitosamente:', result);
 
-    // Realiza la acción que necesites con workerData
+      // También puedes actualizar la tabla realizando una nueva solicitud GET para obtener los datos actualizados
+    })
+    .catch((error) => {
+      console.error('Error al guardar la tarea:', error);
+    });
 
     // Cierra el modal
     handleHideAddWorkerModal();

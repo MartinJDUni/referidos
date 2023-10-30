@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
 import PieChart from '../components/graPie';
-import DataGridPremiumDemo from '../components/tablaET';
+import DataGridPremiumDemo from '@/pages/components/tablaET';
 
 const { Header, Content } = Layout;
 
@@ -36,9 +36,6 @@ const Graphic: React.FC = () => {
             <div className="chart">
               <PieChart data={pieChartData} labels={pieChartLabels} />
             </div>
-            <div className="chart">
-            </div>
-            {/* Agrega más gráficos o componentes aquí */}
           </div>
           <div className="data-grid">
             <DataGridPremiumDemo />

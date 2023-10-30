@@ -17,10 +17,10 @@ export default async (req, res) => {
     try {
       // Realiza la consulta SQL para obtener datos de empleado y nombre del rol
       const query = `
-              SELECT e.Id, e.Name, e.Password, e.Email, e.state, r.Name AS RoleName
-              FROM employee e
-              INNER JOIN role r ON e.Idrole = r.Id;
-          `;
+          SELECT e.Id, e.Name, e.Password, e.Email, e.state, r.Name AS RoleName
+          FROM employee e
+          INNER JOIN role r ON e.Idrole = r.Id;
+      `;
       const [rows] = await connection.execute(query);
       connection.end();
       res.status(200).json({ data: rows });
@@ -28,6 +28,25 @@ export default async (req, res) => {
       console.error('Error al consultar la base de datos:', error);
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
+  } else if (req.method === 'POST') {
+    const { name, password, email, state, roleId } = req.body; // Asume que estás enviando datos en el cuerpo de la solicitud POST.
+
+    if (!name || !password || !email) {
+      res.status(400).json({ error: 'Faltan datos obligatorios' });
+      return;
+    }
+
+    const connection = await connectToDatabase();
+
+    try {
+      // Realiza la inserción de datos en la base de datos
+      const query = 'INSERT INTO employee (Name, Password, Email, state, Idrole) VALUES (?, ?, ?, ?, ?)';
+      const [result] = await connection.execute(query, [name, password, email, 1, 2]);
+      connection.end();
+      res.status(201).json({ message: 'Datos insertados correctamente', insertedId: result.insertId });
+    } catch (error) {
+      console.error('Error al insertar datos en la base de datos:', error);
+      res.status(500).json({ error: 'Error al insertar datos en la base de datos' });
+    }
   }
 };
-

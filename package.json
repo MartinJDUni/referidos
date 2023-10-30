@@ -25,6 +25,7 @@
     "next": "14.0.0",
     "popper.js": "^1.16.1",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.17.0"

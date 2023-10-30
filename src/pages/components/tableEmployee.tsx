@@ -47,29 +47,42 @@ export default function DataGridPremiumDemo() {
     console.log('Eliminar fila con ID:', id);
   };
 
-  React.useEffect(() => {
-    // Realiza una solicitud GET a tu API para obtener los datos de la base de datos "databaseemployee"
+  const fetchData = () =>{
     fetch('/api/databaseemployee') // Cambia la ruta a '/api/databaseemployee'
-      .then((response) => response.json())
-      .then((result) => {
-        // Mapea los datos para cambiar la propiedad 'Id' a 'id'
-        const mappedData = result.data.map((row) => ({
-          id: row.Id, // Cambia 'Id' a 'id'
-          nameemployee: row.Name,
-          pass: row.Password, // Cambia 'Id' a 'id'
-          email: row.Email,
-          state: row.state, // Cambia 'Id' a 'id'
-          rol: row.RoleName,
-          // Agrega otras propiedades si es necesario
-        }));
+    .then((response) => response.json())
+    .then((result) => {
+      // Mapea los datos para cambiar la propiedad 'Id' a 'id'
+      const mappedData = result.data.map((row) => ({
+        id: row.Id, // Cambia 'Id' a 'id'
+        nameemployee: row.Name,
+        pass: row.Password, // Cambia 'Id' a 'id'
+        email: row.Email,
+        state: row.state, // Cambia 'Id' a 'id'
+        rol: row.RoleName,
+        // Agrega otras propiedades si es necesario
+      }));
 
-        setData(mappedData); // Establece los datos mapeados en el estado
-        setLoading(false); // Indica que la carga ha terminado
-      })
-      .catch((error) => {
-        console.error('Error al obtener datos de la base de datos:', error);
-        setLoading(false); // Maneja el error
-      });
+      setData(mappedData); // Establece los datos mapeados en el estado
+      setLoading(false); // Indica que la carga ha terminado
+    })
+    .catch((error) => {
+      console.error('Error al obtener datos de la base de datos:', error);
+      setLoading(false); // Maneja el error
+    });
+  };
+
+  React.useEffect(() => {
+    // Realiza la primera consulta al cargar el componente
+    fetchData();
+
+    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
+    const pollingInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    return () => {
+      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+    };
   }, []);
 
   return (
