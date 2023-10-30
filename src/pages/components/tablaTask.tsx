@@ -45,7 +45,7 @@ export default function DataGridPremiumDemo() {
         console.log('Eliminar fila con ID:', id);
     };
 
-    React.useEffect(() => {
+    const fetchData = () => {
         // Realiza una solicitud GET a tu API para obtener los datos de la base de datos
         fetch('/api/database')
             .then((response) => response.json())
@@ -66,6 +66,20 @@ export default function DataGridPremiumDemo() {
                 console.error('Error al obtener datos de la base de datos:', error);
                 setLoading(false); // Maneja el error
             });
+    };
+
+    React.useEffect(() => {
+        // Realiza la primera consulta al cargar el componente
+        fetchData();
+
+        // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
+        const pollingInterval = setInterval(() => {
+            fetchData();
+        }, 5000);
+
+        return () => {
+            clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+        };
     }, []);
 
     return (

@@ -70,10 +70,10 @@ export default function DataGridPremiumDemo() {
     console.log('Eliminar fila con ID:', id);
   };
 
-  React.useEffect(() => {
+  const fetchData = () => {
     fetch('/api/databaseET')
       .then((response) => response.json())
-      .then((result) => {    
+      .then((result) => {
         const mappedData = result.data.map((row) => ({
           id: row.Id,
           Ename: row.EmployeeName,
@@ -84,13 +84,27 @@ export default function DataGridPremiumDemo() {
           state: row.state,
         }));
 
-        setData(mappedData); 
-        setLoading(false); 
+        setData(mappedData);
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Error al obtener datos de la base de datos:', error);
         setLoading(false);
       });
+  };
+
+  React.useEffect(() => {
+    // Realiza la primera consulta al cargar el componente
+    fetchData();
+
+    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
+    const pollingInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    return () => {
+      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+    };
   }, []);
 
   return (

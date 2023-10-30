@@ -11,6 +11,7 @@ const Task: React.FC = () => {
   const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [dataToPass, setDataToPass] = useState([]); // Estado para pasar datos a la tabla
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -37,6 +38,26 @@ const Task: React.FC = () => {
       name,
       description,
     };
+    
+    // Realiza una solicitud POST para guardar la tarea
+    fetch('/api/database', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(taskData),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      // Puedes actualizar la tabla aquí si lo deseas
+      console.log('Tarea guardada exitosamente:', result);
+
+      // También puedes actualizar la tabla realizando una nueva solicitud GET para obtener los datos actualizados
+    })
+    .catch((error) => {
+      console.error('Error al guardar la tarea:', error);
+    });
+
     handleHideAddTaskModal();
   };
 
@@ -90,7 +111,8 @@ const Task: React.FC = () => {
             </form>
           </Modal>
 
-          <Tabla />
+          {/* Pasa los datos a la tabla */}
+          <Tabla/>
         </Content>
       </Layout>
     </Layout>
