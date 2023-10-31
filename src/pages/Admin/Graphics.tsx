@@ -4,6 +4,7 @@ import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
 import PieChart from '../components/graPie';
 import DataGridPremiumDemo from '@/pages/components/tablaET';
+import BarChart from '../components/graBar';
 
 const { Header, Content } = Layout;
 
@@ -35,6 +36,9 @@ const Graphic: React.FC = () => {
           <div className="charts-container">
             <div className="chart">
               <PieChart data={pieChartData} labels={pieChartLabels} />
+            </div>
+            <div>
+              <BarChart/>
             </div>
           </div>
           <div className="data-grid">

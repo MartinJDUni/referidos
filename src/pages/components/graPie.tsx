@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Chart, { ChartType } from 'chart.js/auto';
+import 'chartjs-plugin-datalabels'; // Importa el complemento
 
 interface PieChartProps {
   data: number[];
@@ -35,6 +36,18 @@ const PieChart: React.FC<PieChartProps> = ({ data, labels }) => {
           },
           options: {
             responsive: true,
+            plugins: {
+              datalabels: {
+                color: '#fff', // Color del texto dentro de las secciones
+                font: {
+                  weight: 'bold',
+                },
+                formatter: (value: number) => {
+                  // Muestra el nombre de la sección y su valor
+                  return `${labels[value.index as number]}: ${data[value.index as number]}`;
+                },
+              },
+            },
           },
         });
       }
