@@ -41,7 +41,7 @@ const Graphic: React.FC = () => {
           Goal: goal,
           Startdate: startDate,
           Finaldate: endDate,
-          state: 1, // Define el estado deseado aquí
+          state: 1, 
         }),
       });
 
@@ -108,11 +108,11 @@ const Graphic: React.FC = () => {
             <div className="chart">
               <PieChart data={pieChartData} labels={pieChartLabels} />
             </div>
-<<<<<<< Updated upstream
+
             <div>
-              <BarChart/>
+              <BarChart />
             </div>
-=======
+
             <Button type="primary" onClick={showModal}>
               Asignar meta
             </Button>
@@ -169,7 +169,6 @@ const Graphic: React.FC = () => {
                 <DatePicker value={endDate} onChange={(date) => setEndDate(date)} />
               </div>
             </Modal>
->>>>>>> Stashed changes
           </div>
           <div className="data-grid">
             <DataGridPremiumDemo />
