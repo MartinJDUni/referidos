@@ -4,12 +4,13 @@ import { useParams } from 'react-router-dom'; // Importa useParams
 import HeaderComponent from "@/pages/components/headeremployee";
 import SidebarComponent from "@/pages/components/sidebaremployee";
 import { useRouter } from 'next/router';
+import CommentList from '../components/listComent';
 
 const { Header, Content } = Layout;
 
 const cometarios: React.FC = () => {
+    const id = 3;
     const router = useRouter();
-    const { id } = router.query;
     const [collapsed, setCollapsed] = useState(false);
 
 
@@ -29,7 +30,7 @@ const cometarios: React.FC = () => {
                         minHeight: 280,
                     }}
                 >
-                    <h1>ID recuperado de la URL: {id}</h1>
+                <CommentList id={id} />
                 </Content>
             </Layout>
         </Layout>

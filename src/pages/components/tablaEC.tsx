@@ -30,7 +30,6 @@ export default function DataGridPremiumDemo() {
     },
     { field: 'id', headerName: 'Id', width: 50 },
     { field: 'client', headerName: 'Cliente', width: 150 },
-    { field: 'emplo', headerName: 'Empleado', width: 150 },
     { field: 'statetask', headerName: 'Estado', width: 200 },
     {
       field: 'start',
@@ -50,7 +49,7 @@ export default function DataGridPremiumDemo() {
         headerName: 'Ver comentarios',
         width: 200,
         renderCell: (params) => (
-          <Link href={`./cometarios/${params.row.id}`}>
+          <Link href="./cometarios">
             <button className="custom-button">Entrar</button>
           </Link>
         ),
@@ -76,7 +75,6 @@ export default function DataGridPremiumDemo() {
         const mappedData = result.data.map((row) => ({
           id: row.Id,
           client: row.ClientName,
-          emplo: row.EmployeeName,
           statetask: row.StateTaskName,
           start: new Date(row.date),
           state: row.state,
