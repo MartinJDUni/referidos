@@ -12,6 +12,7 @@ const Worker: React.FC = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState(""); 
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -23,6 +24,7 @@ const Worker: React.FC = () => {
 
   const handleHideAddWorkerModal = () => {
     setIsAddWorkerModalVisible(false);
+    setError("");
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,14 +40,25 @@ const Worker: React.FC = () => {
   };
 
   const handleSaveWorker = () => {
-    // Aquí puedes realizar alguna acción con los datos del formulario
-    // Por ejemplo, puedes enviar los datos a una API o almacenarlos en un estado global.
+    // Validación de campos obligatorios
+    if (!name || !password || !email) {
+      setError('Por favor, completa todos los campos obligatorios.');
+      return;
+    }
+
+    // Validación de formato de correo electrónico
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailPattern.test(email)) {
+      setError('El correo electrónico ingresado no es válido.');
+      return;
+    }
+
     const workerData = {
       name,
       password,
       email,
     };
-    
+
     fetch('/api/databaseemployee', {
       method: 'POST',
       headers: {
@@ -53,18 +66,17 @@ const Worker: React.FC = () => {
       },
       body: JSON.stringify(workerData),
     })
-    .then((response) => response.json())
-    .then((result) => {
-      // Puedes actualizar la tabla aquí si lo deseas
-      console.log('Tarea guardada exitosamente:', result);
+      .then((response) => response.json())
+      .then((result) => {
+        // actualizar la tabla
+        console.log('Tarea guardada exitosamente:', result);
 
-      // También puedes actualizar la tabla realizando una nueva solicitud GET para obtener los datos actualizados
-    })
-    .catch((error) => {
-      console.error('Error al guardar la tarea:', error);
-    });
+        // actualizar tabla 
+      })
+      .catch((error) => {
+        console.error('Error al guardar la tarea:', error);
+      });
 
-    // Cierra el modal
     handleHideAddWorkerModal();
   };
 
@@ -109,6 +121,7 @@ const Worker: React.FC = () => {
           >
             <form>
               <div style={{ marginBottom: '16px' }}>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '8px' }}>
                   <label style={{ marginBottom: '4px' }}>Nombre:</label>
                   <input type="text" value={name} onChange={handleNameChange} />
@@ -125,7 +138,7 @@ const Worker: React.FC = () => {
             </form>
           </Modal>
         </Content>
-      </Layout> 
+      </Layout>
     </Layout>
   );
 };

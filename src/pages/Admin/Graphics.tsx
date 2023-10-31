@@ -19,6 +19,13 @@ const Graphic: React.FC = () => {
   const [endDate, setEndDate] = useState(null);
   const [employeeOptions, setEmployeeOptions] = useState([]);
   const [taskOptions, setTaskOptions] = useState([]);
+  const [error, setError] = useState({
+    goal: '',
+    selectedEmployee: '',
+    selectedTask: '',
+    startDate: '',
+    endDate: '',
+  });
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -28,34 +35,77 @@ const Graphic: React.FC = () => {
     setIsModalVisible(false);
   };
 
-  const handleOk = async () => {
-    try {
-      const response = await fetch('/api/databaseEmployeeTask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Idemployee: selectedEmployee,
-          Idtask: selectedTask,
-          Goal: goal,
-          Startdate: startDate,
-          Finaldate: endDate,
-          state: 1, 
-        }),
-      });
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {
+      goal: '',
+      selectedEmployee: '',
+      selectedTask: '',
+      startDate: '',
+      endDate: '',
+    };
 
-      if (response.ok) {
-        // Manejar la respuesta exitosa si es necesario
-        console.log('Datos de la meta asignados con éxito');
-      } else {
-        console.error('Error al enviar los datos del modal al servidor');
-      }
-    } catch (error) {
-      console.error('Error al enviar los datos del modal al servidor:', error);
+    if (!goal.trim()) {
+      newErrors.goal = 'La meta es obligatoria';
+      valid = false;
     }
 
-    setIsModalVisible(false);
+    if (!selectedEmployee) {
+      newErrors.selectedEmployee = 'Selecciona un empleado';
+      valid = false;
+    }
+
+    if (!selectedTask) {
+      newErrors.selectedTask = 'Selecciona una tarea';
+      valid = false;
+    }
+
+    if (!startDate) {
+      newErrors.startDate = 'Selecciona una fecha de inicio';
+      valid = false;
+    }
+
+    if (!endDate) {
+      newErrors.endDate = 'Selecciona una fecha final';
+      valid = false;
+    } else if (startDate && endDate && startDate >= endDate) {
+      newErrors.endDate = 'La fecha final debe ser posterior a la fecha de inicio';
+      valid = false;
+    }
+
+    setError(newErrors);
+    return valid;
+  };
+
+  const handleOk = async () => {
+    if (validateForm()) {
+      try {
+        const response = await fetch('/api/databaseEmployeeTask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            Idemployee: selectedEmployee,
+            Idtask: selectedTask,
+            Goal: goal,
+            Startdate: startDate,
+            Finaldate: endDate,
+            state: 1, 
+          }),
+        });
+
+        if (response.ok) {
+          console.log('Datos de la meta asignados con éxito');
+        } else {
+          console.error('Error al enviar los datos del modal al servidor');
+        }
+      } catch (error) {
+        console.error('Error al enviar los datos del modal al servidor:', error);
+      }
+
+      setIsModalVisible(false);
+    }
   };
 
   const handleToggleSidebar = () => {
@@ -65,7 +115,6 @@ const Graphic: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Reemplaza esta URL con la dirección correcta de tu API
         const response = await fetch('/api/databaseEmployeeTask');
         if (response.ok) {
           const data = await response.json();
@@ -125,6 +174,7 @@ const Graphic: React.FC = () => {
               <div style={fieldStyle}>
                 <label>Meta:</label>
                 <Input value={goal} onChange={(e) => setGoal(e.target.value)} />
+                <span style={{ color: 'red' }}>{error.goal}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Empleado:</label>
@@ -142,6 +192,7 @@ const Graphic: React.FC = () => {
                     </Option>
                   ))}
                 </Select>
+                <span style={{ color: 'red' }}>{error.selectedEmployee}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Nombre de la tarea:</label>
@@ -159,14 +210,17 @@ const Graphic: React.FC = () => {
                     </Option>
                   ))}
                 </Select>
+                <span style={{ color: 'red' }}>{error.selectedTask}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Fecha de inicio:</label>
                 <DatePicker value={startDate} onChange={(date) => setStartDate(date)} />
+                <span style={{ color: 'red' }}>{error.startDate}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Fecha final:</label>
                 <DatePicker value={endDate} onChange={(date) => setEndDate(date)} />
+                <span style={{ color: 'red' }}>{error.endDate}</span>
               </div>
             </Modal>
           </div>

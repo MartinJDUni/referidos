@@ -11,6 +11,7 @@ const Task: React.FC = () => {
   const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -18,6 +19,10 @@ const Task: React.FC = () => {
 
   const handleShowAddTaskModal = () => {
     setIsAddTaskModalVisible(true);
+    // Limpia los campos y los errores al abrir el modal
+    setName("");
+    setDescription("");
+    setError("");
   };
 
   const handleHideAddTaskModal = () => {
@@ -33,11 +38,16 @@ const Task: React.FC = () => {
   };
 
   const handleSaveTask = () => {
+    if (!name || !description) {
+      setError("Por favor, complete todos los campos.");
+      return;
+    }
+
     const taskData = {
       name,
       description,
     };
-    
+
     fetch('/api/database', {
       method: 'POST',
       headers: {
@@ -56,6 +66,10 @@ const Task: React.FC = () => {
       console.error('Error al guardar la tarea:', error);
     });
 
+    // Limpia los campos y los errores al guardar la tarea
+    setName("");
+    setDescription("");
+    setError("");
     handleHideAddTaskModal();
   };
 
@@ -105,12 +119,13 @@ const Task: React.FC = () => {
                   <label style={{ marginBottom: '4px' }}>Descripción:</label>
                   <input type="text" value={description} onChange={handleDescriptionChange} />
                 </div>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
               </div>
             </form>
           </Modal>
 
           {/* Pasa los datos a la tabla */}
-          <Tabla/>
+          <Tabla />
         </Content>
       </Layout>
     </Layout>
