@@ -17,7 +17,7 @@ export default async (req, res) => {
         try {
             // Realiza la consulta SQL para obtener solo el ID del empleado
             const employeeQuery = `
-                SELECT Id
+                SELECT Id,Name
                 FROM employee;
             `;
             const [employeeRows] = await connection.execute(employeeQuery);
