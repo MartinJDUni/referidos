@@ -22,7 +22,7 @@ const SidebarComponent = ({ collapsed }) => (
         <Link href="/Admin/Tasks" style={{ textDecoration: 'none' }}>Tareas</Link>
       </Menu.Item>
       <Menu.Item key="4" icon={<CommentOutlined />}>
-        <Link href="/Admin/Comentarios" style={{ textDecoration: 'none' }}>Comentarios</Link>
+        <Link href="/Admin/AdminC" style={{ textDecoration: 'none' }}>Comentarios</Link>
       </Menu.Item>
     </Menu>
     <Menu
