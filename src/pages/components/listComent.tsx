@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 const CommentList = ({ id }: { id: number }) => {
   const [comments, setComments] = useState([]);
@@ -37,14 +41,46 @@ const CommentList = ({ id }: { id: number }) => {
     setAllSelected(!allSelected);
   };
 
-  const markSelectedAsRead = () => {
-    // Implementa la lógica para marcar los comentarios seleccionados como leídos
-    // Actualiza el estado o realiza una solicitud al servidor, según tu aplicación
+  const markSelectedAsRead = async () => {
+    try {
+      // Realiza la solicitud al servidor para actualizar los comentarios seleccionados a estado 0
+      await Promise.all(
+        selectedComments.map(async (commentId) => {
+          await fetch(`/api/databaseCEP`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ commentId, newState: 0 }),
+          });
+        })
+      );
+
+      // Actualiza el estado local o realiza otras acciones según sea necesario
+    } catch (error) {
+      console.error('Error al marcar como leídos:', error);
+    }
   };
 
-  const markSelectedAsUnread = () => {
-    // Implementa la lógica para marcar los comentarios seleccionados como no leídos
-    // Actualiza el estado o realiza una solicitud al servidor, según tu aplicación
+  const markSelectedAsUnread = async () => {
+    try {
+      // Realiza la solicitud al servidor para actualizar los comentarios seleccionados a estado 0
+      await Promise.all(
+        selectedComments.map(async (commentId) => {
+          await fetch(`/api/databaseCEP`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ commentId, newState: 1 }),
+          });
+        })
+      );
+
+      // Actualiza el estado local o realiza otras acciones según sea necesario
+    } catch (error) {
+      console.error('Error al marcar como leídos:', error);
+    }
   };
 
   const showMarkAsReadUnreadButtons = selectedComments.length > 0;
@@ -54,12 +90,19 @@ const CommentList = ({ id }: { id: number }) => {
       <h1>Conversación de Correo</h1>
       {showMarkAsReadUnreadButtons && (
         <div className="comment-actions">
-          <button onClick={markSelectedAsRead}>Marcar seleccionados como leídos</button>
-          <button onClick={markSelectedAsUnread}>Marcar seleccionados como no leídos</button>
+          <button onClick={markSelectedAsRead}>
+            <MarkEmailReadIcon /> </button>
+          <button onClick={markSelectedAsUnread}>
+            <MarkEmailUnreadIcon /> </button>
         </div>
       )}
       <div className="select-all-button">
         <button onClick={toggleSelectAll}>
+        {allSelected ? (
+            <CheckBoxIcon /> // Ícono de marca de verificación
+          ) : (
+            <CheckBoxOutlineBlankIcon /> // Ícono de marca de verificación en blanco
+          )}
           {allSelected ? 'Deseleccionar todo' : 'Seleccionar todo'}
         </button>
       </div>

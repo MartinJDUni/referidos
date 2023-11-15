@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
 import { Layout } from 'antd';
-import HeaderComponent from "@/pages/components/headeremployee";
-import SidebarComponent from "@/pages/components/sidebaremployee";
-import CommentList from '../components/listComent';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import HeaderComponent from "@/pages/components/header";
+import SidebarComponent from "@/pages/components/SideBars";
+import MainContent from './components/Main';
 
 const { Header, Content } = Layout;
 
-const Cometarios: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query; // Obtiene el ID de la URL
-
-  useEffect(() => {
-    // Solo un ejemplo para verificar si se obtiene correctamente el ID
-    console.log('ID:', id);
-  }, [id]);
-
-
+const Graphic: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const handleToggleSidebar = () => {
@@ -36,11 +25,11 @@ const Cometarios: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <CommentList id={id} />
+          <MainContent/>
         </Content>
       </Layout>
     </Layout>
   );
 };
 
-export default Cometarios;
+export default Graphic;

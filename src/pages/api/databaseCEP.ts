@@ -35,5 +35,30 @@ export default async (req, res) => {
       console.error('Error al consultar la base de datos:', error);
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
+  } else if (req.method === 'PUT') {
+    const { commentId, newState } = req.body;
+
+    if (!commentId || newState === undefined) {
+      return res.status(400).json({ error: 'Se requieren commentId y newState' });
+    }
+
+    const connection = await connectToDatabase();
+
+    try {
+      // Realiza la consulta SQL para actualizar el estado del comentario
+      const updateQuery = `
+        UPDATE commentperemployee
+        SET state = ?
+        WHERE Id = ?;
+      `;
+
+      await connection.execute(updateQuery, [newState, commentId]);
+      connection.end();
+
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error('Error al actualizar el estado en la base de datos:', error);
+      res.status(500).json({ error: 'Error al actualizar el estado en la base de datos' });
+    }
   }
 };

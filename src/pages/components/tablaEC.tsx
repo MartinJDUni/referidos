@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Link from 'next/link';
 
-export default function DataGridPremiumDemo() {
+export default function DataGridPremiumDemo({ onClickVerComentarios }) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -45,15 +45,15 @@ export default function DataGridPremiumDemo() {
     },
     { field: 'state', headerName: 'estado', width: 100 },
     {
-        field: 'customAction',
-        headerName: 'Ver comentarios',
-        width: 200,
-        renderCell: (params) => (
-          <Link href="./cometarios">
-            <button className="custom-button">Entrar</button>
-          </Link>
-        ),
-      }
+      field: 'customAction',
+      headerName: 'Ver comentarios',
+      width: 200,
+      renderCell: (params) => (
+        <button onClick={() => onClickVerComentarios(params.row.id)}>
+          Ver comentarios
+        </button>
+      ),
+    }
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);

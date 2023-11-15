@@ -2,15 +2,23 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/headeremployee";
 import SidebarComponent from "@/pages/components/sidebaremployee";
+import CommentList from '../components/listComent';
 import DataGridPremiumDemo from '../components/tablaEC';
 
 const { Header, Content } = Layout;
 
 const Inicio: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mostrarOtroComponente, setMostrarOtroComponente] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState(null);
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
+  };
+
+  const handleVerComentariosClick = (id) => {
+    setMostrarOtroComponente(true);
+    setSelectedCommentId(id);
   };
 
   return (
@@ -25,7 +33,11 @@ const Inicio: React.FC = () => {
             minHeight: 280,
           }}
         >
-        <DataGridPremiumDemo/>
+          {mostrarOtroComponente ? (
+            <CommentList id={selectedCommentId} />
+          ) : (
+            <DataGridPremiumDemo onClickVerComentarios={handleVerComentariosClick} />
+          )}
         </Content>
       </Layout>
     </Layout>
