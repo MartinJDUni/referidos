@@ -154,9 +154,6 @@ const Graphic: React.FC = () => {
           }}
         >
           <div className="charts-container">
-            <div className="chart">
-              <PieChart data={pieChartData} labels={pieChartLabels} />
-            </div>
 
             <div>
               <BarChart />

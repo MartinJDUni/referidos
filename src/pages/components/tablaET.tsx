@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 export default function DataGridPremiumDemo() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [showStateZero, setShowStateZero] = React.useState(false);
 
   const columns = [
     {
@@ -20,10 +21,22 @@ export default function DataGridPremiumDemo() {
             style={{ cursor: 'pointer', marginRight: '8px' }}
             onClick={() => handleEditRow(params.row.id)}
           />
-          <DeleteIcon
-            style={{ cursor: 'pointer' }}
-            onClick={() => handleDeleteRow(params.row.id)}
-          />
+          {params.row.state === 0 ? (
+            <React.Fragment>
+              {/* Agrega aquí el icono que represente la reactivación */}
+              <span
+                style={{ cursor: 'pointer', marginRight: '8px' }}
+                onClick={() => handleReactivateRow(params.row.id)}
+              >
+                Reactivar
+              </span>
+            </React.Fragment>
+          ) : (
+            <DeleteIcon
+              style={{ cursor: 'pointer' }}
+              onClick={() => handleDeleteRow(params.row.id)}
+            />
+          )}
         </div>
       ),
     },
@@ -55,26 +68,55 @@ export default function DataGridPremiumDemo() {
         return `${year}-${month}-${day}`;
       },
     },
-    { field: 'state', headerName: 'Estado', width: 100 },
+    { field: 'state', headerName: 'Estado', width: 100, hide: !showStateZero },
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);
 
   const handleEditRow = (id) => {
-    // Implementa la lógica para editar la fila con el ID proporcionado
     console.log('Editar fila con ID:', id);
   };
 
-  const handleDeleteRow = (id) => {
-    // Implementa la lógica para eliminar la fila con el ID proporcionado
-    console.log('Eliminar fila con ID:', id);
+  const handleReactivateRow = async (id) => {
+    try {
+      // Llama a la nueva ruta PUT para actualizar el estado a 1 (reactivar)
+      await fetch('/api/databaseReac', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+      // Actualiza los datos para reflejar el cambio en la interfaz
+      fetchData();
+    } catch (error) {
+      console.error('Error al reactivar el estado en la base de datos desde el cliente:', error);
+    }
+  };
+
+  const handleDeleteRow = async (id) => {
+    try {
+      // Llama a la nueva ruta PUT para actualizar el estado a 0
+      await fetch('/api/databaseET', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+      // Actualiza los datos para reflejar el cambio en la interfaz
+      fetchData();
+    } catch (error) {
+      console.error('Error al actualizar el estado en la base de datos desde el cliente:', error);
+    }
   };
 
   const fetchData = () => {
     fetch('/api/databaseET')
       .then((response) => response.json())
       .then((result) => {
-        const mappedData = result.data.map((row) => ({
+        const filteredData = result.data.filter((row) => showStateZero ? row.state === 0 : row.state === 1);
+        const mappedData = filteredData.map((row) => ({
           id: row.Id,
           Ename: row.EmployeeName,
           Tname: row.TaskName,
@@ -94,21 +136,23 @@ export default function DataGridPremiumDemo() {
   };
 
   React.useEffect(() => {
-    // Realiza la primera consulta al cargar el componente
     fetchData();
-
-    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
     const pollingInterval = setInterval(() => {
       fetchData();
     }, 5000);
 
     return () => {
-      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+      clearInterval(pollingInterval);
     };
-  }, []);
+  }, [showStateZero]);
 
   return (
     <Box sx={{ height: 520, width: '100%' }}>
+      <div>
+        <button onClick={() => setShowStateZero(!showStateZero)}>
+          {showStateZero ? ' Ver Activos' : 'Ver no activo'}
+        </button>
+      </div>
       <DataGrid
         rows={data}
         columns={columns}
@@ -128,6 +172,8 @@ export default function DataGridPremiumDemo() {
           headerName: 'Commodity',
           field: 'commodity',
         }}
+        getRowId={(row) => row.id}
+        rows={data}
       />
     </Box>
   );

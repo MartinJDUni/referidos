@@ -29,5 +29,29 @@ export default async (req, res) => {
             console.error('Error al consultar la base de datos:', error);
             res.status(500).json({ error: 'Error al consultar la base de datos' });
         }
-    }
+    }else if (req.method === 'PUT') {
+        const { id } = req.body;
+    
+        if (!id) {
+          return res.status(400).json({ error: 'ID no proporcionado' });
+        }
+    
+        const connection = await connectToDatabase();
+    
+        try {
+          // Actualiza el estado a 0 en lugar de eliminar físicamente
+          const updateQuery = `
+            UPDATE employeespertask
+            SET state = 0
+            WHERE Id = ?;
+          `;
+          await connection.execute(updateQuery, [id]);
+    
+          connection.end();
+          res.status(200).json({ message: 'Estado actualizado con éxito' });
+        } catch (error) {
+          console.error('Error al actualizar el estado en la base de datos:', error);
+          res.status(500).json({ error: 'Error al actualizar el estado en la base de datos' });
+        }
+      }
 };
