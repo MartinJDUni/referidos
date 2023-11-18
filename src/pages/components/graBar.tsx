@@ -9,7 +9,11 @@ const CustomBarChart = () => {
       const response = await fetch('/api/databaseET');
       if (response.ok) {
         const result = await response.json();
-        setChartData(result.data);
+
+        // Filtra solo los elementos con estado 1
+        const filteredData = result.data.filter(item => item.state === 1);
+
+        setChartData(filteredData);
       } else {
         console.error('Error al obtener datos de la API');
       }
