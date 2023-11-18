@@ -1,29 +1,48 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
-const BarChart = () => {
-  const data = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-    datasets: [
-      {
-        label: 'Ventas',
-        data: [12, 19, 3, 5, 2],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
+const CustomBarChart = () => {
+  const [chartData, setChartData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/databaseET');
+      if (response.ok) {
+        const result = await response.json();
+        setChartData(result.data);
+      } else {
+        console.error('Error al obtener datos de la API');
+      }
+    } catch (error) {
+      console.error('Error al procesar datos:', error);
+    }
   };
 
-  const options = {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
+  useEffect(() => {
+    // Realiza la primera consulta al cargar el componente
+    fetchData();
 
-  return <Bar data={data} options={options} />;
+    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
+    const pollingInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    return () => {
+      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+    };
+  }, []);
+
+  return (
+    <BarChart width={800} height={400} data={chartData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="EmployeeName" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="Goal" fill="rgba(75, 192, 192, 0.6)" name="Meta" />
+      <Bar dataKey="TaskName" fill="rgba(255, 99, 132, 0.6)" name="Tarea" />
+    </BarChart>
+  );
 };
 
-export default BarChart;
+export default CustomBarChart;

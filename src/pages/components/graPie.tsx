@@ -1,60 +1,64 @@
-import React, { useEffect, useRef } from 'react';
-import Chart, { ChartType } from 'chart.js/auto';
-import 'chartjs-plugin-datalabels'; // Importa el complemento
+import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
-interface PieChartProps {
-  data: number[];
-  labels: string[];
-}
+const CustomBarChart = () => {
+  const [chartData, setChartData] = useState([]);
 
-const PieChart: React.FC<PieChartProps> = ({ data, labels }) => {
-  const chartRef = useRef<HTMLCanvasElement | null>(null);
-  const chartInstance = useRef<Chart | null>(null);
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/databaseET');
+      if (response.ok) {
+        const result = await response.json();
+
+        // Agrupa los datos por tarea y suma las metas
+        const groupedData = result.data.reduce((accumulator, current) => {
+          const existingItem = accumulator.find(item => item.TaskName === current.TaskName);
+
+          if (existingItem) {
+            existingItem.Goal += current.Goal;
+          } else {
+            accumulator.push({
+              TaskName: current.TaskName,
+              Goal: current.Goal
+            });
+          }
+
+          return accumulator;
+        }, []);
+
+        setChartData(groupedData);
+      } else {
+        console.error('Error al obtener datos de la API');
+      }
+    } catch (error) {
+      console.error('Error al procesar datos:', error);
+    }
+  };
 
   useEffect(() => {
-    if (chartRef.current) {
-      if (chartInstance.current) {
-        // Destruye el gráfico anterior si existe
-        chartInstance.current.destroy();
-      }
+    // Realiza la primera consulta al cargar el componente
+    fetchData();
 
-      const ctx = chartRef.current.getContext('2d');
+    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
+    const pollingInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
 
-      if (ctx) {
-        chartInstance.current = new Chart(ctx, {
-          type: 'pie' as ChartType, // Asegura que el tipo es 'pie'
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                data: data,
-                backgroundColor: [
-                  'red', 'yellow', 'purple', 'orange', 'pink' // Colores personalizables
-                ],
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              datalabels: {
-                color: '#fff', // Color del texto dentro de las secciones
-                font: {
-                  weight: 'bold',
-                },
-                formatter: (value: number) => {
-                  // Muestra el nombre de la sección y su valor
-                  return `${labels[value.index as number]}: ${data[value.index as number]}`;
-                },
-              },
-            },
-          },
-        });
-      }
-    }
-  }, [data, labels]);
+    return () => {
+      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+    };
+  }, []);
 
-  return <canvas ref={chartRef} width={300} height={300} />;
+  return (
+    <BarChart width={800} height={400} data={chartData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="TaskName" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="Goal" fill="rgba(75, 192, 192, 0.6)" name="Meta Total por Tarea" />
+    </BarChart>
+  );
 };
 
-export default PieChart;
+export default CustomBarChart;

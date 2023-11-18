@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Modal, Select, DatePicker, Button, Input } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
-import PieChart from '../components/graPie';
 import DataGridPremiumDemo from '@/pages/components/tablaET';
 import BarChart from '../components/graBar';
+import CustomBarChart from '../components/graPie';
 
 const { Header, Content } = Layout;
 const { Option } = Select;
@@ -91,7 +91,7 @@ const Graphic: React.FC = () => {
             Goal: goal,
             Startdate: startDate,
             Finaldate: endDate,
-            state: 1, 
+            state: 1,
           }),
         });
 
@@ -153,11 +153,16 @@ const Graphic: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <div className="charts-container">
 
+          <div>
             <div>
               <BarChart />
             </div>
+            <div>
+              <CustomBarChart />
+            </div>
+          </div>
+          <div className="charts-container">
 
             <Button type="primary" onClick={showModal}>
               Asignar meta
