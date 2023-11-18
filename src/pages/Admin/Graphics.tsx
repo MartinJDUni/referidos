@@ -5,6 +5,7 @@ import SidebarComponent from "@/pages/components/SideBars";
 import DataGridPremiumDemo from '@/pages/components/tablaET';
 import BarChart from '../components/graBar';
 import CustomBarChart from '../components/graPie';
+import ProgressBarChart from '../components/ToPro';
 
 const { Header, Content } = Layout;
 const { Option } = Select;
@@ -161,6 +162,9 @@ const Graphic: React.FC = () => {
             <div>
               <CustomBarChart />
             </div>
+          </div>
+          <div>
+            <ProgressBarChart/>
           </div>
           <div className="charts-container">
 

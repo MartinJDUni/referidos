@@ -11,7 +11,7 @@ const CustomBarChart = () => {
       const totalResponse = await fetch('/api/databaseET');
       if (totalResponse.ok) {
         const totalResult = await totalResponse.json();
-        console.log('Datos totales:', totalResult);
+        
         const totalData = totalResult.data;
 
         // Filtrar solo los elementos con estado 1
@@ -42,7 +42,7 @@ const CustomBarChart = () => {
       const completedResponse = await fetch('/api/DB');
       if (completedResponse.ok) {
         const completedResult = await completedResponse.json();
-        console.log('Datos de tareas completadas:', completedResult);
+        
         const completedData = completedResult.data;
 
         // Filtrar solo los elementos con estado 1
@@ -65,7 +65,7 @@ const CustomBarChart = () => {
         }, []);
 
         setCompletedChartData(groupedCompletedData);
-        console.log('Completed Data:', groupedCompletedData);
+        
       } else {
         console.error('Error al obtener datos de tareas completadas de la API');
       }
