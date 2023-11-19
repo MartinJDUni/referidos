@@ -2,15 +2,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  opacity: 35;
+  height: 100vh;
+  opacity: 0.35;
   animation: fadeIn 1s forwards;
+  background-color: #1c2dad;
+  padding-bottom: 0; 
 }
+
 
 .logo-login {
   width: 300px;
   height: auto;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  display: block; 
+  margin-left: auto; 
+  margin-right: auto; 
 }
 
 @keyframes fadeIn {
@@ -49,19 +55,20 @@
 
 .login-form h2 {
   color: #1c2dad;
-  font-family: 'calibri', sans-serif;
-  font-size: 24px;
+  font-family: 'arial', Helvetica;
+  font-size: 20px;
   text-transform: uppercase;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 
 .input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  border: 1px solid #cccccc;
+  border: 1px solid #ff0000;
   border-radius: 5px;
   font-size: 16px;
+  
 }
 
 .button {

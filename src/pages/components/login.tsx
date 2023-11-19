@@ -11,9 +11,8 @@ const Login: FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Enviar las credenciales al servidor para autenticación
     try {
-      const response = await fetch('/api/auth', {
+      const response = await fetch('/api/authentification', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
@@ -25,11 +24,19 @@ const Login: FC = () => {
         // La autenticación fue exitosa
         router.push('/Admin/Graphics');
       } else {
-        setError('Credenciales incorrectas');
+        // Verificar si la respuesta es JSON antes de intentar analizarla
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          setError(data.error || 'Credenciales incorrectas');
+        } else {
+          setError('Error de servidor. Por favor, inténtalo de nuevo.');
+        }
       }
-    } catch (error) {
+    } catch (error) { 
       console.error('Error al iniciar sesión:', error);
-    }
+      setError('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
+    }  
   };
 
   return (
