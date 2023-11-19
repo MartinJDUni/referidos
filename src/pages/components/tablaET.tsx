@@ -1,8 +1,8 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function DataGridPremiumDemo() {
   const [data, setData] = React.useState([]);
@@ -11,21 +11,21 @@ export default function DataGridPremiumDemo() {
 
   const columns = [
     {
-      field: 'actions',
-      headerName: 'Acciones',
+      field: "actions",
+      headerName: "Acciones",
       width: 120,
       sortable: false,
       renderCell: (params) => (
         <div>
           <EditIcon
-            style={{ cursor: 'pointer', marginRight: '8px' }}
+            style={{ cursor: "pointer", marginRight: "8px" }}
             onClick={() => handleEditRow(params.row.id)}
           />
           {params.row.state === 0 ? (
             <React.Fragment>
               {/* Agrega aquí el icono que represente la reactivación */}
               <span
-                style={{ cursor: 'pointer', marginRight: '8px' }}
+                style={{ cursor: "pointer", marginRight: "8px" }}
                 onClick={() => handleReactivateRow(params.row.id)}
               >
                 Reactivar
@@ -33,20 +33,21 @@ export default function DataGridPremiumDemo() {
             </React.Fragment>
           ) : (
             <DeleteIcon
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               onClick={() => handleDeleteRow(params.row.id)}
             />
           )}
         </div>
       ),
     },
-    { field: 'id', headerName: 'Id', width: 50 },
-    { field: 'Ename', headerName: 'Nombre', width: 150 },
-    { field: 'Tname', headerName: 'Tarea', width: 150 },
-    { field: 'goal', headerName: 'Meta', width: 100 },
+    { field: "id", headerName: "Id", width: 50 },
+    { field: "Ename", headerName: "Nombre", width: 150 },
+    { field: "Tname", headerName: "Tarea", width: 150 },
+    { field: "goal", headerName: "Meta", width: 100 },
+    { field: "TaskCount", headerName: "Completados", width: 150 },
     {
-      field: 'start',
-      headerName: 'Fecha de inicio',
+      field: "start",
+      headerName: "Fecha de inicio",
       width: 150,
       valueFormatter: (params) => {
         const date = new Date(params.value);
@@ -57,8 +58,8 @@ export default function DataGridPremiumDemo() {
       },
     },
     {
-      field: 'final',
-      headerName: 'Fecha de final',
+      field: "final",
+      headerName: "Fecha de final",
       width: 150,
       valueFormatter: (params) => {
         const date = new Date(params.value);
@@ -68,56 +69,72 @@ export default function DataGridPremiumDemo() {
         return `${year}-${month}-${day}`;
       },
     },
-    { field: 'state', headerName: 'Estado', width: 100, hide: !showStateZero },
+    { field: "state", headerName: "Estado", width: 100, hide: !showStateZero },
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);
 
   const handleEditRow = (id) => {
-    console.log('Editar fila con ID:', id);
+    console.log("Editar fila con ID:", id);
   };
 
   const handleReactivateRow = async (id) => {
     try {
       // Llama a la nueva ruta PUT para actualizar el estado a 1 (reactivar)
-      await fetch('/api/databaseReac', {
-        method: 'PUT',
+      await fetch("/api/databaseReac", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id }),
       });
       // Actualiza los datos para reflejar el cambio en la interfaz
       fetchData();
     } catch (error) {
-      console.error('Error al reactivar el estado en la base de datos desde el cliente:', error);
+      console.error(
+        "Error al reactivar el estado en la base de datos desde el cliente:",
+        error
+      );
     }
   };
 
   const handleDeleteRow = async (id) => {
     try {
       // Llama a la nueva ruta PUT para actualizar el estado a 0
-      await fetch('/api/databaseET', {
-        method: 'PUT',
+      await fetch("/api/databaseET", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id }),
       });
       // Actualiza los datos para reflejar el cambio en la interfaz
       fetchData();
     } catch (error) {
-      console.error('Error al actualizar el estado en la base de datos desde el cliente:', error);
+      console.error(
+        "Error al actualizar el estado en la base de datos desde el cliente:",
+        error
+      );
     }
   };
 
   const fetchData = () => {
-    fetch('/api/databaseET')
-      .then((response) => response.json())
-      .then((result) => {
-        const filteredData = result.data.filter((row) => showStateZero ? row.state === 0 : row.state === 1);
-        const mappedData = filteredData.map((row) => ({
+    const promises = [
+      fetch("/api/databaseET").then((response) => response.json()),
+      fetch("/api/dbC").then((response) => response.json()),
+    ];
+
+    Promise.all(promises)
+      .then((results) => {
+        const [resultET, resultOtherAPI] = results;
+
+        const filteredDataET = resultET.data.filter((row) =>
+          showStateZero ? row.state === 0 : row.state === 1
+        );
+
+        const mappedDataET = filteredDataET.map((row) => ({
           id: row.Id,
+          EmployeeId: row.EmployeeId,
           Ename: row.EmployeeName,
           Tname: row.TaskName,
           goal: row.Goal,
@@ -126,11 +143,36 @@ export default function DataGridPremiumDemo() {
           state: row.state,
         }));
 
-        setData(mappedData);
+        const finalData = mappedDataET.map((rowET) => {
+          console.log("Buscando coincidencia para el ID:", rowET.id);
+
+          const matchingOtherData = resultOtherAPI.data.find((otherRow) => {
+            console.log(
+              "Comparando IDs:",
+              otherRow.EmployeeId,
+              rowET.EmployeeId
+            );
+            return otherRow.EmployeeId === rowET.EmployeeId;
+          });
+
+          console.log("Datos combinados:", { rowET, matchingOtherData });
+          const taskCount = matchingOtherData?.TaskCount || 0;
+          const goal = rowET.goal || 1; // Evitar dividir por cero
+
+          return {
+            ...rowET,
+            TaskCount: (taskCount / goal) * 100,
+            TaskIds: matchingOtherData?.TaskIds || [],
+          };
+        });
+
+        console.log("Datos finales:", finalData);
+
+        setData(finalData);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error al obtener datos de la base de datos:', error);
+        console.error("Error al obtener datos de la base de datos:", error);
         setLoading(false);
       });
   };
@@ -147,10 +189,10 @@ export default function DataGridPremiumDemo() {
   }, [showStateZero]);
 
   return (
-    <Box sx={{ height: 520, width: '100%' }}>
+    <Box sx={{ height: 520, width: "100%" }}>
       <div>
         <button onClick={() => setShowStateZero(!showStateZero)}>
-          {showStateZero ? ' Ver Activos' : 'Ver no activo'}
+          {showStateZero ? " Ver Activos" : "Ver no activo"}
         </button>
       </div>
       <DataGrid
@@ -169,11 +211,10 @@ export default function DataGridPremiumDemo() {
           ),
         }}
         autoGroupColumnDef={{
-          headerName: 'Commodity',
-          field: 'commodity',
+          headerName: "Commodity",
+          field: "commodity",
         }}
         getRowId={(row) => row.id}
-        rows={data}
       />
     </Box>
   );
