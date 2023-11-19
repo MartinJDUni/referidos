@@ -8,26 +8,9 @@ import Link from 'next/link';
 export default function DataGridPremiumDemo({ onClickVerComentarios }) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [showStateZero, setShowStateZero] = React.useState(false);
 
   const columns = [
-    {
-      field: 'actions',
-      headerName: 'Acciones',
-      width: 120,
-      sortable: false,
-      renderCell: (params) => (
-        <div>
-          <EditIcon
-            style={{ cursor: 'pointer', marginRight: '8px' }}
-            onClick={() => handleEditRow(params.row.id)}
-          />
-          <DeleteIcon
-            style={{ cursor: 'pointer' }}
-            onClick={() => handleDeleteRow(params.row.id)}
-          />
-        </div>
-      ),
-    },
     { field: 'id', headerName: 'Id', width: 50 },
     { field: 'client', headerName: 'Cliente', width: 150 },
     { field: 'emp', headerName: 'Empleado', width: 150 },
@@ -59,21 +42,19 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
 
   const [selectionModel, setSelectionModel] = React.useState([]);
 
-  const handleEditRow = (id) => {
-    // Implementa la lógica para editar la fila con el ID proporcionado
-    console.log('Editar fila con ID:', id);
-  };
-
-  const handleDeleteRow = (id) => {
-    // Implementa la lógica para eliminar la fila con el ID proporcionado
-    console.log('Eliminar fila con ID:', id);
-  };
-
   const fetchData = () => {
-    fetch('/api/databaseEC')
-      .then((response) => response.json())
-      .then((result) => {
-        const mappedData = result.data.map((row) => ({
+    const promises = [
+      fetch('/api/databaseEC').then((response) => response.json()),
+    ];
+
+    Promise.all(promises)
+      .then((results) => {
+        const [result] = results;
+
+        const filteredDataET = result.data.filter((row) =>
+          showStateZero ? row.state === 0 : row.state === 1
+        );
+        const mappedData = filteredDataET.map((row) => ({
           id: row.Id,
           client: row.ClientName,
           emp: row.EmployeeName,
@@ -81,7 +62,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
           start: new Date(row.date),
           state: row.state,
         }));
-
         setData(mappedData);
         setLoading(false);
       })
@@ -92,21 +72,22 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
   };
 
   React.useEffect(() => {
-    // Realiza la primera consulta al cargar el componente
     fetchData();
-
-    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
     const pollingInterval = setInterval(() => {
       fetchData();
     }, 5000);
 
     return () => {
-      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+      clearInterval(pollingInterval);
     };
-  }, []);
-
+  }, [showStateZero]);
   return (
     <Box sx={{ height: 520, width: '100%' }}>
+      <div>
+        <button onClick={() => setShowStateZero(!showStateZero)}>
+          {showStateZero ? ' Ver Activos' : 'Ver no activo'}
+        </button>
+      </div>
       <DataGrid
         rows={data}
         columns={columns}

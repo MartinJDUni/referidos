@@ -48,5 +48,29 @@ export default async (req, res) => {
       console.error('Error al insertar datos en la base de datos:', error);
       res.status(500).json({ error: 'Error al insertar datos en la base de datos' });
     }
+  }else if (req.method === 'PUT') {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ error: 'ID no proporcionado' });
+    }
+
+    const connection = await connectToDatabase();
+
+    try {
+      // Actualiza el estado a 1 para reactivar en lugar de eliminar físicamente
+      const updateQuery = `
+        UPDATE employee
+        SET state = 0
+        WHERE Id = ?;
+      `;
+      await connection.execute(updateQuery, [id]);
+
+      connection.end();
+      res.status(200).json({ message: 'Reactivado con éxito' });
+    } catch (error) {
+      console.error('Error al reactivar en la base de datos:', error);
+      res.status(500).json({ error: 'Error al reactivar en la base de datos' });
+    }
   }
 };
