@@ -163,11 +163,7 @@ const Graphic: React.FC = () => {
               <CustomBarChart />
             </div>
           </div>
-          <div>
-            <ProgressBarChart/>
-          </div>
           <div className="charts-container">
-
             <Button type="primary" onClick={showModal}>
               Asignar meta
             </Button>
