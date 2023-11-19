@@ -13,9 +13,9 @@ export default function DataGridPremiumDemo() {
 
   const columns = [
     {
-      field: 'actions',
+      field: 'actions',headerAlign: 'center', align: 'center',
       headerName: 'Acciones',
-      width: 120,
+      width: 100,
       sortable: false,
       renderCell: (params) => (
         <div>
@@ -41,16 +41,16 @@ export default function DataGridPremiumDemo() {
         </div>
       ),
     },
-    { field: 'id', headerName: 'Id', width: 50 },
-    { field: 'Ename', headerName: 'Nombre', width: 150 },
-    { field: 'Tname', headerName: 'Tarea', width: 150 },
-    { field: 'goal', headerName: 'Meta', width: 100 },
+    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center' },
+    { field: 'Ename', headerName: 'Nombre', width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center' },
     {
-      field: 'TaskCount',
+      field: 'TaskCount', headerAlign: 'center',
       headerName: 'Completados',
       width: 200,
       renderCell: (params) => (
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
           <LinearProgress
             variant="determinate"
             value={params.value || 0}
@@ -63,7 +63,7 @@ export default function DataGridPremiumDemo() {
       ),
     },
     {
-      field: 'start',
+      field: 'start', headerAlign: 'center', align: 'center',
       headerName: 'Fecha de inicio',
       width: 150,
       valueFormatter: (params) => {
@@ -75,7 +75,7 @@ export default function DataGridPremiumDemo() {
       },
     },
     {
-      field: 'final',
+      field: 'final', headerAlign: 'center', align: 'center',
       headerName: 'Fecha de final',
       width: 150,
       valueFormatter: (params) => {
@@ -86,7 +86,7 @@ export default function DataGridPremiumDemo() {
         return `${year}-${month}-${day}`;
       },
     },
-    { field: 'state', headerName: 'Estado', width: 100, hide: !showStateZero },
+    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center',align: 'center', hide: !showStateZero },
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);
