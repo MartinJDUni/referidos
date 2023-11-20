@@ -11,7 +11,7 @@ const CustomBarChart = () => {
       const totalResponse = await fetch('/api/databaseET');
       if (totalResponse.ok) {
         const totalResult = await totalResponse.json();
-        
+
         const totalData = totalResult.data;
 
         // Filtrar solo los elementos con estado 1
@@ -42,7 +42,7 @@ const CustomBarChart = () => {
       const completedResponse = await fetch('/api/DB');
       if (completedResponse.ok) {
         const completedResult = await completedResponse.json();
-        
+
         const completedData = completedResult.data;
 
         // Filtrar solo los elementos con estado 1
@@ -65,7 +65,7 @@ const CustomBarChart = () => {
         }, []);
 
         setCompletedChartData(groupedCompletedData);
-        
+
       } else {
         console.error('Error al obtener datos de tareas completadas de la API');
       }
@@ -96,15 +96,21 @@ const CustomBarChart = () => {
   }));
 
   return (
-    <BarChart width={800} height={400} data={combinedChartData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="TaskName" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="Total" fill="rgba(75, 192, 192, 0.6)" name="Total de Metas por Tarea" />
-      <Bar dataKey="Completed" fill="rgba(255, 99, 132, 0.6)" name="Metas Completadas por Tarea" />
-    </BarChart>
+    <div className="custom-chart-container" style={{ background: 'white', width: '800px', margin: '20px 0' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de meta por tarea</h3>
+      </div>
+      <BarChart width={600} height={380} data={combinedChartData}>
+        <CartesianGrid stroke="transparent" />
+        <XAxis dataKey="TaskName" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="Total" fill="#D71313" name="Total de Metas por Tarea" /> {/* Cambiar color a amarillo */}
+        <Bar dataKey="Completed" fill="#3F51B5" name="Metas Completadas por Tarea" /> {/* Cambiar color a índigo */}
+      </BarChart>
+
+    </div>
   );
 };
 

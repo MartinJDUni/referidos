@@ -132,12 +132,6 @@ const Graphic: React.FC = () => {
     fetchData();
   }, []);
 
-  const pieChartData = [12, 19, 3, 17, 6];
-  const pieChartLabels = ['Manzanas', 'Plátanos', 'Uvas', 'Naranjas', 'Cerezas'];
-
-  const barChartData = [10, 15, 8, 25, 12];
-  const barChartLabels = ['Producto A', 'Producto B', 'Producto C', 'Producto D', 'Producto E'];
-
   const fieldStyle = {
     marginBottom: '15px',
   };
@@ -164,7 +158,7 @@ const Graphic: React.FC = () => {
             </div>
           </div>
           <div className="charts-container">
-            <Button type="primary" onClick={showModal}>
+            <Button type="primary" style={{ float: 'right' }} onClick={showModal}>
               Asignar meta
             </Button>
             <Modal
@@ -226,7 +220,7 @@ const Graphic: React.FC = () => {
               </div>
             </Modal>
           </div>
-          <div className="data-grid">
+          <div className="data-grid" style={{ marginTop: '70px',padding: '50px',backgroundColor: 'white',marginBottom: '10px' }}>
             <DataGridPremiumDemo />
           </div>
         </Content>

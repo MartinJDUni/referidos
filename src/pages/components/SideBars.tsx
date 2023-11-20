@@ -1,46 +1,56 @@
+import React from 'react';
 import Link from 'next/link';
-import { BarChartOutlined, TeamOutlined, EditOutlined, LogoutOutlined, ScheduleOutlined, CommentOutlined } from '@ant-design/icons'; // Importa los íconos faltantes
+import Image from 'next/image';
+import { BarChartOutlined, TeamOutlined, EditOutlined, LogoutOutlined, ScheduleOutlined, CommentOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
 const { Sider } = Layout;
 
-const SidebarComponent = ({ collapsed }) => (
-  <Sider trigger={null} collapsible collapsed={collapsed}>
-    <div className="demo-logo-vertical" />
-    <Menu
-      theme="dark"
-      mode="vertical"
-      defaultSelectedKeys={['1']}
-    >
-      <Menu.Item key="1" icon={<BarChartOutlined />}>
-        <Link href="/Admin/Graphics" style={{ textDecoration: 'none' }}>Gráficas</Link>
-      </Menu.Item>
-      <Menu.Item key="2" icon={<TeamOutlined />}>
-        <Link href="/Admin/Employee" style={{ textDecoration: 'none' }}>Trabajadores</Link>
-      </Menu.Item>
-      <Menu.Item key="3" icon={<ScheduleOutlined />}>
-        <Link href="/Admin/Tasks" style={{ textDecoration: 'none' }}>Tareas</Link>
-      </Menu.Item>
-      <Menu.Item key="4" icon={<CommentOutlined />}>
-        <Link href="/Admin/AdminC" style={{ textDecoration: 'none' }}>Comentarios</Link>
-      </Menu.Item>
-    </Menu>
-    <Menu
-      theme="dark"
-      mode="vertical"
-      style={{ position: 'absolute', bottom: '0', width: '100%' }}
-    >
-      <Menu.Item key="4" icon={<EditOutlined />}>
-        Editar Perfil
-      </Menu.Item>
-      <Menu.Item key="5" icon={<LogoutOutlined />}>
-        <Link href="/components/login" style={{ textDecoration: 'none' }}>Cerrar Sesión</Link>
-      </Menu.Item>
-    </Menu>
-  </Sider>
-);
+const SidebarComponent = ({ collapsed }) => {
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+
+  return (
+    <Sider trigger={null} collapsible collapsed={collapsed}>
+      {!collapsed && (
+        <div className="logo-container">
+          <Image src="/images/logo3.png" alt="Logo" width={150} height={80} />
+        </div>
+      )}
+      <Menu theme="dark" mode="vertical" selectedKeys={[currentPath]}>
+        <Menu.Item key="/Admin/Graphics" icon={<BarChartOutlined />}>
+          <Link href="/Admin/Graphics" style={{ textDecoration: 'none' }}>Gráficas</Link>
+        </Menu.Item>
+        <Menu.Item key="/Admin/Employee" icon={<TeamOutlined />}>
+          <Link href="/Admin/Employee" style={{ textDecoration: 'none' }}>Trabajadores</Link>
+        </Menu.Item>
+        <Menu.Item key="/Admin/Tasks" icon={<ScheduleOutlined />}>
+          <Link href="/Admin/Tasks" style={{ textDecoration: 'none' }}>Tareas</Link>
+        </Menu.Item>
+        <Menu.Item key="/Admin/AdminC" icon={<CommentOutlined />}>
+          <Link href="/Admin/AdminC" style={{ textDecoration: 'none' }}>Comentarios</Link>
+        </Menu.Item>
+      </Menu>
+      <Menu theme="dark" mode="vertical" style={{ position: 'absolute', bottom: '0', width: '100%' }}>
+        <Menu.Item key="/Admin/EditProfile" icon={<EditOutlined />}>
+          <Link href="/Admin/EditProfile">Editar Perfil</Link>
+        </Menu.Item>
+        <Menu.Item key="/components/login" icon={<LogoutOutlined />}>
+          <Link href="/components/login">Cerrar Sesión</Link>
+        </Menu.Item>
+      </Menu>
+
+      <style jsx>{`
+        .logo-container {
+          text-align: center;
+          margin: 16px;
+        }
+
+        .logo-container img {
+          display: block;
+        }
+      `}</style>
+    </Sider>
+  );
+};
 
 export default SidebarComponent;
-
-
-

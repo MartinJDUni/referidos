@@ -12,7 +12,11 @@ const Worker: React.FC = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -25,18 +29,24 @@ const Worker: React.FC = () => {
   const handleHideAddWorkerModal = () => {
     setIsAddWorkerModalVisible(false);
     setError("");
+    setNameError("");
+    setPasswordError("");
+    setEmailError("");
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    setNameError("");
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    setPasswordError("");
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    setEmailError("");
   };
 
   const handleSaveWorker = () => {
@@ -49,9 +59,11 @@ const Worker: React.FC = () => {
     // Validación de formato de correo electrónico
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailPattern.test(email)) {
-      setError('El correo electrónico ingresado no es válido.');
+      setEmailError('El correo electrónico ingresado no es válido.');
       return;
     }
+
+    // Otras validaciones necesarias...
 
     const workerData = {
       name,
@@ -68,16 +80,26 @@ const Worker: React.FC = () => {
     })
       .then((response) => response.json())
       .then((result) => {
-        // actualizar la tabla
+        // Actualizar la tabla
         console.log('Tarea guardada exitosamente:', result);
+        setSuccessMessage('Trabajador añadido exitosamente.');
 
-        // actualizar tabla 
+        // Limpiar campos y mostrar mensaje de éxito después de 2 segundos
+        setTimeout(() => {
+          setName("");
+          setPassword("");
+          setEmail("");
+          setError("");
+          setNameError("");
+          setPasswordError("");
+          setEmailError("");
+          setSuccessMessage("");
+          handleHideAddWorkerModal();
+        }, 2000);
       })
       .catch((error) => {
         console.error('Error al guardar la tarea:', error);
       });
-
-    handleHideAddWorkerModal();
   };
 
   return (
@@ -95,10 +117,11 @@ const Worker: React.FC = () => {
           }}
         >
           <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
-            <h1>Trabajadores</h1>
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px' }}>Personal</h1>
             <Button
               onClick={handleShowAddWorkerModal}
               type="primary"
+              style={{ background: '#1890ff', borderColor: '#1890ff', marginRight: '16px' }}
             >
               Agregar trabajador
             </Button>
@@ -121,18 +144,25 @@ const Worker: React.FC = () => {
           >
             <form>
               <div style={{ marginBottom: '16px' }}>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '8px' }}>
+                {error && <p style={{ color: 'red', marginBottom: '8px' }}>{error}</p>}
+                {successMessage && <p style={{ color: 'green', marginBottom: '8px' }}>{successMessage}</p>}
+
+                <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column' }}>
                   <label style={{ marginBottom: '4px' }}>Nombre:</label>
                   <input type="text" value={name} onChange={handleNameChange} />
+                  {nameError && <p style={{ color: 'red', marginTop: '4px' }}>{nameError}</p>}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '8px' }}>
+
+                <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column' }}>
                   <label style={{ marginBottom: '4px' }}>Contraseña:</label>
                   <input type="password" value={password} onChange={handlePasswordChange} />
+                  {passwordError && <p style={{ color: 'red', marginTop: '4px' }}>{passwordError}</p>}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '8px' }}>
+
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={{ marginBottom: '4px' }}>Correo Electrónico:</label>
                   <input type="email" value={email} onChange={handleEmailChange} />
+                  {emailError && <p style={{ color: 'red', marginTop: '4px' }}>{emailError}</p>}
                 </div>
               </div>
             </form>

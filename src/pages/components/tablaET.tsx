@@ -13,7 +13,9 @@ export default function DataGridPremiumDemo() {
 
   const columns = [
     {
-      field: 'actions',headerAlign: 'center', align: 'center',
+      field: 'actions',
+      headerAlign: 'center',
+      align: 'center',
       headerName: 'Acciones',
       width: 100,
       sortable: false,
@@ -34,19 +36,20 @@ export default function DataGridPremiumDemo() {
             </React.Fragment>
           ) : (
             <DeleteIcon
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', color: '#EB455F' }}
               onClick={() => handleDeleteRow(params.row.id)}
             />
           )}
         </div>
       ),
     },
-    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center' },
-    { field: 'Ename', headerName: 'Nombre', width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center' },
-    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center' },
+    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
+    { field: 'Ename', headerName: 'Nombre', width: 150, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
+    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
+    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
     {
-      field: 'TaskCount', headerAlign: 'center',
+      field: 'TaskCount',
+      headerAlign: 'center',
       headerName: 'Completados',
       width: 200,
       renderCell: (params) => (
@@ -54,16 +57,27 @@ export default function DataGridPremiumDemo() {
           <LinearProgress
             variant="determinate"
             value={params.value || 0}
-            sx={{ width: '100%', height: 20, marginRight: '8px' }}
+            sx={{
+              width: '100%',
+              height: 20,
+              marginRight: '8px',
+              backgroundColor: params.value > 50 ? 'green' : '0174BE',
+              '& .MuiLinearProgress-bar': {
+                backgroundColor: 'blue',
+              },
+            }}
           />
           <Typography variant="body2" color="textSecondary">
             {`${params.value.toFixed(2)}%`}
           </Typography>
         </Box>
       ),
+      style: { fontWeight: 'bold' },
     },
     {
-      field: 'start', headerAlign: 'center', align: 'center',
+      field: 'start',
+      headerAlign: 'center',
+      align: 'center',
       headerName: 'Fecha de inicio',
       width: 150,
       valueFormatter: (params) => {
@@ -73,9 +87,12 @@ export default function DataGridPremiumDemo() {
         const day = `0${date.getDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
       },
+      style: { fontWeight: 'bold' },
     },
     {
-      field: 'final', headerAlign: 'center', align: 'center',
+      field: 'final',
+      headerAlign: 'center',
+      align: 'center',
       headerName: 'Fecha de final',
       width: 150,
       valueFormatter: (params) => {
@@ -85,8 +102,9 @@ export default function DataGridPremiumDemo() {
         const day = `0${date.getDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
       },
+      style: { fontWeight: 'bold' },
     },
-    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center',align: 'center', hide: !showStateZero },
+    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', hide: !showStateZero, style: { fontWeight: 'bold' } },
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);

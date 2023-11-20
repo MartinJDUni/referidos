@@ -15,27 +15,16 @@ export default function DataGridPremiumDemo() {
       headerName: 'Acciones',
       width: 100,
       sortable: false,
-      renderCell: (params) => (
+      renderCell: (params: { row: { id: any; }; }) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px' }}
             onClick={() => handleEditRow(params.row.id)}
           />
-          {params.row.state === 0 ? (
-            <React.Fragment>
-              <span
-                style={{ cursor: 'pointer', marginRight: '8px' }}
-                onClick={() => handleReactivateRow(params.row.id)}
-              >
-                Reactivar
-              </span>
-            </React.Fragment>
-          ) : (
-            <DeleteIcon
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleDeleteRow(params.row.id)}
-            />
-          )}
+          <DeleteIcon
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleDeleteRow(params.row.id)}
+          />
         </div>
       ),
     },
@@ -69,7 +58,6 @@ export default function DataGridPremiumDemo() {
       console.error('Error al actualizar el estado en la base de datos desde el cliente:', error);
     }
   };
-
   const handleReactivateRow = async (id) => {
     try {
       await fetch('/api/dbaux', {
@@ -112,6 +100,7 @@ export default function DataGridPremiumDemo() {
       .catch((error) => {
         console.error('Error al obtener datos de la base de datos:', error);
         setLoading(false);
+
       });
   };
 
@@ -152,6 +141,7 @@ export default function DataGridPremiumDemo() {
           headerName: 'Commodity',
           field: 'commodity',
         }}
+        style={{ background: 'white' }} 
       />
     </Box>
   );

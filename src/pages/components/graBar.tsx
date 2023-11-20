@@ -9,8 +9,6 @@ const CustomBarChart = () => {
       const response = await fetch('/api/databaseET');
       if (response.ok) {
         const result = await response.json();
-
-        // Filtra solo los elementos con estado 1
         const filteredData = result.data.filter(item => item.state === 1);
 
         setChartData(filteredData);
@@ -23,29 +21,32 @@ const CustomBarChart = () => {
   };
 
   useEffect(() => {
-    // Realiza la primera consulta al cargar el componente
     fetchData();
-
-    // Configura una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
     const pollingInterval = setInterval(() => {
       fetchData();
     }, 5000);
 
     return () => {
-      clearInterval(pollingInterval); // Limpia el intervalo al desmontar el componente
+      clearInterval(pollingInterval);
     };
   }, []);
 
   return (
-    <BarChart width={800} height={400} data={chartData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="EmployeeName" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="Goal" fill="rgba(75, 192, 192, 0.6)" name="Meta" />
-      <Bar dataKey="TaskName" fill="rgba(255, 99, 132, 0.6)" name="Tarea" />
-    </BarChart>
+    <div className="custom-chart-container" style={{ background: '#FFFFFF', width: '800px' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de empleado por tarea</h3>
+      </div>
+      <BarChart width={600} height={380} data={chartData}>
+        <CartesianGrid stroke="transparent" />
+        <XAxis dataKey="EmployeeName" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="Goal" fill="#0174BE" name="Meta" /> {/* Cambiar color a verde */}
+        <Bar dataKey="TaskName" fill="#D71313" name="Tarea" /> {/* Cambiar color a azul */}
+      </BarChart>
+
+    </div>
   );
 };
 
