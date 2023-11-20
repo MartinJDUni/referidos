@@ -11,11 +11,17 @@ const Login: FC = () => {
   useEffect(() => {
     // Verifica si el usuario está autenticado al cargar la página
     const storedUserId = localStorage.getItem('userId');
+    const storedUserRole = localStorage.getItem('userRole'); // Cambiado a 'userRole'
+
     if (storedUserId) {
-      // Si el usuario está autenticado, redirige a la página deseada
-      router.push('/Employee/InicioEmployee');
+      if (storedUserRole === '2') { // Comparación con cadena '2'
+        router.push('/Employee/InicioEmployee');
+      } else {
+        router.push('/Admin/Graphics');
+      }
     }
   }, []);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,11 +41,14 @@ const Login: FC = () => {
 
         console.log('Respuesta del servidor:', userData);
         console.log('ID del Usuario:', userData.authenticatedUser.id);
-        
+
+        // Guarda userId y role en localStorage
         localStorage.setItem('userId', userData.authenticatedUser.id);
-        if(userData.authenticatedUser.role == 2){
+        localStorage.setItem('userRole', userData.authenticatedUser.role);
+
+        if (userData.authenticatedUser.role === 2) {
           router.push('/Employee/InicioEmployee');
-        }else{
+        } else {
           router.push('/Admin/Graphics');
         }
       } else {
@@ -52,10 +61,10 @@ const Login: FC = () => {
           setError('Error de servidor. Por favor, inténtalo de nuevo.');
         }
       }
-    } catch (error) { 
+    } catch (error) {
       console.error('Error al iniciar sesión:', error);
       setError('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
-    }  
+    }
   };
 
   return (
