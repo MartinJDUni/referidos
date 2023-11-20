@@ -27,7 +27,7 @@ export default async (req, res) => {
       const connection = await connectToDatabase();
 
       const userQuery = `
-        SELECT Id, Name
+        SELECT Id, Name, Idrole
         FROM employee
         WHERE email = ? AND password = ?;
       `;
@@ -40,6 +40,7 @@ export default async (req, res) => {
       const authenticatedUser = {
         id: userRows[0].Id,
         name: userRows[0].Name,
+        role: userRows[0].Idrole,
         // Agrega otros campos que necesites
       };
       console.log(authenticatedUser);

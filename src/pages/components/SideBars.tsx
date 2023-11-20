@@ -3,8 +3,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { BarChartOutlined, TeamOutlined, EditOutlined, LogoutOutlined, ScheduleOutlined, CommentOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
+import router from 'next/router';
 
 const { Sider } = Layout;
+const handleLogout = () => {
+  // Elimina la información de autenticación al cerrar sesión
+  localStorage.removeItem('userId');
+
+  // Redirige a la página de inicio de sesión
+  router.push('/');
+};
 
 const SidebarComponent = ({ collapsed }) => {
   const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -35,7 +43,7 @@ const SidebarComponent = ({ collapsed }) => {
           <Link href="/Admin/EditProfile">Editar Perfil</Link>
         </Menu.Item>
         <Menu.Item key="/components/login" icon={<LogoutOutlined />}>
-          <Link href="/components/login">Cerrar Sesión</Link>
+          <button onClick={handleLogout}>salir</button>
         </Menu.Item>
       </Menu>
 

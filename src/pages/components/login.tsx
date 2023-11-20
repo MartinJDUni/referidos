@@ -32,11 +32,16 @@ const Login: FC = () => {
       if (response.ok) {
         // La autenticación fue exitosa
         const userData = await response.json();
+
         console.log('Respuesta del servidor:', userData);
         console.log('ID del Usuario:', userData.authenticatedUser.id);
+        
         localStorage.setItem('userId', userData.authenticatedUser.id);
-
-        router.push('/Employee/InicioEmployee');
+        if(userData.authenticatedUser.role == 2){
+          router.push('/Employee/InicioEmployee');
+        }else{
+          router.push('/Admin/Graphics');
+        }
       } else {
         // Verificar si la respuesta es JSON antes de intentar analizarla
         const contentType = response.headers.get('content-type');
