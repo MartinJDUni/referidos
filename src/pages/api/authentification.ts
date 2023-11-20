@@ -1,4 +1,3 @@
-
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
@@ -28,7 +27,7 @@ export default async (req, res) => {
       const connection = await connectToDatabase();
 
       const userQuery = `
-        SELECT *
+        SELECT Id, Name
         FROM employee
         WHERE email = ? AND password = ?;
       `;
@@ -38,7 +37,12 @@ export default async (req, res) => {
         return res.status(401).json({ error: 'Por favor ingrese correctamente los datos' });
       }
 
-      const authenticatedUser = userRows[0].name; // Cambia 'name' por el campo correcto en tu tabla
+      const authenticatedUser = {
+        id: userRows[0].Id,
+        name: userRows[0].Name,
+        // Agrega otros campos que necesites
+      };
+      console.log(authenticatedUser);
 
       res.status(200).json({ message: 'Autenticación exitosa', authenticatedUser });
     } catch (error) {

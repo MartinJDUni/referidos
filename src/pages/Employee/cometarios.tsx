@@ -36,7 +36,6 @@ const Cometarios: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <CommentList id={id} />
         </Content>
       </Layout>
     </Layout>

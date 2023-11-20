@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '@/styles/Login.module.css';
 
@@ -7,6 +7,15 @@ const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Verifica si el usuario está autenticado al cargar la página
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      // Si el usuario está autenticado, redirige a la página deseada
+      router.push('/Employee/InicioEmployee');
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +31,12 @@ const Login: FC = () => {
 
       if (response.ok) {
         // La autenticación fue exitosa
-        router.push('/Admin/Graphics');
+        const userData = await response.json();
+        console.log('Respuesta del servidor:', userData);
+        console.log('ID del Usuario:', userData.authenticatedUser.id);
+        localStorage.setItem('userId', userData.authenticatedUser.id);
+
+        router.push('/Employee/InicioEmployee');
       } else {
         // Verificar si la respuesta es JSON antes de intentar analizarla
         const contentType = response.headers.get('content-type');
