@@ -6,7 +6,17 @@
 body {
   background-color: white;
 }
+.read-comment {
+  /* Estilos para comentarios leídos, si es necesario */
+}
 
+.unread-comment {
+  font-weight: bold; /* Esto hará que el texto sea negrita para comentarios no leídos */
+}
+
+.bold-text {
+  font-weight: bold;
+}
 .cancelledCell {
   color: red;
   font-weight: bold;

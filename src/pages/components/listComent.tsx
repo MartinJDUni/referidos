@@ -10,16 +10,29 @@ const CommentList = ({ id }: { id: number }) => {
   const [allSelected, setAllSelected] = useState(false);
 
   useEffect(() => {
-    // Realiza una solicitud GET a la API con el ID específico
-    fetch(`/api/databaseCEP?id=${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // Maneja los datos de respuesta
+    // Función para realizar la solicitud a la API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/databaseCEP?id=${id}`);
+        const data = await response.json();
         setComments(data.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error al obtener datos de la API:', error);
-      });
+      }
+    };
+
+    // Realizar la primera solicitud al montar el componente
+    fetchData();
+
+    // Configurar un intervalo para realizar la solicitud cada 5 segundos
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    // Limpiar el intervalo al desmontar el componente
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [id]);
 
   const toggleSelectComment = (commentId) => {
@@ -91,14 +104,16 @@ const CommentList = ({ id }: { id: number }) => {
       {showMarkAsReadUnreadButtons && (
         <div className="comment-actions">
           <button onClick={markSelectedAsRead}>
-            <MarkEmailReadIcon /> </button>
+            <MarkEmailReadIcon /> Marcar como Leído
+          </button>
           <button onClick={markSelectedAsUnread}>
-            <MarkEmailUnreadIcon /> </button>
+            <MarkEmailUnreadIcon /> Marcar como No Leído
+          </button>
         </div>
       )}
       <div className="select-all-button">
         <button onClick={toggleSelectAll}>
-        {allSelected ? (
+          {allSelected ? (
             <CheckBoxIcon /> // Ícono de marca de verificación
           ) : (
             <CheckBoxOutlineBlankIcon /> // Ícono de marca de verificación en blanco
@@ -108,8 +123,13 @@ const CommentList = ({ id }: { id: number }) => {
       </div>
       <ul className="comment-list">
         {comments.map((comment, index) => (
-          <li key={index} className={`comment ${comment.hidden ? 'hidden' : ''}`}>
-            <div className="comment-header">
+          <li
+            key={index}
+            className={`comment ${comment.hidden ? 'hidden' : ''} ${
+              comment.state === 0 ? 'read-comment' : 'unread-comment'
+            }`}
+          >
+            <div className={`comment-header ${comment.state === 1 ? 'bold-text' : ''}`}>
               <div className="comment-sender">
                 <strong>{comment.senderName}</strong> <span>{comment.timestamp}</span>
               </div>
@@ -128,5 +148,4 @@ const CommentList = ({ id }: { id: number }) => {
     </div>
   );
 };
-
 export default CommentList;
