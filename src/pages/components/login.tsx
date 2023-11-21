@@ -45,6 +45,7 @@ const Login: FC = () => {
         // Guarda userId y role en localStorage
         localStorage.setItem('userId', userData.authenticatedUser.id);
         localStorage.setItem('userRole', userData.authenticatedUser.role);
+        localStorage.setItem('userName', userData.authenticatedUser.name);
 
         if (userData.authenticatedUser.role === 2) {
           router.push('/Employee/InicioEmployee');

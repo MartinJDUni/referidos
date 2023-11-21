@@ -9,6 +9,8 @@ const { Sider } = Layout;
 const handleLogout = () => {
   // Elimina la información de autenticación al cerrar sesión
   localStorage.removeItem('userId');
+  localStorage.removeItem('userRole');
+  localStorage.removeItem('userName');
 
   // Redirige a la página de inicio de sesión
   router.push('/');
