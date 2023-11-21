@@ -27,7 +27,7 @@ const CommentList = ({ id }: { id: number }) => {
     // Configurar un intervalo para realizar la solicitud cada 5 segundos
     const intervalId = setInterval(() => {
       fetchData();
-    }, 5000);
+    }, 3000);
 
     // Limpiar el intervalo al desmontar el componente
     return () => {
