@@ -2,14 +2,25 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
+import DataGridPremiumDemo from '../components/DataGridPremiumDemo';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 export default function DataGridPremiumDemo() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [editingRowId, setEditingRowId] = React.useState(null);
+  const [editedFields, setEditedFields] = React.useState({});
+  const [selectionModel, setSelectionModel] = React.useState([]);
 
   const getProgressColor = (value) => {
     if (value <= 30) {
@@ -41,7 +52,7 @@ export default function DataGridPremiumDemo() {
       renderCell: (params) => (
         <div>
           <EditIcon
-            style={{ cursor: 'pointer', marginRight: '8px' }}
+            style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
             onClick={() => handleEditRow(params.row.id)}
           />
           {params.row.state === 0 ? (
@@ -134,14 +145,60 @@ export default function DataGridPremiumDemo() {
     { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', hide: !showStateZero, style: { fontWeight: 'bold' } },
   ];
 
-  const [selectionModel, setSelectionModel] = React.useState([]);
-
   const handleEditRow = (id) => {
-    console.log('Editar fila con ID:', id);
+    setEditingRowId(id);
+    setOpen(true);
+
+    // Recuperar los valores actuales de la fila y establecerlos en el estado
+    const editedRow = data.find((row) => row.id === id);
+    setEditedFields(editedRow);
   };
 
+  const handleEditClose = () => {
+    setOpen(false);
+    setEditingRowId(null);
+    setEditedFields({}); // Limpiar campos editados al cerrar el modal
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      // Make a PUT request to your API endpoint with the updated fields
+      const response = await fetch('/api/databaseETedit', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: editingRowId,
+          goal: editedFields.goal,
+          start: editedFields.start,
+          final: editedFields.final,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update data: ${response.statusText}`);
+      }
+
+      // Update the local state with the edited fields
+      setData((prevData) =>
+        prevData.map((row) =>
+          row.id === editingRowId ? { ...row, ...editedFields } : row
+        )
+      );
+
+      // Close the edit modal after successful update
+      handleEditClose();
+
+      console.log('Changes saved successfully');
+    } catch (error) {
+      console.error('Error saving changes:', error);
+      // Handle error, show notification, etc.
+    }
+  };
   const handleReactivateRow = async (id) => {
     try {
+      // Lógica para reactivar la fila
       await fetch('/api/databaseReac', {
         method: 'PUT',
         headers: {
@@ -157,6 +214,7 @@ export default function DataGridPremiumDemo() {
 
   const handleDeleteRow = async (id) => {
     try {
+      // Lógica para eliminar la fila
       await fetch('/api/databaseET', {
         method: 'PUT',
         headers: {
@@ -233,8 +291,11 @@ export default function DataGridPremiumDemo() {
   return (
     <Box sx={{ height: 520, width: '100%' }}>
       <div>
-        <button onClick={() => setShowStateZero(!showStateZero)}>
-          {showStateZero ? ' Ver Activos' : 'Ver no activo'}
+        <button
+          onClick={() => setShowStateZero(!showStateZero)}
+          style={{ backgroundColor: showStateZero ? 'green' : 'red', color: 'white' }}
+        >
+          {showStateZero ? ' Ver Activos' : 'Ver Inactivos'}
         </button>
       </div>
       <DataGrid
@@ -258,6 +319,48 @@ export default function DataGridPremiumDemo() {
         }}
         getRowId={(row) => row.id}
       />
+
+      {/* Modal de edición */}
+      <Dialog open={open} onClose={handleEditClose} fullWidth maxWidth="xs">
+        <DialogTitle>Editar Información</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Meta"
+            fullWidth
+            margin="normal"
+            style={{ marginBottom: 16 }}
+            value={editedFields.goal || ''}
+            onChange={(e) => setEditedFields({ ...editedFields, goal: e.target.value })}
+          />
+          <TextField
+            label="Fecha de inicio"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            style={{ marginBottom: 16 }}
+            value={editedFields.start ? editedFields.start.toISOString().split('T')[0] : ''}
+            onChange={(e) => setEditedFields({ ...editedFields, start: new Date(e.target.value) })}
+          />
+          <TextField
+            label="Fecha de final"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            style={{ marginBottom: 16 }}
+            value={editedFields.final ? editedFields.final.toISOString().split('T')[0] : ''}
+            onChange={(e) => setEditedFields({ ...editedFields, final: new Date(e.target.value) })}
+          />
+          {/* Agrega más campos según sea necesario */}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSaveEdit} color="primary">
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

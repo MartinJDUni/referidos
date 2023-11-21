@@ -32,7 +32,7 @@ const CustomBarChart = () => {
   }, []);
 
   return (
-    <div className="custom-chart-container" style={{ background: '#FFFFFF', width: '800px' }}>
+    <div className="custom-chart-container" style={{ background: '#FFFFFF', width: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div style={{ textAlign: 'center' }}>
         <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de empleado por tarea</h3>
       </div>
@@ -45,7 +45,6 @@ const CustomBarChart = () => {
         <Bar dataKey="Goal" fill="#0174BE" name="Meta" /> {/* Cambiar color a verde */}
         <Bar dataKey="TaskName" fill="#D71313" name="Tarea" /> {/* Cambiar color a azul */}
       </BarChart>
-
     </div>
   );
 };

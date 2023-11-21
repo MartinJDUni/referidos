@@ -96,7 +96,7 @@ const CustomBarChart = () => {
   }));
 
   return (
-    <div className="custom-chart-container" style={{ background: 'white', width: '800px', margin: '20px 0' }}>
+    <div className="custom-chart-container" style={{ background: 'white', width: '800px', margin: '20px auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div style={{ textAlign: 'center' }}>
         <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de meta por tarea</h3>
       </div>
@@ -109,7 +109,6 @@ const CustomBarChart = () => {
         <Bar dataKey="Total" fill="#D71313" name="Total de Metas por Tarea" /> {/* Cambiar color a amarillo */}
         <Bar dataKey="Completed" fill="#3F51B5" name="Metas Completadas por Tarea" /> {/* Cambiar color a índigo */}
       </BarChart>
-
     </div>
   );
 };

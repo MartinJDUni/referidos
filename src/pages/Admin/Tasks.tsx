@@ -78,23 +78,28 @@ const Task: React.FC = () => {
       <SidebarComponent collapsed={collapsed} />
       <Layout>
         <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
+        {/* Mueve el encabezado fuera del componente Content */}
         <Content
           style={{
-            margin: '60px 16px 24px',
-            padding: 24,
+            margin: '90px 30px 15px', // 
+            padding: 15,
             minHeight: 280,
             position: 'relative',
+            backgroundColor: '#fff',
+            marginLeft: '30px', 
           }}
+          
         >
-          <h1>Tareas</h1>
-          <Button
+        <div style={{ marginBottom: '30px', display: 'flex', justifyContent: 'space-between' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '-1px' }}>Listado de tareas</h1>
+           <Button
             onClick={handleShowAddTaskModal}
             type="primary"
-            style={{ position: 'absolute', top: -20, right: 0 }}
+            style={{ position: 'absolute', top: -60, right: 0 }}
           >
             Agregar tarea
           </Button>
-
+        </div>
           <Modal
             title="Agregar Tarea"
             visible={isAddTaskModalVisible}
