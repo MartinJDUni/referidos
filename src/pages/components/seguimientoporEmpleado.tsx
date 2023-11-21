@@ -21,7 +21,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
 
     const columns = [
         {
-            field: 'actions',
+            field: 'actions', headerAlign: 'center', align: 'center',
             headerName: 'Acciones',
             width: 120,
             sortable: false,
@@ -38,11 +38,19 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
                 </div>
             ),
         },
-        { field: 'id', headerName: 'Id', width: 50 },
-        { field: 'client', headerName: 'Cliente', width: 150 },
-        { field: 'statetask', headerName: 'Estado', width: 200 },
+        { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center' },
+        { field: 'client', headerName: 'Cliente', headerAlign: 'center', align: 'center', width: 150 },
         {
-            field: 'start',
+            field: 'statetask',
+            headerName: 'Estado',
+            headerAlign: 'center',
+            align: 'center',
+            width: 200,
+            cellClassName: (params) =>
+                params.value === 'CANCELADO' ? 'cancelledCell' : params.value === 'ACEPTADO' ? 'acceptedCell' : '',
+        },
+        {
+            field: 'start', headerAlign: 'center', align: 'center',
             headerName: 'Fecha de inicio',
             width: 150,
             valueFormatter: (params) => {
@@ -53,9 +61,9 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
                 return `${year}-${month}-${day}`;
             },
         },
-        { field: 'state', headerName: 'estado', width: 100 },
+        { field: 'state', headerName: 'estado', headerAlign: 'center', align: 'center', width: 100 },
         {
-            field: 'customAction',
+            field: 'customAction', headerAlign: 'center', align: 'center',
             headerName: 'Ver comentarios',
             width: 200,
             renderCell: (params) => (
@@ -80,10 +88,10 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
 
     const fetchData = () => {
         if (!userId) {
-            console.log("no hay id: ",userId);
+            console.log("no hay id: ", userId);
             return;
         }
-    
+
         fetch(`/api/dbTaskPer?employeeId=${userId}`)
             .then((response) => response.json())
             .then((result) => {
@@ -110,7 +118,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
             console.log("Intervalo ejecutado");
             fetchData();
         }, 3000);
-    
+
         return () => {
             clearInterval(pollingInterval);
         };

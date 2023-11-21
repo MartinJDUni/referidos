@@ -45,7 +45,7 @@ const SidebarComponent = ({ collapsed }) => {
           <Link href="/Admin/EditProfile">Editar Perfil</Link>
         </Menu.Item>
         <Menu.Item key="/components/login" icon={<LogoutOutlined />}>
-          <button onClick={handleLogout}>salir</button>
+          <Link href="/" style={{ textDecoration: 'none' }} onClick={handleLogout}>Salir</Link>
         </Menu.Item>
       </Menu>
 

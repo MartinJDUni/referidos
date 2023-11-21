@@ -14,7 +14,7 @@ export default async (req, res) => {
           FROM customerperemployee cpe
           INNER JOIN employee e ON cpe.Idemployee = e.Id
           INNER JOIN statetask st ON cpe.Idstatetask = st.Id
-          WHERE st.State = 'ACEPTDADO'
+          WHERE st.State = 'ACEPTADO'
           GROUP BY e.Id;
         `;
             const [rows] = await connection.execute(query);
