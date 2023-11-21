@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -8,6 +12,8 @@ const CommentList = ({ id }: { id: number }) => {
   const [comments, setComments] = useState([]);
   const [selectedComments, setSelectedComments] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
     // Función para realizar la solicitud a la API
@@ -36,7 +42,6 @@ const CommentList = ({ id }: { id: number }) => {
   }, [id]);
 
   const toggleSelectComment = (commentId) => {
-    // Implementa la lógica para seleccionar o deseleccionar el comentario
     const isSelected = selectedComments.includes(commentId);
     if (isSelected) {
       setSelectedComments(selectedComments.filter((id) => id !== commentId));
@@ -56,7 +61,6 @@ const CommentList = ({ id }: { id: number }) => {
 
   const markSelectedAsRead = async () => {
     try {
-      // Realiza la solicitud al servidor para actualizar los comentarios seleccionados a estado 0
       await Promise.all(
         selectedComments.map(async (commentId) => {
           await fetch(`/api/databaseCEP`, {
@@ -68,8 +72,6 @@ const CommentList = ({ id }: { id: number }) => {
           });
         })
       );
-
-      // Actualiza el estado local o realiza otras acciones según sea necesario
     } catch (error) {
       console.error('Error al marcar como leídos:', error);
     }
@@ -77,7 +79,6 @@ const CommentList = ({ id }: { id: number }) => {
 
   const markSelectedAsUnread = async () => {
     try {
-      // Realiza la solicitud al servidor para actualizar los comentarios seleccionados a estado 0
       await Promise.all(
         selectedComments.map(async (commentId) => {
           await fetch(`/api/databaseCEP`, {
@@ -89,14 +90,52 @@ const CommentList = ({ id }: { id: number }) => {
           });
         })
       );
-
-      // Actualiza el estado local o realiza otras acciones según sea necesario
     } catch (error) {
       console.error('Error al marcar como leídos:', error);
     }
   };
 
   const showMarkAsReadUnreadButtons = selectedComments.length > 0;
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleNewCommentChange = (event) => {
+    setNewComment(event.target.value);
+  };
+
+  const agregarComentarioYCerrarModal = async () => {
+    try {
+      // Realiza la solicitud al servidor para agregar el nuevo comentario a la base de datos
+      await fetch(`/api/databaseComentList`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, newComment }),
+      });
+
+      // Actualiza la lista de comentarios después de agregar el nuevo comentario
+      fetch(`/api/databaseCEP?id=${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setComments(data.data);
+        })
+        .catch((error) => {
+          console.error('Error al obtener datos de la API:', error);
+        });
+
+      // Cierra el modal después de agregar el comentario
+      closeModal();
+    } catch (error) {
+      console.error('Error al agregar comentario:', error);
+    }
+  };
 
   return (
     <div className="comment-list-container">
@@ -116,11 +155,12 @@ const CommentList = ({ id }: { id: number }) => {
           {allSelected ? (
             <CheckBoxIcon /> // Ícono de marca de verificación
           ) : (
-            <CheckBoxOutlineBlankIcon /> // Ícono de marca de verificación en blanco
+            <CheckBoxOutlineBlankIcon />
           )}
           {allSelected ? 'Deseleccionar todo' : 'Seleccionar todo'}
         </button>
       </div>
+      <button onClick={openModal}>Agregar Comentario</button>
       <ul className="comment-list">
         {comments.map((comment, index) => (
           <li
@@ -145,6 +185,22 @@ const CommentList = ({ id }: { id: number }) => {
           </li>
         ))}
       </ul>
+
+      {/* Modal para agregar comentario */}
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
+          <TextField
+            label="Nuevo Comentario"
+            multiline
+            rows={4}
+            fullWidth
+            value={newComment}
+            onChange={handleNewCommentChange}
+          />
+          <Button onClick={closeModal}>Cancelar</Button>
+          <Button onClick={agregarComentarioYCerrarModal}>Agregar Comentario</Button>
+        </Box>
+      </Modal>
     </div>
   );
 };

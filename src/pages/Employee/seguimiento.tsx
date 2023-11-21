@@ -45,3 +45,4 @@ const Inicio: React.FC = () => {
 };
 
 export default Inicio;
+ 

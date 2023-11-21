@@ -22,7 +22,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
             onClick={() => handleEditRow(params.row.id)}
           />
           <DeleteIcon
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', color: 'red' }}
             onClick={() => handleDeleteRow(params.row.id)}
           />
         </div>
