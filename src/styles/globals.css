@@ -7,6 +7,30 @@ body {
   background-color: white;
 }
 
+.cancelledCell {
+  color: red;
+  font-weight: bold;
+  border-radius: 5px; /* Ajusta el valor según tu preferencia */
+}
+
+.acceptedCell {
+  color: green;
+  font-weight: bold;
+  border-radius: 5px; /* Ajusta el valor según tu preferencia */
+}
+
+.inProcessCell {
+  color: blue; /* Ajusta el color según tu preferencia */
+  font-weight: bold;
+  border-radius: 5px; /* Ajusta el valor según tu preferencia */
+}
+
+.rejectedCell {
+  color: red; /* Ajusta el color según tu preferencia */
+  font-weight: bold;
+  border-radius: 5px; /* Ajusta el valor según tu preferencia */
+}
+
 
 .comment-list-container {
   max-width: 800px;

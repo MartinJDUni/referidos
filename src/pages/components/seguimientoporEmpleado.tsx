@@ -12,6 +12,25 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
 
     const [userId, setUserId] = useState(null);
 
+    const getProgressColor = (value) => {
+        if (value <= 30) {
+            return {
+                background: '#E53935', // Rojo para 0-30
+                bar: '#C62828',
+            };
+        } else if (value <= 60) {
+            return {
+                background: '#FFC107', // Amarillo para 30-60
+                bar: '#FFA000',
+            };
+        } else {
+            return {
+                background: '#4CAF50', // Verde para >60
+                bar: '#2E7D32',
+            };
+        }
+    };
+
     useEffect(() => {
         // Obtener userId de localStorage al cargar la página
         const storedUserId = localStorage.getItem('userId');
@@ -46,8 +65,20 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
             headerAlign: 'center',
             align: 'center',
             width: 200,
-            cellClassName: (params) =>
-                params.value === 'CANCELADO' ? 'cancelledCell' : params.value === 'ACEPTADO' ? 'acceptedCell' : '',
+            cellClassName: (params) => {
+                switch (params.value) {
+                    case 'CANCELADO':
+                        return 'cancelledCell';
+                    case 'ACEPTADO':
+                        return 'acceptedCell';
+                    case 'EN PROCESO':
+                        return 'inProcessCell';
+                    case 'RECHAZADO':
+                        return 'rejectedCell';
+                    default:
+                        return '';
+                }
+            },
         },
         {
             field: 'start', headerAlign: 'center', align: 'center',

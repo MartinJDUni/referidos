@@ -14,7 +14,27 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
     { field: 'id', headerName: 'Id', width: 50 },
     { field: 'client', headerName: 'Cliente', width: 150 },
     { field: 'emp', headerName: 'Empleado', width: 150 },
-    { field: 'statetask', headerName: 'Estado', width: 200 },
+    {
+      field: 'statetask',
+      headerName: 'Estado',
+      headerAlign: 'center',
+      align: 'center',
+      width: 200,
+      cellClassName: (params) => {
+          switch (params.value) {
+              case 'CANCELADO':
+                  return 'cancelledCell';
+              case 'ACEPTADO':
+                  return 'acceptedCell';
+              case 'EN PROCESO':
+                  return 'inProcessCell';
+              case 'RECHAZADO':
+                  return 'rejectedCell';
+              default:
+                  return '';
+          }
+      },
+  },
     {
       field: 'start',
       headerName: 'Fecha de inicio',

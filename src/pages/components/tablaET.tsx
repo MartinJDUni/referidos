@@ -11,6 +11,25 @@ export default function DataGridPremiumDemo() {
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
 
+  const getProgressColor = (value) => {
+    if (value <= 30) {
+      return {
+        background: '#E53935', // Rojo para 0-30
+        bar: '#C62828',
+      };
+    } else if (value <= 60) {
+      return {
+        background: '#FFC107', // Amarillo para 30-60
+        bar: '#FFA000',
+      };
+    } else {
+      return {
+        background: '#4CAF50', // Verde para >60
+        bar: '#2E7D32',
+      };
+    }
+  };
+
   const columns = [
     {
       field: 'actions',
@@ -52,26 +71,34 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       headerName: 'Completados',
       width: 200,
-      renderCell: (params) => (
-        <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
-          <LinearProgress
-            variant="determinate"
-            value={params.value || 0}
-            sx={{
-              width: '100%',
-              height: 20,
-              marginRight: '8px',
-              backgroundColor: params.value > 50 ? 'green' : '0174BE',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: 'blue',
-              },
-            }}
-          />
-          <Typography variant="body2" color="textSecondary">
-            {`${params.value.toFixed(2)}%`}
-          </Typography>
-        </Box>
-      ),
+      renderCell: (params) => {
+        const { background, bar } = getProgressColor(params.value || 0);
+
+        return (
+          <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
+            <LinearProgress
+              variant="determinate"
+              value={params.value || 0}
+              sx={{
+                width: '100%',
+                height: 20,
+                borderRadius: 4, // Bordes redondeados
+                backgroundColor: background,
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: bar,
+                },
+              }}
+            />
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ marginLeft: 1, fontWeight: 'bold' }}
+            >
+              {`${params.value.toFixed(2)}%`}
+            </Typography>
+          </Box>
+        );
+      },
       style: { fontWeight: 'bold' },
     },
     {
