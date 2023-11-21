@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/headeremployee";
 import SidebarComponent from "@/pages/components/sidebaremployee";
 import CommentList from '../components/listComent';
-import DataGridPremiumDemo from '../components/tablaEC';
+import DataGridPremiumDemo from '../components/seguimientoporEmpleado';
 
 const { Header, Content } = Layout;
 

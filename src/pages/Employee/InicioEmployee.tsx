@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import HeaderComponent from "@/pages/components/headeremployee";
 import SidebarComponent from "@/pages/components/sidebaremployee";
+import CustomBarChart from '../components/tablagrafemplo';
 
 const { Header, Content } = Layout;
 
@@ -24,7 +25,8 @@ const Inicio: React.FC = () => {
             minHeight: 280,
           }}
         >
-          <h1>Ini</h1>
+          
+          <CustomBarChart />
         </Content>
       </Layout>
     </Layout>
