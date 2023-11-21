@@ -139,7 +139,7 @@ export default function DataGridPremiumDemo() {
         const pollingInterval = setInterval(() => {
             console.log("Intervalo ejecutado");
             fetchData();
-        }, 8000);
+        }, 3000);
 
         return () => {
             clearInterval(pollingInterval);

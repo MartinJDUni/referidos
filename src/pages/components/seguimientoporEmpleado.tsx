@@ -109,7 +109,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
         const pollingInterval = setInterval(() => {
             console.log("Intervalo ejecutado");
             fetchData();
-        }, 8000);
+        }, 3000);
     
         return () => {
             clearInterval(pollingInterval);

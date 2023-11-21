@@ -35,7 +35,7 @@ const SidebarComponent = ({ collapsed }) => (
         Editar Perfil
       </Menu.Item>
       <Menu.Item key="5" icon={<LogoutOutlined />}>
-        <button onClick={handleLogout}>salir</button>
+      <Link href="/" style={{ textDecoration: 'none' }} onClick={handleLogout}>Salir</Link>
       </Menu.Item>
     </Menu>
   </Sider>
