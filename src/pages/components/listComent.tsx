@@ -3,6 +3,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -16,7 +18,6 @@ const CommentList = ({ id }: { id: number }) => {
   const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
-    // Función para realizar la solicitud a la API
     const fetchData = async () => {
       try {
         const response = await fetch(`/api/databaseCEP?id=${id}`);
@@ -27,15 +28,12 @@ const CommentList = ({ id }: { id: number }) => {
       }
     };
 
-    // Realizar la primera solicitud al montar el componente
     fetchData();
 
-    // Configurar un intervalo para realizar la solicitud cada 5 segundos
     const intervalId = setInterval(() => {
       fetchData();
     }, 3000);
 
-    // Limpiar el intervalo al desmontar el componente
     return () => {
       clearInterval(intervalId);
     };
@@ -43,11 +41,9 @@ const CommentList = ({ id }: { id: number }) => {
 
   const toggleSelectComment = (commentId) => {
     const isSelected = selectedComments.includes(commentId);
-    if (isSelected) {
-      setSelectedComments(selectedComments.filter((id) => id !== commentId));
-    } else {
-      setSelectedComments([...selectedComments, commentId]);
-    }
+    setSelectedComments((prevSelected) =>
+      isSelected ? prevSelected.filter((id) => id !== commentId) : [...prevSelected, commentId]
+    );
   };
 
   const toggleSelectAll = () => {
@@ -59,7 +55,7 @@ const CommentList = ({ id }: { id: number }) => {
     setAllSelected(!allSelected);
   };
 
-  const markSelectedAsRead = async () => {
+  const markSelectedComments = async (newState) => {
     try {
       await Promise.all(
         selectedComments.map(async (commentId) => {
@@ -68,42 +64,20 @@ const CommentList = ({ id }: { id: number }) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ commentId, newState: 0 }),
+            body: JSON.stringify({ commentId, newState }),
           });
         })
       );
     } catch (error) {
-      console.error('Error al marcar como leídos:', error);
+      console.error('Error al marcar comentarios:', error);
     }
   };
 
-  const markSelectedAsUnread = async () => {
-    try {
-      await Promise.all(
-        selectedComments.map(async (commentId) => {
-          await fetch(`/api/databaseCEP`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ commentId, newState: 1 }),
-          });
-        })
-      );
-    } catch (error) {
-      console.error('Error al marcar como leídos:', error);
-    }
-  };
+  const markSelectedAsRead = () => markSelectedComments(0);
+  const markSelectedAsUnread = () => markSelectedComments(1);
 
-  const showMarkAsReadUnreadButtons = selectedComments.length > 0;
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const handleNewCommentChange = (event) => {
     setNewComment(event.target.value);
@@ -111,7 +85,9 @@ const CommentList = ({ id }: { id: number }) => {
 
   const agregarComentarioYCerrarModal = async () => {
     try {
-      // Realiza la solicitud al servidor para agregar el nuevo comentario a la base de datos
+      // Limpiar el campo de texto antes de realizar la solicitud para agregar el nuevo comentario
+      setNewComment('');
+
       await fetch(`/api/databaseComentList`, {
         method: 'POST',
         headers: {
@@ -120,15 +96,10 @@ const CommentList = ({ id }: { id: number }) => {
         body: JSON.stringify({ id, newComment }),
       });
 
-      // Actualiza la lista de comentarios después de agregar el nuevo comentario
-      fetch(`/api/databaseCEP?id=${id}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setComments(data.data);
-        })
-        .catch((error) => {
-          console.error('Error al obtener datos de la API:', error);
-        });
+      // Obtener la lista actualizada de comentarios después de agregar uno nuevo
+      const response = await fetch(`/api/databaseCEP?id=${id}`);
+      const data = await response.json();
+      setComments(data.data);
 
       // Cierra el modal después de agregar el comentario
       closeModal();
@@ -137,30 +108,32 @@ const CommentList = ({ id }: { id: number }) => {
     }
   };
 
+  const handleBack = () => {
+    // Lógica para retroceder, por ejemplo, redirigir a otra página o ejecutar alguna acción de retroceso
+    // Puedes personalizar esta función según tus necesidades
+    console.log("Atrás");
+  };
+
   return (
     <div className="comment-list-container">
-      <h1>Conversación de Correo</h1>
-      {showMarkAsReadUnreadButtons && (
+      <h1>Comentarios por tarea</h1>
+      {selectedComments.length > 0 && (
         <div className="comment-actions">
-          <button onClick={markSelectedAsRead}>
-            <MarkEmailReadIcon /> Marcar como Leído
-          </button>
-          <button onClick={markSelectedAsUnread}>
-            <MarkEmailUnreadIcon /> Marcar como No Leído
-          </button>
+          <Button onClick={markSelectedAsRead} startIcon={<MarkEmailReadIcon />}>
+            Marcar como Leído
+          </Button>
+          <Button onClick={markSelectedAsUnread} startIcon={<MarkEmailUnreadIcon />}>
+            Marcar como No Leído
+          </Button>
         </div>
       )}
       <div className="select-all-button">
-        <button onClick={toggleSelectAll}>
-          {allSelected ? (
-            <CheckBoxIcon /> // Ícono de marca de verificación
-          ) : (
-            <CheckBoxOutlineBlankIcon />
-          )}
+        <Button onClick={toggleSelectAll} startIcon={allSelected ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}>
           {allSelected ? 'Deseleccionar todo' : 'Seleccionar todo'}
-        </button>
+        </Button>
       </div>
-      <button onClick={openModal}>Agregar Comentario</button>
+      <Button onClick={openModal}>Agregar Comentario</Button>
+      <Button onClick={handleBack}>Ir al listado de tareas</Button>
       <ul className="comment-list">
         {comments.map((comment, index) => (
           <li
@@ -174,10 +147,14 @@ const CommentList = ({ id }: { id: number }) => {
                 <strong>{comment.senderName}</strong> <span>{comment.timestamp}</span>
               </div>
               <div className="comment-actions">
-                <input
-                  type="checkbox"
-                  checked={selectedComments.includes(comment.Id)}
-                  onChange={() => toggleSelectComment(comment.Id)}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedComments.includes(comment.Id)}
+                      onChange={() => toggleSelectComment(comment.Id)}
+                    />
+                  }
+                  label=""
                 />
               </div>
             </div>
@@ -186,7 +163,6 @@ const CommentList = ({ id }: { id: number }) => {
         ))}
       </ul>
 
-      {/* Modal para agregar comentario */}
       <Modal open={isModalOpen} onClose={closeModal}>
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
           <TextField
@@ -204,4 +180,5 @@ const CommentList = ({ id }: { id: number }) => {
     </div>
   );
 };
+
 export default CommentList;

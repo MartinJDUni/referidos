@@ -28,14 +28,14 @@ export default function DataGridPremiumDemo() {
         background: '#E53935', // Rojo para 0-30
         bar: '#C62828',
       };
-    } else if (value <= 60) {
+    } else if (value < 100) {
       return {
-        background: '#FFC107', // Amarillo para 30-60
+        background: '#FFC107', // Amarillo para 30-99
         bar: '#FFA000',
       };
     } else {
       return {
-        background: '#4CAF50', // Verde para >60
+        background: '#4CAF50', // Verde para >100
         bar: '#2E7D32',
       };
     }

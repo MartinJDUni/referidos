@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { BarChartOutlined, TeamOutlined, EditOutlined, LogoutOutlined, ScheduleOutlined, CommentOutlined } from '@ant-design/icons'; // Importa los íconos faltantes
 import { Layout, Menu } from 'antd';
+import Image from 'next/image';
 import router from 'next/router';
 
 const { Sider } = Layout;
@@ -13,7 +14,11 @@ const handleLogout = () => {
 };
 const SidebarComponent = ({ collapsed }) => (
   <Sider trigger={null} collapsible collapsed={collapsed}>
-    <div className="demo-logo-vertical" />
+    {!collapsed && (
+      <div className="logo-container">
+        <Image src="/images/logo3.png" alt="Logo" width={150} height={80} />
+      </div>
+    )}
     <Menu
       theme="dark"
       mode="vertical"
@@ -35,9 +40,19 @@ const SidebarComponent = ({ collapsed }) => (
         Editar Perfil
       </Menu.Item>
       <Menu.Item key="5" icon={<LogoutOutlined />}>
-      <Link href="/" style={{ textDecoration: 'none' }} onClick={handleLogout}>Salir</Link>
+        <Link href="/" style={{ textDecoration: 'none' }} onClick={handleLogout}>Salir</Link>
       </Menu.Item>
     </Menu>
+    <style jsx>{`
+        .logo-container {
+          text-align: center;
+          margin: 16px;
+        }
+
+        .logo-container img {
+          display: block;
+        }
+      `}</style>
   </Sider>
 );
 export default SidebarComponent;
