@@ -293,7 +293,27 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
         }}
       />
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        {/* ... (Previous code for editing row) */}
+        <DialogTitle>Cambiar estado de la tarea</DialogTitle>
+        <DialogContent>
+          <Select
+            value={selectedState}
+            onChange={handleStateChange}
+            fullWidth
+            label="Estado de la tarea"
+          >
+            {taskStates.map((state) => (
+              <MenuItem key={state.id} value={state.id}>
+                {state.state}
+              </MenuItem>
+            ))}
+          </Select>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancelar</Button>
+          <Button onClick={handleSaveChanges} variant="contained" color="primary">
+            Guardar cambios
+          </Button>
+        </DialogActions>
       </Dialog>
       <Dialog open={openAddEmployeeDialog} onClose={() => setOpenAddEmployeeDialog(false)}>
         <DialogTitle>Agregar Nuevo Cliente</DialogTitle>
