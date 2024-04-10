@@ -33,7 +33,7 @@ const Inicio: React.FC = () => {
             minHeight: 280,
           }}
         >
-          {mostrarOtroComponente ? (
+          {mostrarOtroComponente && selectedCommentId !== null ? (
             <CommentList id={selectedCommentId} />
           ) : (
             <DataGridPremiumDemo onClickVerComentarios={handleVerComentariosClick} />
