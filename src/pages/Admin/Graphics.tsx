@@ -6,20 +6,23 @@ import DataGridPremiumDemo from '@/pages/components/tablaET';
 import BarChart from '../components/graBar';
 import CustomBarChart from '../components/graPie';
 import ProgressBarChart from '../components/ToPro';
+import dayjs, { Dayjs } from 'dayjs';
+
 
 const { Header, Content } = Layout;
 const { Option } = Select;
 
 const Graphic: React.FC = () => {
+  const [employeeOptions, setEmployeeOptions] = useState<{ Id: number; Name: string; }[]>([]);
   const [collapsed, setCollapsed] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedTask, setSelectedTask] = useState('');
   const [goal, setGoal] = useState('');
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [employeeOptions, setEmployeeOptions] = useState([]);
-  const [taskOptions, setTaskOptions] = useState([]);
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+
+  const [taskOptions, setTaskOptions] = useState<{ Id: number; Name: string; }[]>([]);
   const [error, setError] = useState({
     goal: '',
     selectedEmployee: '',
@@ -220,7 +223,7 @@ const Graphic: React.FC = () => {
               </div>
             </Modal>
           </div>
-          <div className="data-grid" style={{ marginTop: '70px',padding: '50px',backgroundColor: 'white',marginBottom: '10px' }}>
+          <div className="data-grid" style={{ marginTop: '70px', padding: '50px', backgroundColor: 'white', marginBottom: '10px' }}>
             <DataGridPremiumDemo />
           </div>
         </Content>
