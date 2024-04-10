@@ -1,6 +1,6 @@
-import { createConnection } from 'mysql2/promise';
+import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createConnection } from 'mysql2/promise';
 
-export default async (req, res) => {
+export default async (req: { method: string; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const connection = await connectToDatabase();
 
