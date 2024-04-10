@@ -1,23 +1,14 @@
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
-
-  try {
-    connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
-      database: 'referidos',
+    const connection = await createConnection({
+        host: '34.135.49.190',
+        user: 'martin',
+        password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+        database: 'referidos', // Cambia esto por el nombre de tu base de datos
     });
-    console.log('Conexión exitosa a la base de datos MySQL');
     return connection;
-  } catch (error) {
-    console.error('Error al conectar con la base de datos:', error);
-    throw new Error('Error al conectar con la base de datos');
-  }
 }
-
 
 export default async (req, res) => {
     if (req.method === 'GET') {
@@ -26,7 +17,7 @@ export default async (req, res) => {
         try {
             // Realiza la consulta SQL para obtener solo el ID del empleado
             const employeeQuery = `
-                SELECT Id,Name
+                SELECT Id, Name
                 FROM employee;
             `;
             const [employeeRows] = await connection.execute(employeeQuery);
@@ -59,10 +50,14 @@ export default async (req, res) => {
         const connection = await connectToDatabase();
     
         try {
+            // Parsea Startdate como un objeto Date
+            const startDate = new Date(Startdate);
+            const finaldate = new Date(Finaldate);
+
             // Realiza la inserción de datos en la base de datos
             const [result] = await connection.execute(
                 'INSERT INTO employeespertask (Idemployee, Idtask, Goal, Startdate, Finaldate, state) VALUES (?, ?, ?, ?, ?, ?)',
-                [Idemployee, Idtask, Goal, Startdate, Finaldate, state]
+                [Idemployee, Idtask, Goal, startDate, finaldate, state]
             );
     
             connection.end();
@@ -72,6 +67,7 @@ export default async (req, res) => {
             console.error('Error al insertar datos en la base de datos:', error);
             res.status(500).json({ error: 'Error al insertar datos en la base de datos' });
         }
+    } else {
+        res.status(405).json({ error: 'Método no permitido' });
     }
-    
 };
