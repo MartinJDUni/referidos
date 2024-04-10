@@ -16,7 +16,12 @@ const handleLogout = () => {
   router.push('/');
 };
 
-const SidebarComponent = ({ collapsed }) => {
+// Especifica el tipo de la prop collapsed
+interface SidebarProps {
+  collapsed: boolean;
+}
+
+const SidebarComponent: React.FC<SidebarProps> = ({ collapsed }) => {
   const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
   return (
