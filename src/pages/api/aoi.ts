@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 }
 
 
-export default async (req, res) => {
+export default async (req: { method: string; query: { email: any; password: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; authenticatedUser?: { id: any; name: any; }; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const { email, password } = req.query;
 
@@ -33,6 +33,11 @@ export default async (req, res) => {
       // Realiza la consulta SQL deseada
       const [userRows] = await connection.execute('SELECT * FROM employee WHERE email = ? AND password = ?', [email, password]);
 
+      if (!(userRows instanceof Array)) {
+        // No se encontró el usuario con las credenciales proporcionadas
+        return res.status(401).json({ error: 'Credenciales incorrectas' });
+      }
+
       if (userRows.length === 0) {
         // No se encontró el usuario con las credenciales proporcionadas
         return res.status(401).json({ error: 'Credenciales incorrectas' });
@@ -42,7 +47,6 @@ export default async (req, res) => {
       const authenticatedUser = {
         id: userRows[0].id,
         name: userRows[0].name,
-        // Agrega otros campos que necesites
       };
 
       res.status(200).json({ message: 'Autenticación exitosa', authenticatedUser });
@@ -62,3 +66,4 @@ export default async (req, res) => {
     res.status(405).json({ error: 'Método no permitido' });
   }
 };
+
