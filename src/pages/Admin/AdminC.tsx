@@ -16,7 +16,7 @@ const Inicio: React.FC = () => {
     setCollapsed(!collapsed);
   };
 
-  const handleVerComentariosClick = (id) => {
+  const handleVerComentariosClick = (id: React.SetStateAction<null>) => {
     setMostrarOtroComponente(true);
     setSelectedCommentId(id);
   };
