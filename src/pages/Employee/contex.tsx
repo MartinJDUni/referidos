@@ -1,13 +1,27 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Crea el contexto
-const AppContext = createContext(null);
+interface AppContextType {
+  collapsed: boolean;
+  mostrarOtroComponente: boolean;
+  selectedCommentId: string | null;
+  toggleSidebar: () => void;
+  verComentarios: (id: string) => void;
+}
+
+// Crea el contexto con un valor inicial del tipo AppContextType
+const AppContext = createContext<AppContextType>({
+  collapsed: false,
+  mostrarOtroComponente: false,
+  selectedCommentId: null,
+  toggleSidebar: () => {},
+  verComentarios: () => {},
+});
 
 // Define el proveedor de contexto
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mostrarOtroComponente, setMostrarOtroComponente] = useState(false);
-  const [selectedCommentId, setSelectedCommentId] = useState<null | string>(null);
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
 
   const toggleSidebar = () => {
     setCollapsed((prevCollapsed) => !prevCollapsed);
@@ -18,7 +32,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setSelectedCommentId(id);
   };
 
-  const contextValue = {
+  const contextValue: AppContextType = {
     collapsed,
     mostrarOtroComponente,
     selectedCommentId,
