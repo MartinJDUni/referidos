@@ -1,24 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
+// Define la interfaz para describir la estructura de los objetos en el array
+interface ProgressData {
+  name: string;
+  value: number;
+}
+
+interface GoalData {
+  state: number;
+  Goal: number;
+  // Otros campos si existen
+}
+
 const ProgressBarChart = () => {
-  const [progressData, setProgressData] = useState([]);
+  const [progressData, setProgressData] = useState<ProgressData[]>([]); // Define el tipo de progressData como ProgressData[]
 
   const fetchData = async () => {
     try {
       // Obtener los datos de las metas totales con estado 1
       const totalResponse = await fetch('/api/databaseET');
       const totalResult = await totalResponse.json();
-      const totalData = totalResult.data.filter(item => item.state === 1);
-
+      
+      // Filtrar el array usando la interfaz GoalData
+      const totalData = totalResult.data.filter((item: GoalData) => item.state === 1);
+      
       // Obtener los datos de las metas aceptadas con estado 1
       const acceptedResponse = await fetch('/api/DB');
       const acceptedResult = await acceptedResponse.json();
-      const acceptedData = acceptedResult.data.filter(item => item.state === 1);
+      const acceptedData = acceptedResult.data.filter((item: GoalData) => item.state === 1);
 
       // Calcular el porcentaje de metas aceptadas
-      const totalGoals = totalData.reduce((sum, item) => sum + item.Goal, 0);
-      const acceptedGoals = acceptedData.reduce((sum, item) => sum + item.state, 0);
+      const totalGoals = totalData.reduce((sum: number, item: GoalData) => sum + item.Goal, 0);
+      const acceptedGoals = acceptedData.reduce((sum: number, item: GoalData) => sum + item.state, 0);
       const progressPercentage = totalGoals === 0 ? 0 : (acceptedGoals / totalGoals) * 100;
 
       console.log('Total de metas:', totalGoals);
@@ -55,7 +69,7 @@ const ProgressBarChart = () => {
       <Bar
         dataKey="value"
         fill="rgba(75, 192, 192, 0.6)"
-        label={{ position: 'insideTop', content: `${progressData[0]?.value}%` }}
+        label={{ position: 'insideTop', content: ({ value }) => `${value}%` }} // Envuelve el contenido dentro de una función
         animationBegin={0}
       />
     </BarChart>
