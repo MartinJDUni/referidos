@@ -21,9 +21,9 @@ const ProgressBarChart = () => {
       const acceptedGoals = acceptedData.reduce((sum, item) => sum + item.state, 0);
       const progressPercentage = totalGoals === 0 ? 0 : (acceptedGoals / totalGoals) * 100;
 
-      console.log('Total de meta:', totalGoals);
+      console.log('Total de metas:', totalGoals);
       console.log('Metas aceptadas:', acceptedGoals);
-      console.log('Porcentaje progreso:', progressPercentage);
+      console.log('Porcentaje de progreso:', progressPercentage);
 
       setProgressData([{ name: 'Progreso', value: progressPercentage }]);
     } catch (error) {
