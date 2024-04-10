@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 }
 
 
-export default async (req, res) => {
+export default async (req: { method: string; body: { id: any; name: any; password: any; email: any; state: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; }): void; new(): any; }; }; }) => {
   if (req.method === 'PUT') {
     const { id, name, password, email, state } = req.body;
 
@@ -47,7 +47,7 @@ export default async (req, res) => {
       console.log('Operación exitosa.');
     } catch (error) {
       console.error('Error al actualizar en la base de datos:', error);
-      res.status(500).json({ error: `Error al actualizar en la base de datos: ${error.message}` });
+      res.status(500);
     } finally {
       if (connection) {
         await connection.end();

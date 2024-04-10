@@ -1,13 +1,18 @@
-import { createConnection } from 'mysql2/promise';
+import { createConnection, FieldPacket, OkPacket, RowDataPacket } from 'mysql2/promise';
+
+// Define la interfaz para el objeto User
+interface User {
+  id: number;
+  name: string;
+  role: string;
+}
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
-
   try {
-    connection = await createConnection({
+    const connection = await createConnection({
       host: '34.135.49.190',
       user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      password: 'pruebasUni',
       database: 'referidos',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
@@ -18,8 +23,8 @@ export async function connectToDatabase() {
   }
 }
 
-export default async (req, res) => {
-  let connection = null; // Variable definida fuera del bloque try
+export default async (req: { method: string; body: { email: any; password: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; authenticatedUser?: User }): void; new(): any; }; }; }) => {
+  let connection = null;
 
   if (req.method === 'POST') {
     try {
@@ -29,20 +34,18 @@ export default async (req, res) => {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
       }
 
-      connection = await connectToDatabase(); // Establecer la conexión y asignarla a la variable connection
+      connection = await connectToDatabase();
 
-      const userQuery = `
-        SELECT Id, Name, Idrole
-        FROM employee
-        WHERE email = ? AND password = ?;
-      `;
-      const [userRows] = await connection.execute(userQuery, [email, password]);
+      const [userRows, _fields] = await connection.execute<RowDataPacket[]>(
+        'SELECT Id, Name, Idrole FROM employee WHERE email = ? AND password = ?',
+        [email, password]
+      );
 
       if (userRows.length === 0) {
         return res.status(401).json({ error: 'Por favor ingrese correctamente los datos' });
       }
 
-      const authenticatedUser = {
+      const authenticatedUser: User = {
         id: userRows[0].Id,
         name: userRows[0].Name,
         role: userRows[0].Idrole,

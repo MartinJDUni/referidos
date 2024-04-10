@@ -1,4 +1,4 @@
-import { createConnection } from 'mysql2/promise';
+import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
   let connection = null; // Variable definida fuera del bloque try
@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 }
 
 
-export default async (req, res) => {
+export default async (req: { method: string; body: { name: any; description: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; insertedId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const connection = await connectToDatabase();
     
@@ -49,7 +49,7 @@ export default async (req, res) => {
         [name, description,1]
       );
       connection.end();
-      res.status(201).json({ message: 'Datos insertados correctamente', insertedId: result.insertId });
+      res.status(201);
     } catch (error) {
       console.error('Error al insertar datos en la base de datos:', error);
       res.status(500).json({ error: 'Error al insertar datos en la base de datos' });

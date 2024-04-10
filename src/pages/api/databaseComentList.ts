@@ -1,13 +1,13 @@
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
+  let connection = null;
 
   try {
     connection = await createConnection({
       host: '34.135.49.190',
       user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      password: 'pruebasUni',
       database: 'referidos',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
@@ -18,7 +18,7 @@ export async function connectToDatabase() {
   }
 }
 
-export default async (req, res) => {
+export default async (req: { method: string; body: { id: any; newComment: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; commentId?: any; }): void; new(): any; }; }; }) => {
     if (req.method === 'POST') {
       const { id, newComment } = req.body;
   
@@ -29,15 +29,13 @@ export default async (req, res) => {
       const connection = await connectToDatabase();
   
       try {
-        // Realiza la consulta SQL para agregar un nuevo comentario a la tabla commentperemployee
         const addCommentQuery = `
           INSERT INTO commentperemployee (Idcustomerperemployee, comment, state)
           VALUES (?, ?, ?);
         `;
         const [addResult] = await connection.execute(addCommentQuery, [id, newComment, 1]);
   
-        // Verifica si la inserción fue exitosa
-        if (addResult.affectedRows > 0) {
+        if ('affectedRows' in addResult && addResult.affectedRows > 0) {
           const commentId = addResult.insertId;
           console.log(`Comentario agregado correctamente. ID del nuevo comentario: ${commentId}`);
           res.status(200).json({ message: 'Comentario agregado correctamente.', commentId });
@@ -49,9 +47,11 @@ export default async (req, res) => {
         console.error('Error al agregar el comentario:', error);
         res.status(500).json({ error: 'Error al agregar el comentario.' });
       } finally {
-        connection.end();
+        if (connection) {
+          connection.end();
+        }
       }
     } else {
       res.status(405).json({ error: 'Método no permitido.' });
     }
-  };
+};

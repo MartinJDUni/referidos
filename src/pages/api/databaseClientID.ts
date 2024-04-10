@@ -1,13 +1,13 @@
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
+  let connection = null;
 
   try {
     connection = await createConnection({
       host: '34.135.49.190',
       user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      password: 'pruebasUni',
       database: 'referidos',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
@@ -18,8 +18,7 @@ export async function connectToDatabase() {
   }
 }
 
-
-export default async (req, res) => {
+export default async (req: { method: string; body: { Idclient: any; Idemployee: any; Idstatetask?: 3 | undefined; state?: 1 | undefined; date?: string | undefined; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; clientId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'POST') {
     const { Idclient, Idemployee, Idstatetask = 3, state = 1, date = new Date().toISOString() } = req.body;
 
@@ -30,15 +29,13 @@ export default async (req, res) => {
     const connection = await connectToDatabase();
 
     try {
-      // Realiza la consulta SQL para agregar un nuevo registro a la tabla customerperemployee
       const addEmployeeQuery = `
         INSERT INTO customerperemployee (Idclient, Idemployee, Idstatetask, state, date)
         VALUES (?, ?, ?, ?, ?);
       `;
       const [addResult] = await connection.execute(addEmployeeQuery, [Idclient, Idemployee, Idstatetask, state, date]);
 
-      // Verifica si la inserción fue exitosa
-      if (addResult.affectedRows > 0) {
+      if ('affectedRows' in addResult && addResult.affectedRows > 0) {
         const clientId = addResult.insertId;
         console.log(`Registro agregado correctamente. ID del nuevo registro: ${clientId}`);
         res.status(200).json({ message: 'Registro agregado correctamente.', clientId });

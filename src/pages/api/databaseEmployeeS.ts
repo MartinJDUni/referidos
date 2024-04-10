@@ -1,7 +1,24 @@
-// api/databaseEmployeeS.js
-import { createConnection } from 'mysql2/promise';
+import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createConnection } from 'mysql2/promise';
 
-export default async (req, res) => {
+export async function connectToDatabase() {
+  let connection = null; // Variable definida fuera del bloque try
+
+  try {
+    connection = await createConnection({
+      host: '34.135.49.190',
+      user: 'martin',
+      password: 'pruebasUni',
+      database: 'referidos',
+    });
+    console.log('Conexión exitosa a la base de datos MySQL');
+    return connection; // Se devuelve la conexión para que pueda ser utilizada fuera de esta función
+  } catch (error) {
+    console.error('Error al conectar con la base de datos:', error);
+    throw new Error('Error al conectar con la base de datos');
+  }
+}
+
+export default async (req: { method: string; body: { id?: any; newState?: any; name?: any; phone?: any; idcard?: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { statetask?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; clientId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const connection = await connectToDatabase();
 
@@ -21,7 +38,7 @@ export default async (req, res) => {
       console.error('Error al consultar la base de datos:', error);
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
-  }else if (req.method === 'PUT') {
+  } else if (req.method === 'PUT') {
     // Si la solicitud es de tipo PUT, intenta actualizar el estado de un empleado
     const { id, newState } = req.body;
 
@@ -41,7 +58,7 @@ export default async (req, res) => {
       const [updateResult] = await connection.execute(updateEmployeeStateQuery, [newState, id]);
 
       // Verifica si la actualización fue exitosa
-      if (updateResult.affectedRows > 0) {
+      if (updateResult && 'affectedRows' in updateResult && updateResult.affectedRows > 0) {
         console.log(`Estado actualizado correctamente para el empleado con ID ${id}`);
         res.status(200).json({ message: 'Estado actualizado correctamente.' });
       } else {
@@ -55,16 +72,16 @@ export default async (req, res) => {
     } finally {
       connection.end();
     }
-  }else if (req.method === 'POST') {
+  } else if (req.method === 'POST') {
     // Si la solicitud es de tipo PUT, intenta agregar un cliente
     const { name, phone, idcard } = req.body;
-  
+
     if (!name || !phone || !idcard) {
       return res.status(400).json({ error: 'Se requiere el nombre, correo electrónico y teléfono para agregar un cliente.' });
     }
-  
+
     const connection = await connectToDatabase();
-  
+
     try {
       // Realiza la consulta SQL para agregar un cliente
       const addClientQuery = `
@@ -72,9 +89,9 @@ export default async (req, res) => {
         VALUES (?, ?, ?);
       `;
       const [addResult] = await connection.execute(addClientQuery, [name, phone, idcard]);
-  
+
       // Verifica si la adición fue exitosa
-      if (addResult.affectedRows > 0) {
+      if (addResult && 'affectedRows' in addResult && addResult.affectedRows > 0) {
         const clientId = addResult.insertId;
         console.log(`Cliente ${name} (ID: ${clientId}) agregado correctamente.`);
         res.status(200).json({ message: 'Cliente agregado correctamente.', clientId });
@@ -82,31 +99,12 @@ export default async (req, res) => {
         console.error('Error al agregar el cliente a la base de datos.');
         res.status(500).json({ error: 'Error al agregar el cliente a la base de datos.' });
       }
-  
+
     } catch (error) {
       console.error('Error al agregar el cliente:', error);
       res.status(500).json({ error: 'Error al agregar el cliente.' });
     } finally {
       connection.end();
     }
-  } 
-};
-
-export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
-
-  try {
-    connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
-      database: 'referidos',
-    });
-    console.log('Conexión exitosa a la base de datos MySQL');
-    return connection; 
-  } catch (error) {
-    console.error('Error al conectar con la base de datos:', error);
-    throw new Error('Error al conectar con la base de datos');
   }
-}
-
+};

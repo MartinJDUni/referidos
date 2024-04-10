@@ -1,13 +1,13 @@
-import { createConnection } from 'mysql2/promise';
+import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
+  let connection = null;
 
   try {
     connection = await createConnection({
       host: '34.135.49.190',
       user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      password: 'pruebasUni',
       database: 'referidos',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
@@ -18,13 +18,11 @@ export async function connectToDatabase() {
   }
 }
 
-
-export default async (req, res) => {
+export default async (req: { method: string; body: { name?: any; password?: any; email?: any; state?: any; roleId?: any; id?: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; insertedId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const connection = await connectToDatabase();
 
     try {
-      // Realiza la consulta SQL para obtener datos de empleado y nombre del rol
       const query = `
           SELECT e.Id, e.Name, e.Password, e.Email, e.state, r.Name AS RoleName
           FROM employee e
@@ -38,7 +36,7 @@ export default async (req, res) => {
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
   } else if (req.method === 'POST') {
-    const { name, password, email, state, roleId } = req.body; // Asume que estás enviando datos en el cuerpo de la solicitud POST.
+    const { name, password, email, state, roleId } = req.body;
 
     if (!name || !password || !email) {
       res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -48,16 +46,20 @@ export default async (req, res) => {
     const connection = await connectToDatabase();
 
     try {
-      // Realiza la inserción de datos en la base de datos
       const query = 'INSERT INTO employee (Name, Password, Email, state, Idrole) VALUES (?, ?, ?, ?, ?)';
       const [result] = await connection.execute(query, [name, password, email, 1, 2]);
       connection.end();
-      res.status(201).json({ message: 'Datos insertados correctamente', insertedId: result.insertId });
+      if ('insertId' in result) {
+        res.status(201).json({ message: 'Datos insertados correctamente', insertedId: result.insertId });
+      } else {
+        console.error('Error al insertar datos en la base de datos:', result);
+        res.status(500).json({ error: 'Error al insertar datos en la base de datos' });
+      }
     } catch (error) {
       console.error('Error al insertar datos en la base de datos:', error);
       res.status(500).json({ error: 'Error al insertar datos en la base de datos' });
     }
-  }else if (req.method === 'PUT') {
+  } else if (req.method === 'PUT') {
     const { id } = req.body;
 
     if (!id) {
@@ -67,7 +69,6 @@ export default async (req, res) => {
     const connection = await connectToDatabase();
 
     try {
-      // Actualiza el estado a 1 para reactivar en lugar de eliminar físicamente
       const updateQuery = `
         UPDATE employee
         SET state = 0
@@ -81,5 +82,7 @@ export default async (req, res) => {
       console.error('Error al reactivar en la base de datos:', error);
       res.status(500).json({ error: 'Error al reactivar en la base de datos' });
     }
+  } else {
+    res.status(405).json({ error: 'Método no permitido.' });
   }
 };

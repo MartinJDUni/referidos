@@ -1,13 +1,13 @@
-import { createConnection } from 'mysql2/promise';
+import { createConnection, RowDataPacket } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
+  let connection = null;
 
   try {
     connection = await createConnection({
       host: '34.135.49.190',
       user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      password: 'pruebasUni',
       database: 'referidos',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
@@ -18,8 +18,7 @@ export async function connectToDatabase() {
   }
 }
 
-
-export default async (req, res) => {
+export default async (req: { method: string; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { CantidadAceptados?: any; error?: string; }): void; new(): any; }; }; }) => {
     if (req.method === 'GET') {
         const connection = await connectToDatabase();
 
@@ -33,7 +32,7 @@ export default async (req, res) => {
             AND ce.date BETWEEN et.Startdate AND et.Finaldate
             GROUP BY e.Name;
             `;
-            const [rows] = await connection.execute(query);
+            const [rows] = await connection.execute<RowDataPacket[]>(query);
             connection.end();
             res.status(200).json({ CantidadAceptados: rows[0].CantidadAceptados });
         } catch (error) {

@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 }
 
 
-export default async (req, res) => {
+export default async (req: { method: string; body: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; }): void; new(): any; }; }; }) => {
   if (req.method === 'PUT') {
     const { id } = req.body;
 

@@ -1,4 +1,4 @@
-import { createConnection } from 'mysql2/promise';
+import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
   let connection = null; // Variable definida fuera del bloque try
@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 }
 
 
-export default async (req, res) => {
+export default async (req: { method: string; query: { employeeId: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const { employeeId } = req.query;
 
