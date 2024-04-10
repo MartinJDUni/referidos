@@ -1,14 +1,23 @@
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  const connection = await createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '', // Cambia esto por la contraseña de tu base de datos
-    database: 'referidos', // Cambia esto por el nombre de tu base de datos
-  });
-  return connection;
+  let connection = null; // Variable definida fuera del bloque try
+
+  try {
+    connection = await createConnection({
+      host: '34.135.49.190',
+      user: 'martin',
+      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      database: 'referidos',
+    });
+    console.log('Conexión exitosa a la base de datos MySQL');
+    return connection;
+  } catch (error) {
+    console.error('Error al conectar con la base de datos:', error);
+    throw new Error('Error al conectar con la base de datos');
+  }
 }
+
 
 export default async (req, res) => {
   if (req.method === 'POST') {

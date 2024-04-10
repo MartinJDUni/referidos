@@ -1,13 +1,16 @@
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
+  let connection = null; // Variable definida fuera del bloque try
+
   try {
-    const connection = await createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: '', // Cambia esto por la contraseña de tu base de datos
-      database: 'referidos', // Cambia esto por el nombre de tu base de datos 
+    connection = await createConnection({
+      host: '34.135.49.190',
+      user: 'martin',
+      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
+      database: 'referidos',
     });
+    console.log('Conexión exitosa a la base de datos MySQL');
     return connection;
   } catch (error) {
     console.error('Error al conectar con la base de datos:', error);
@@ -16,6 +19,8 @@ export async function connectToDatabase() {
 }
 
 export default async (req, res) => {
+  let connection = null; // Variable definida fuera del bloque try
+
   if (req.method === 'POST') {
     try {
       const { email, password } = req.body;
@@ -24,7 +29,7 @@ export default async (req, res) => {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
       }
 
-      const connection = await connectToDatabase();
+      connection = await connectToDatabase(); // Establecer la conexión y asignarla a la variable connection
 
       const userQuery = `
         SELECT Id, Name, Idrole
@@ -41,10 +46,9 @@ export default async (req, res) => {
         id: userRows[0].Id,
         name: userRows[0].Name,
         role: userRows[0].Idrole,
-        // Agrega otros campos que necesites
       };
-      console.log(authenticatedUser);
 
+      console.log('Usuario autenticado:', authenticatedUser);
       res.status(200).json({ message: 'Autenticación exitosa', authenticatedUser });
     } catch (error) {
       console.error('Error al autenticar el usuario:', error);
@@ -53,6 +57,7 @@ export default async (req, res) => {
       try {
         if (connection) {
           await connection.end();
+          console.log('Conexión cerrada');
         }
       } catch (error) {
         console.error('Error al cerrar la conexión con la base de datos:', error);
