@@ -16,7 +16,7 @@ const Inicio: React.FC = () => {
     setCollapsed(!collapsed);
   };
 
-  const handleVerComentariosClick = (id) => {
+  const handleVerComentariosClick = (id: React.SetStateAction<null>) => {
     setMostrarOtroComponente(true);
     setSelectedCommentId(id);
   };
@@ -33,7 +33,7 @@ const Inicio: React.FC = () => {
             minHeight: 280,
           }}
         >
-          {mostrarOtroComponente ? (
+          {mostrarOtroComponente && selectedCommentId !== null ? (
             <CommentList id={selectedCommentId} />
           ) : (
             <DataGridPremiumDemo onClickVerComentarios={handleVerComentariosClick} />
