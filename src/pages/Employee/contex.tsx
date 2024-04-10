@@ -1,17 +1,19 @@
 import React, { createContext, useContext, useState } from 'react';
 
+// Crea el contexto
 const AppContext = createContext(null);
 
-export const AppProvider = ({ children }) => {
+// Define el proveedor de contexto
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mostrarOtroComponente, setMostrarOtroComponente] = useState(false);
-  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [selectedCommentId, setSelectedCommentId] = useState<null | string>(null);
 
   const toggleSidebar = () => {
     setCollapsed((prevCollapsed) => !prevCollapsed);
   };
 
-  const verComentarios = (id) => {
+  const verComentarios = (id: string) => {
     setMostrarOtroComponente(true);
     setSelectedCommentId(id);
   };
@@ -31,6 +33,7 @@ export const AppProvider = ({ children }) => {
   );
 };
 
+// Define el hook personalizado para consumir el contexto
 export const useAppContext = () => {
   return useContext(AppContext);
 };
