@@ -17,7 +17,7 @@ export default function DataGridPremiumDemo() {
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
 
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const getProgressColor = (value: number) => {
     if (value <= 30) {
@@ -54,7 +54,7 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       headerName: 'Completados',
       width: 200,
-      renderCell: (params: { value: number; }) => {
+      renderCell: (params) => {
         const { background, bar } = getProgressColor(params.value || 0);
 
         return (
@@ -90,7 +90,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       headerName: 'Fecha de inicio',
       width: 150,
-      valueFormatter: (params: { value: string | number | Date; }) => {
+      valueFormatter: (params) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -105,7 +105,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       headerName: 'Fecha de final',
       width: 150,
-      valueFormatter: (params: { value: string | number | Date; }) => {
+      valueFormatter: (params) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);

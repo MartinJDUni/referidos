@@ -9,8 +9,17 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 
+interface EmployeeData {
+  id: number;
+  nameemployee: string;
+  pass: string;
+  email: string;
+  state: string;
+  rol: string;
+}
+
 export default function DataGridPremiumDemo() {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<EmployeeData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -26,7 +35,7 @@ export default function DataGridPremiumDemo() {
       width: 100,
       sortable: false,
       hide: !showStateZero,
-      renderCell: (params: { row: { id: any; state: number; }; }) => (
+      renderCell: (params) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
@@ -90,7 +99,7 @@ export default function DataGridPremiumDemo() {
     }
   };
 
-  const handleDeleteRow = async (id) => {
+  const handleDeleteRow = async (id: any) => {
     console.log(id);
     try {
       await fetch('/api/databaseemployee', {

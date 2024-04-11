@@ -6,10 +6,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Link from 'next/link';
 
 export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClickVerComentarios: (id: number) => void }) {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
-  const [selectionModel, setSelectionModel] = React.useState([]);
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'Id', width: 50 },
@@ -61,8 +60,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
     }
   ];
 
-  
-
   const fetchData = () => {
     const promises = [
       fetch('/api/databaseEC').then((response) => response.json()),
@@ -113,20 +110,12 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
         rows={data}
         columns={columns}
         loading={loading}
-        selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection: React.SetStateAction<never[]>) => {
-          setSelectionModel(newSelection);
-        }}
         components={{
           Toolbar: (props) => (
             <div>
               <GridToolbar {...props} />
             </div>
           ),
-        }}
-        autoGroupColumnDef={{
-          headerName: 'Commodity',
-          field: 'commodity',
         }}
       />
     </Box>

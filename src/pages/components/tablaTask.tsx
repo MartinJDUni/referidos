@@ -9,8 +9,15 @@ import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
+interface TaskData {
+  id: number;
+  task: string;
+  description: string;
+  state: string;
+}
+
 export default function DataGridPremiumDemo() {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<TaskData[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   const [openEditModal, setOpenEditModal] = React.useState(false);
@@ -22,7 +29,7 @@ export default function DataGridPremiumDemo() {
       headerName: 'Acciones',
       width: 120,
       sortable: false,
-      renderCell: (params: { row: { id: any; task: any; description: any; }; }) => (
+      renderCell: (params) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}

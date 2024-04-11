@@ -10,9 +10,18 @@ import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
+interface Comment {
+  Id: number;
+  hidden: boolean;
+  state: number;
+  senderName: string;
+  timestamp: string;
+  comment: string;
+}
+
 const CommentList = ({ id }: { id: number }) => {
-  const [comments, setComments] = useState([]);
-  const [selectedComments, setSelectedComments] = useState([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [selectedComments, setSelectedComments] = useState<number[]>([]);
   const [allSelected, setAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -39,7 +48,7 @@ const CommentList = ({ id }: { id: number }) => {
     };
   }, [id]);
 
-  const toggleSelectComment = (commentId) => {
+  const toggleSelectComment = (commentId: number) => {
     const isSelected = selectedComments.includes(commentId);
     setSelectedComments((prevSelected) =>
       isSelected ? prevSelected.filter((id) => id !== commentId) : [...prevSelected, commentId]
@@ -55,7 +64,7 @@ const CommentList = ({ id }: { id: number }) => {
     setAllSelected(!allSelected);
   };
 
-  const markSelectedComments = async (newState) => {
+  const markSelectedComments = async (newState: number) => {
     try {
       await Promise.all(
         selectedComments.map(async (commentId) => {
@@ -79,7 +88,7 @@ const CommentList = ({ id }: { id: number }) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const handleNewCommentChange = (event) => {
+  const handleNewCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewComment(event.target.value);
   };
 
@@ -135,9 +144,9 @@ const CommentList = ({ id }: { id: number }) => {
       <Button onClick={openModal}>Agregar Comentario</Button>
       <Button onClick={handleBack}>Ir al listado de tareas</Button>
       <ul className="comment-list">
-        {comments.map((comment, index) => (
+        {comments.map((comment) => (
           <li
-            key={index}
+            key={comment.Id}
             className={`comment ${comment.hidden ? 'hidden' : ''} ${
               comment.state === 0 ? 'read-comment' : 'unread-comment'
             }`}

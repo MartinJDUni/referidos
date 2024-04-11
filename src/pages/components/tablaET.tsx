@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -12,14 +12,20 @@ import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
+interface EditedFields {
+  goal?: string; // O el tipo correcto para el campo goal
+  start?: Date;
+  final?: Date;
+}
+
 export default function DataGridPremiumDemo() {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<any[]>([]); // Aquí puedes especificar el tipo de tus datos en lugar de 'any'
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [editingRowId, setEditingRowId] = React.useState(null);
-  const [editedFields, setEditedFields] = React.useState({});
-  const [selectionModel, setSelectionModel] = React.useState([]);
+  const [editedFields, setEditedFields] = React.useState<EditedFields>({});
+  const [selectionModel, setSelectionModel] = React.useState<any[]>([]);
 
   const getProgressColor = (value: number) => {
     if (value <= 30) {
@@ -43,12 +49,12 @@ export default function DataGridPremiumDemo() {
   const columns = [
     {
       field: 'actions',
+      headerName: 'Acciones',
       headerAlign: 'center',
       align: 'center',
-      headerName: 'Acciones',
       width: 100,
       sortable: false,
-      renderCell: (params: { row: { id: any; state: number; }; }) => (
+      renderCell: (params: { row: { id: React.SetStateAction<null>; state: number; }; }) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
@@ -72,18 +78,19 @@ export default function DataGridPremiumDemo() {
         </div>
       ),
     },
-    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
-    { field: 'Ename', headerName: 'Nombre', width: 150, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
-    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
-    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
+    { field: 'id', headerName: 'Id', width: 50 },
+    { field: 'Ename', headerName: 'Nombre', width: 150 },
+    { field: 'Tname', headerName: 'Tarea', width: 150 },
+    { field: 'goal', headerName: 'Meta', width: 80 },
     {
       field: 'TaskCount',
-      headerAlign: 'center',
       headerName: 'Completados',
+      headerAlign: 'center',
+      align: 'center',
       width: 200,
       renderCell: (params: { value: number; }) => {
         const { background, bar } = getProgressColor(params.value || 0);
-
+  
         return (
           <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
             <LinearProgress
@@ -92,30 +99,25 @@ export default function DataGridPremiumDemo() {
               sx={{
                 width: '100%',
                 height: 20,
-                borderRadius: 4, // Bordes redondeados
+                borderRadius: 4,
                 backgroundColor: background,
                 '& .MuiLinearProgress-bar': {
                   backgroundColor: bar,
                 },
               }}
             />
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{ marginLeft: 1, fontWeight: 'bold' }}
-            >
+            <Typography variant="body2" color="textSecondary" sx={{ marginLeft: 1 }}>
               {`${params.value.toFixed(2)}%`}
             </Typography>
           </Box>
         );
       },
-      style: { fontWeight: 'bold' },
     },
     {
       field: 'start',
+      headerName: 'Fecha de inicio',
       headerAlign: 'center',
       align: 'center',
-      headerName: 'Fecha de inicio',
       width: 150,
       valueFormatter: (params: { value: string | number | Date; }) => {
         const date = new Date(params.value);
@@ -124,13 +126,12 @@ export default function DataGridPremiumDemo() {
         const day = `0${date.getDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
       },
-      style: { fontWeight: 'bold' },
     },
     {
       field: 'final',
+      headerName: 'Fecha de final',
       headerAlign: 'center',
       align: 'center',
-      headerName: 'Fecha de final',
       width: 150,
       valueFormatter: (params: { value: string | number | Date; }) => {
         const date = new Date(params.value);
@@ -139,9 +140,8 @@ export default function DataGridPremiumDemo() {
         const day = `0${date.getDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
       },
-      style: { fontWeight: 'bold' },
     },
-    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', hide: !showStateZero, style: { fontWeight: 'bold' } },
+    { field: 'state', headerName: 'Estado', width: 100 },
   ];
 
   const handleEditRow = (id: React.SetStateAction<null>) => {
@@ -302,7 +302,7 @@ export default function DataGridPremiumDemo() {
         columns={columns}
         loading={loading}
         selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection: React.SetStateAction<never[]>) => {
+        onSelectionModelChange={(newSelection: React.SetStateAction<any[]>) => {
           setSelectionModel(newSelection);
         }}
         components={{

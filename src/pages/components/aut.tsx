@@ -1,10 +1,16 @@
 // AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-const AuthContext = createContext();
+interface AuthContextType {
+  user: any; // Tipo de usuario
+  login: (userData: any) => void; // Función de inicio de sesión
+  logout: () => void; // Función de cierre de sesión
+}
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     // Verificar si hay información de usuario en el localStorage al cargar la página
@@ -14,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userData) => {
+  const login = (userData: any) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
   };
@@ -32,5 +38,9 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+  }
+  return context;
 };
