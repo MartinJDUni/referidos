@@ -23,8 +23,8 @@ export default function DataGridPremiumDemo() {
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedRowData, setSelectedRowData] = React.useState(null);
-  const [selectionModel, setSelectionModel] = React.useState([]);
+  const [selectedRowData, setSelectedRowData] = React.useState<EmployeeData | null>(null);
+  const [selectionModel, setSelectionModel] = React.useState<any[]>([]);
 
   const columns: GridColDef[] =[
     {
@@ -77,7 +77,7 @@ export default function DataGridPremiumDemo() {
     setIsModalOpen(false);
   };
 
-  const handleSaveChanges = async (rowData) => {
+  const handleSaveChanges = async (rowData: EmployeeData) => {
     try {
       const { id, nameemployee, pass, email, state } = rowData;
 
@@ -183,20 +183,12 @@ export default function DataGridPremiumDemo() {
         rows={data}
         columns={columns}
         loading={loading}
-        selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection) => {
-          setSelectionModel(newSelection);
-        }}
         components={{
           Toolbar: (props) => (
             <div>
               <GridToolbar {...props} />
             </div>
           ),
-        }}
-        autoGroupColumnDef={{
-          headerName: 'Commodity',
-          field: 'commodity',
         }}
         style={{ background: 'white' }}
       />
@@ -219,14 +211,14 @@ export default function DataGridPremiumDemo() {
               defaultValue={selectedRowData?.nameemployee}
               fullWidth
               sx={{ marginBottom: 2 }}
-              onChange={(e) => setSelectedRowData({ ...selectedRowData, nameemployee: e.target.value })}
+              onChange={(e) => setSelectedRowData({ ...selectedRowData!, nameemployee: e.target.value })}
             />
             <TextField
               label="Correo"
               defaultValue={selectedRowData?.email}
               fullWidth
               sx={{ marginBottom: 2 }}
-              onChange={(e) => setSelectedRowData({ ...selectedRowData, email: e.target.value })}
+              onChange={(e) => setSelectedRowData({ ...selectedRowData!, email: e.target.value })}
             />
             <TextField
               label="Contraseña"
@@ -234,9 +226,9 @@ export default function DataGridPremiumDemo() {
               defaultValue={selectedRowData?.pass}
               fullWidth
               sx={{ marginBottom: 2 }}
-              onChange={(e) => setSelectedRowData({ ...selectedRowData, pass: e.target.value })}
+              onChange={(e) => setSelectedRowData({ ...selectedRowData!, pass: e.target.value })}
             />
-            <Button variant="contained" onClick={() => handleSaveChanges(selectedRowData)} sx={{ marginRight: 2 }}>
+            <Button variant="contained" onClick={() => handleSaveChanges(selectedRowData!)} sx={{ marginRight: 2 }}>
               Guardar cambios
             </Button>
             <Button variant="contained" onClick={handleCloseModal} color="error">

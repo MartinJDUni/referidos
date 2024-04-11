@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Modal from '@mui/material/Modal';
@@ -23,7 +23,27 @@ export default function DataGridPremiumDemo() {
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [editedTask, setEditedTask] = React.useState({ id: null, task: '', description: '' });
 
-  const columns = [
+  const columns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'Id',
+      width: 150,
+    },
+    {
+      field: 'task',
+      headerName: 'Tarea',
+      width: 200,
+    },
+    {
+      field: 'description',
+      headerName: 'Descripcion',
+      width: 200,
+    },
+    {
+      field: 'state',
+      headerName: 'Estado',
+      width: 200,
+    },
     {
       field: 'actions',
       headerName: 'Acciones',
@@ -44,10 +64,6 @@ export default function DataGridPremiumDemo() {
         </div>
       ),
     },
-    { field: 'id', headerName: 'Id', width: 150 },
-    { field: 'task', headerName: 'Tarea', width: 200 },
-    { field: 'description', headerName: 'Descripcion', width: 200 },
-    { field: 'state', headerName: 'Estado', width: 200 },
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);
@@ -90,6 +106,7 @@ export default function DataGridPremiumDemo() {
         // Maneja el error según tus necesidades
       });
   };
+  
   const handleDeleteRow = (id: any) => {
     // Implementa la lógica para eliminar la fila con el ID proporcionado
     console.log('Eliminar fila con ID:', id);
@@ -138,10 +155,6 @@ export default function DataGridPremiumDemo() {
         rows={data}
         columns={columns}
         loading={loading}
-        selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection) => {
-          setSelectionModel(newSelection);
-        }}
         components={{
           Toolbar: (props) => (
             <div>
@@ -149,24 +162,6 @@ export default function DataGridPremiumDemo() {
             </div>
           ),
         }}
-        autoGroupColumnDef={{
-          headerName: 'Commodity',
-          field: 'commodity',
-        }}
-        renderCell={(params: { row: { id: any; task: any; description: any; }; }) => (
-          <div>
-            <EditIcon
-              style={{ cursor: 'pointer', marginRight: '8px' }}
-              onClick={() =>
-                handleOpenEditModal(params.row.id, params.row.task, params.row.description)
-              }
-            />
-            <DeleteIcon
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleDeleteRow(params.row.id)}
-            />
-          </div>
-        )}
       />
 
       {/* Modal de Edición */}
