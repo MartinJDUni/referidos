@@ -68,8 +68,10 @@ export default function DataGridPremiumDemo() {
 
   const handleOpenModal = (id: any) => {
     const selectedRow = data.find((row) => row.id === id);
-    setSelectedRowData(selectedRow);
-    setIsModalOpen(true);
+    if (selectedRow) {
+      setSelectedRowData(selectedRow);
+      setIsModalOpen(true);
+    }
   };
 
   const handleCloseModal = () => {
