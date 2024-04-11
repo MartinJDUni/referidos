@@ -19,11 +19,11 @@ interface EditedFields {
 }
 
 export default function DataGridPremiumDemo() {
-  const [data, setData] = React.useState<any[]>([]); // Aquí puedes especificar el tipo de tus datos en lugar de 'any'
+  const [data, setData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [editingRowId, setEditingRowId] = React.useState(null);
+  const [editingRowId, setEditingRowId] = React.useState<any>(null);
   const [editedFields, setEditedFields] = React.useState<EditedFields>({});
   const [selectionModel, setSelectionModel] = React.useState<any[]>([]);
 
@@ -46,7 +46,7 @@ export default function DataGridPremiumDemo() {
     }
   };
 
-  const columns = [
+  const columns: GridColDef[] = [
     {
       field: 'actions',
       headerName: 'Acciones',
@@ -54,7 +54,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       width: 100,
       sortable: false,
-      renderCell: (params: { row: { id: React.SetStateAction<null>; state: number; }; }) => (
+      renderCell: (params) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
@@ -88,7 +88,7 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       align: 'center',
       width: 200,
-      renderCell: (params: { value: number; }) => {
+      renderCell: (params) => {
         const { background, bar } = getProgressColor(params.value || 0);
   
         return (
@@ -119,7 +119,7 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       align: 'center',
       width: 150,
-      valueFormatter: (params: { value: string | number | Date; }) => {
+      valueFormatter: (params) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -133,7 +133,7 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       align: 'center',
       width: 150,
-      valueFormatter: (params: { value: string | number | Date; }) => {
+      valueFormatter: (params) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -144,11 +144,10 @@ export default function DataGridPremiumDemo() {
     { field: 'state', headerName: 'Estado', width: 100 },
   ];
 
-  const handleEditRow = (id: React.SetStateAction<null>) => {
+  const handleEditRow = (id: any) => {
     setEditingRowId(id);
     setOpen(true);
 
-    // Recuperar los valores actuales de la fila y establecerlos en el estado
     const editedRow = data.find((row) => row.id === id);
     setEditedFields(editedRow);
   };
@@ -156,12 +155,11 @@ export default function DataGridPremiumDemo() {
   const handleEditClose = () => {
     setOpen(false);
     setEditingRowId(null);
-    setEditedFields({}); // Limpiar campos editados al cerrar el modal
+    setEditedFields({});
   };
 
   const handleSaveEdit = async () => {
     try {
-      // Make a PUT request to your API endpoint with the updated fields
       const response = await fetch('/api/databaseETedit', {
         method: 'PUT',
         headers: {
@@ -179,25 +177,22 @@ export default function DataGridPremiumDemo() {
         throw new Error(`Failed to update data: ${response.statusText}`);
       }
 
-      // Update the local state with the edited fields
       setData((prevData) =>
         prevData.map((row) =>
           row.id === editingRowId ? { ...row, ...editedFields } : row
         )
       );
 
-      // Close the edit modal after successful update
       handleEditClose();
 
       console.log('Changes saved successfully');
     } catch (error) {
       console.error('Error saving changes:', error);
-      // Handle error, show notification, etc.
     }
   };
+
   const handleReactivateRow = async (id: any) => {
     try {
-      // Lógica para reactivar la fila
       await fetch('/api/databaseReac', {
         method: 'PUT',
         headers: {
@@ -213,7 +208,6 @@ export default function DataGridPremiumDemo() {
 
   const handleDeleteRow = async (id: any) => {
     try {
-      // Lógica para eliminar la fila
       await fetch('/api/databaseET', {
         method: 'PUT',
         headers: {
@@ -302,7 +296,7 @@ export default function DataGridPremiumDemo() {
         columns={columns}
         loading={loading}
         selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection: React.SetStateAction<any[]>) => {
+        onSelectionModelChange={(newSelection) => {
           setSelectionModel(newSelection);
         }}
         components={{
@@ -319,7 +313,6 @@ export default function DataGridPremiumDemo() {
         getRowId={(row) => row.id}
       />
 
-      {/* Modal de edición */}
       <Dialog open={open} onClose={handleEditClose} fullWidth maxWidth="xs">
         <DialogTitle>Editar Información</DialogTitle>
         <DialogContent>
@@ -349,7 +342,6 @@ export default function DataGridPremiumDemo() {
             value={editedFields.final ? editedFields.final.toISOString().split('T')[0] : ''}
             onChange={(e) => setEditedFields({ ...editedFields, final: new Date(e.target.value) })}
           />
-          {/* Agrega más campos según sea necesario */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleEditClose} color="primary">
