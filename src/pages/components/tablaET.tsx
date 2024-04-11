@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
-import DataGridPremiumDemo from '../components/DataGridPremiumDemo';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
@@ -22,7 +21,7 @@ export default function DataGridPremiumDemo() {
   const [editedFields, setEditedFields] = React.useState({});
   const [selectionModel, setSelectionModel] = React.useState([]);
 
-  const getProgressColor = (value) => {
+  const getProgressColor = (value: number) => {
     if (value <= 30) {
       return {
         background: '#E53935', // Rojo para 0-30
@@ -49,7 +48,7 @@ export default function DataGridPremiumDemo() {
       headerName: 'Acciones',
       width: 100,
       sortable: false,
-      renderCell: (params) => (
+      renderCell: (params: { row: { id: any; state: number; }; }) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
@@ -82,7 +81,7 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       headerName: 'Completados',
       width: 200,
-      renderCell: (params) => {
+      renderCell: (params: { value: number; }) => {
         const { background, bar } = getProgressColor(params.value || 0);
 
         return (
@@ -118,7 +117,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       headerName: 'Fecha de inicio',
       width: 150,
-      valueFormatter: (params) => {
+      valueFormatter: (params: { value: string | number | Date; }) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -133,7 +132,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       headerName: 'Fecha de final',
       width: 150,
-      valueFormatter: (params) => {
+      valueFormatter: (params: { value: string | number | Date; }) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -145,7 +144,7 @@ export default function DataGridPremiumDemo() {
     { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', hide: !showStateZero, style: { fontWeight: 'bold' } },
   ];
 
-  const handleEditRow = (id) => {
+  const handleEditRow = (id: React.SetStateAction<null>) => {
     setEditingRowId(id);
     setOpen(true);
 
@@ -196,7 +195,7 @@ export default function DataGridPremiumDemo() {
       // Handle error, show notification, etc.
     }
   };
-  const handleReactivateRow = async (id) => {
+  const handleReactivateRow = async (id: any) => {
     try {
       // Lógica para reactivar la fila
       await fetch('/api/databaseReac', {
@@ -212,7 +211,7 @@ export default function DataGridPremiumDemo() {
     }
   };
 
-  const handleDeleteRow = async (id) => {
+  const handleDeleteRow = async (id: any) => {
     try {
       // Lógica para eliminar la fila
       await fetch('/api/databaseET', {
@@ -238,11 +237,11 @@ export default function DataGridPremiumDemo() {
       .then((results) => {
         const [resultET, resultOtherAPI] = results;
 
-        const filteredDataET = resultET.data.filter((row) =>
+        const filteredDataET = resultET.data.filter((row: { state: number; }) =>
           showStateZero ? row.state === 0 : row.state === 1
         );
 
-        const mappedDataET = filteredDataET.map((row) => ({
+        const mappedDataET = filteredDataET.map((row: { Id: any; EmployeeId: any; EmployeeName: any; TaskName: any; Goal: any; Startdate: string | number | Date; Finaldate: string | number | Date; state: any; }) => ({
           id: row.Id,
           EmployeeId: row.EmployeeId,
           Ename: row.EmployeeName,
@@ -253,8 +252,8 @@ export default function DataGridPremiumDemo() {
           state: row.state,
         }));
 
-        const finalData = mappedDataET.map((rowET) => {
-          const matchingOtherData = resultOtherAPI.data.find((otherRow) => {
+        const finalData = mappedDataET.map((rowET: { EmployeeId: any; goal: number; }) => {
+          const matchingOtherData = resultOtherAPI.data.find((otherRow: { EmployeeId: any; }) => {
             return otherRow.EmployeeId === rowET.EmployeeId;
           });
 
@@ -303,7 +302,7 @@ export default function DataGridPremiumDemo() {
         columns={columns}
         loading={loading}
         selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection) => {
+        onSelectionModelChange={(newSelection: React.SetStateAction<never[]>) => {
           setSelectionModel(newSelection);
         }}
         components={{

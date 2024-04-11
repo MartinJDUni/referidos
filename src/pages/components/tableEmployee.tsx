@@ -58,7 +58,7 @@ export default function DataGridPremiumDemo() {
     { field: 'state', headerName: 'Estado', width: 75 },
   ];
 
-  const handleOpenModal = (id) => {
+  const handleOpenModal = (id: any) => {
     const selectedRow = data.find((row) => row.id === id);
     setSelectedRowData(selectedRow);
     setIsModalOpen(true);
@@ -106,7 +106,7 @@ export default function DataGridPremiumDemo() {
     }
   };
 
-  const handleReactivateRow = async (id) => {
+  const handleReactivateRow = async (id: any) => {
     try {
       await fetch('/api/dbaux', {
         method: 'PUT',
@@ -130,10 +130,10 @@ export default function DataGridPremiumDemo() {
       .then((results) => {
         const [result] = results;
 
-        const filteredDataET = result.data.filter((row) =>
+        const filteredDataET = result.data.filter((row: { state: number; }) =>
           showStateZero ? row.state === 0 : row.state === 1
         );
-        const mappedData = filteredDataET.map((row) => ({
+        const mappedData = filteredDataET.map((row: { Id: any; Name: any; Password: any; Email: any; state: any; RoleName: any; }) => ({
           id: row.Id,
           nameemployee: row.Name,
           pass: row.Password,

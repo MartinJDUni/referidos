@@ -22,7 +22,7 @@ export default function DataGridPremiumDemo() {
       headerName: 'Acciones',
       width: 120,
       sortable: false,
-      renderCell: (params) => (
+      renderCell: (params: { row: { id: any; task: any; description: any; }; }) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
@@ -45,7 +45,7 @@ export default function DataGridPremiumDemo() {
 
   const [selectionModel, setSelectionModel] = React.useState([]);
 
-  const handleOpenEditModal = (id, task, description) => {
+  const handleOpenEditModal = (id: any, task: any, description: any) => {
     setEditedTask({ id, task, description });
     setOpenEditModal(true);
   };
@@ -83,7 +83,7 @@ export default function DataGridPremiumDemo() {
         // Maneja el error según tus necesidades
       });
   };
-  const handleDeleteRow = (id) => {
+  const handleDeleteRow = (id: any) => {
     // Implementa la lógica para eliminar la fila con el ID proporcionado
     console.log('Eliminar fila con ID:', id);
   };
@@ -94,7 +94,7 @@ export default function DataGridPremiumDemo() {
       .then((response) => response.json())
       .then((result) => {
         // Mapea los datos para cambiar la propiedad 'Id' a 'id'
-        const mappedData = result.data.map((row) => ({
+        const mappedData = result.data.map((row: { Id: any; Name: any; Descrition: any; state: any; }) => ({
           id: row.Id, // Cambia 'Id' a 'id'
           task: row.Name,
           description: row.Descrition, // Cambia 'Id' a 'id'
@@ -146,7 +146,7 @@ export default function DataGridPremiumDemo() {
           headerName: 'Commodity',
           field: 'commodity',
         }}
-        renderCell={(params) => (
+        renderCell={(params: { row: { id: any; task: any; description: any; }; }) => (
           <div>
             <EditIcon
               style={{ cursor: 'pointer', marginRight: '8px' }}

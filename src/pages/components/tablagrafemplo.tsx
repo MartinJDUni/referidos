@@ -19,7 +19,7 @@ export default function DataGridPremiumDemo() {
 
   const [userId, setUserId] = useState(null);
 
-  const getProgressColor = (value) => {
+  const getProgressColor = (value: number) => {
     if (value <= 30) {
       return {
         background: '#E53935', // Rojo para 0-30
@@ -54,7 +54,7 @@ export default function DataGridPremiumDemo() {
       headerAlign: 'center',
       headerName: 'Completados',
       width: 200,
-      renderCell: (params) => {
+      renderCell: (params: { value: number; }) => {
         const { background, bar } = getProgressColor(params.value || 0);
 
         return (
@@ -90,7 +90,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       headerName: 'Fecha de inicio',
       width: 150,
-      valueFormatter: (params) => {
+      valueFormatter: (params: { value: string | number | Date; }) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -105,7 +105,7 @@ export default function DataGridPremiumDemo() {
       align: 'center',
       headerName: 'Fecha de final',
       width: 150,
-      valueFormatter: (params) => {
+      valueFormatter: (params: { value: string | number | Date; }) => {
         const date = new Date(params.value);
         const year = date.getFullYear();
         const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -129,11 +129,11 @@ export default function DataGridPremiumDemo() {
       .then((results) => {
         const [resultET, resultOtherAPI] = results;
 
-        const filteredDataET = resultET.data.filter((row) =>
+        const filteredDataET = resultET.data.filter((row: { state: number; }) =>
           showStateZero ? row.state === 0 : row.state === 1
         );
 
-        const mappedDataET = filteredDataET.map((row) => ({
+        const mappedDataET = filteredDataET.map((row: { Id: any; EmployeeId: any; EmployeeName: any; TaskName: any; Goal: any; Startdate: string | number | Date; Finaldate: string | number | Date; state: any; }) => ({
           id: row.Id,
           EmployeeId: row.EmployeeId,
           Ename: row.EmployeeName,
@@ -144,8 +144,8 @@ export default function DataGridPremiumDemo() {
           state: row.state,
         }));
 
-        const finalData = mappedDataET.map((rowET) => {
-          const matchingOtherData = resultOtherAPI.data.find((otherRow) => {
+        const finalData = mappedDataET.map((rowET: { EmployeeId: any; goal: number; }) => {
+          const matchingOtherData = resultOtherAPI.data.find((otherRow: { EmployeeId: any; }) => {
             return otherRow.EmployeeId === rowET.EmployeeId;
           });
 
