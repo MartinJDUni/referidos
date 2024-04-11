@@ -25,7 +25,7 @@ export default function DataGridPremiumDemo() {
   const [open, setOpen] = React.useState(false);
   const [editingRowId, setEditingRowId] = React.useState<any>(null);
   const [editedFields, setEditedFields] = React.useState<EditedFields>({});
-  const [selectionModel, setSelectionModel] = React.useState<any[]>([]);
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<any[]>([]);
 
   const getProgressColor = (value: number) => {
     if (value <= 30) {
@@ -295,10 +295,8 @@ export default function DataGridPremiumDemo() {
         rows={data}
         columns={columns}
         loading={loading}
-        selectionModel={selectionModel}
-        onSelectionModelChange={(newSelection) => {
-          setSelectionModel(newSelection);
-        }}
+        rowSelectionModel={rowSelectionModel}
+
         components={{
           Toolbar: (props) => (
             <div>
@@ -306,10 +304,7 @@ export default function DataGridPremiumDemo() {
             </div>
           ),
         }}
-        autoGroupColumnDef={{
-          headerName: 'Commodity',
-          field: 'commodity',
-        }}
+
         getRowId={(row) => row.id}
       />
 

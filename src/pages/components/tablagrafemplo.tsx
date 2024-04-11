@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import { useState, useEffect } from 'react';
@@ -45,10 +45,10 @@ export default function DataGridPremiumDemo() {
     setUserId(storedUserId);
   }, []);
 
-  const columns = [
-    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' }},
-    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
-    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center', style: { fontWeight: 'bold' } },
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
+    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
+    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
     {
       field: 'TaskCount',
       headerAlign: 'center',
@@ -82,7 +82,7 @@ export default function DataGridPremiumDemo() {
           </Box>
         );
       },
-      style: { fontWeight: 'bold' },
+      cellClassName: 'bold-cell',
     },
     {
       field: 'start',
@@ -97,7 +97,7 @@ export default function DataGridPremiumDemo() {
         const day = `0${date.getDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
       },
-      style: { fontWeight: 'bold' },
+      cellClassName: 'bold-cell',
     },
     {
       field: 'final',
@@ -112,9 +112,9 @@ export default function DataGridPremiumDemo() {
         const day = `0${date.getDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
       },
-      style: { fontWeight: 'bold' },
+      cellClassName: 'bold-cell',
     },
-    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', hide: !showStateZero, style: { fontWeight: 'bold' } },
+    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
   ];
 
   const [selectionModel, setSelectionModel] = React.useState([]);
@@ -186,20 +186,12 @@ export default function DataGridPremiumDemo() {
           rows={data}
           columns={columns}
           loading={loading}
-          selectionModel={selectionModel}
-          onSelectionModelChange={(newSelection) => {
-            setSelectionModel(newSelection);
-          }}
           components={{
             Toolbar: (props) => (
               <div>
                 <GridToolbar {...props} />
               </div>
             ),
-          }}
-          autoGroupColumnDef={{
-            headerName: 'Commodity',
-            field: 'commodity',
           }}
           getRowId={(row) => row.id}
         />

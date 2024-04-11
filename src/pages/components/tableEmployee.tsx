@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Modal from '@mui/material/Modal';
@@ -26,7 +26,7 @@ export default function DataGridPremiumDemo() {
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const [selectionModel, setSelectionModel] = React.useState([]);
 
-  const columns = [
+  const columns: GridColDef[] =[
     {
       field: 'actions',
       headerAlign: 'center',
@@ -34,7 +34,6 @@ export default function DataGridPremiumDemo() {
       headerName: 'Acciones',
       width: 100,
       sortable: false,
-      hide: !showStateZero,
       renderCell: (params) => (
         <div>
           <EditIcon
