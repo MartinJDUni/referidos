@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AppContextType {
   collapsed: boolean;
@@ -9,18 +9,12 @@ interface AppContextType {
 }
 
 // Crea el contexto con un valor inicial del tipo AppContextType
-const AppContext = createContext<AppContextType>({
-  collapsed: false,
-  mostrarOtroComponente: false,
-  selectedCommentId: null,
-  toggleSidebar: () => {},
-  verComentarios: () => {},
-});
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
 // Define el proveedor de contexto
-export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [mostrarOtroComponente, setMostrarOtroComponente] = useState(false);
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [mostrarOtroComponente, setMostrarOtroComponente] = useState<boolean>(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
 
   const toggleSidebar = () => {
@@ -49,7 +43,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
 // Define el hook personalizado para consumir el contexto
 export const useAppContext = () => {
-  return useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext debe ser usado dentro de un AppProvider');
+  }
+  return context;
 };
 
 export default AppContext; // Exporta el contexto por defecto
