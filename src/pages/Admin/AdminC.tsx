@@ -10,13 +10,13 @@ const { Header, Content } = Layout;
 const Inicio: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mostrarOtroComponente, setMostrarOtroComponente] = useState(false);
-  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
-  const handleVerComentariosClick = (id: React.SetStateAction<null>) => {
+  const handleVerComentariosClick = (id: number) => {
     setMostrarOtroComponente(true);
     setSelectedCommentId(id);
   };
