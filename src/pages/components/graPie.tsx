@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
+// Define tipos para los datos
+interface TaskData {
+  TaskName: string;
+  Total: number;
+}
+
 const CustomBarChart = () => {
-  const [totalChartData, setTotalChartData] = useState([]);
-  const [completedChartData, setCompletedChartData] = useState([]);
+  const [totalChartData, setTotalChartData] = useState<TaskData[]>([]);
+  const [completedChartData, setCompletedChartData] = useState<TaskData[]>([]);
 
   const fetchData = async () => {
     try {
@@ -15,10 +21,10 @@ const CustomBarChart = () => {
         const totalData = totalResult.data;
 
         // Filtrar solo los elementos con estado 1
-        const filteredTotalData = totalData.filter(item => item.state === 1);
+        const filteredTotalData = totalData.filter((item: { state: number }) => item.state === 1);
 
         // Agrupar los datos por tarea y sumar las metas
-        const groupedTotalData = filteredTotalData.reduce((accumulator, current) => {
+        const groupedTotalData = filteredTotalData.reduce((accumulator: TaskData[], current: { TaskName: string; Goal: number }) => {
           const existingItem = accumulator.find(item => item.TaskName === current.TaskName);
 
           if (existingItem) {
@@ -46,18 +52,18 @@ const CustomBarChart = () => {
         const completedData = completedResult.data;
 
         // Filtrar solo los elementos con estado 1
-        const filteredCompletedData = completedData.filter(item => item.state === 1);
+        const filteredCompletedData = completedData.filter((item: { state: number }) => item.state === 1);
 
         // Agrupar los datos por tarea y sumar las metas completadas
-        const groupedCompletedData = filteredCompletedData.reduce((accumulator, current) => {
+        const groupedCompletedData = filteredCompletedData.reduce((accumulator: TaskData[], current: { TaskName: string; Goal: number }) => {
           const existingItem = accumulator.find(item => item.TaskName === current.TaskName);
 
           if (existingItem) {
-            existingItem.Completed += current.Goal;
+            existingItem.Total += current.Goal;
           } else {
             accumulator.push({
               TaskName: current.TaskName,
-              Completed: current.Goal
+              Total: current.Goal
             });
           }
 
@@ -65,7 +71,6 @@ const CustomBarChart = () => {
         }, []);
 
         setCompletedChartData(groupedCompletedData);
-
       } else {
         console.error('Error al obtener datos de tareas completadas de la API');
       }
@@ -92,7 +97,7 @@ const CustomBarChart = () => {
   const combinedChartData = totalChartData.map(item => ({
     TaskName: item.TaskName,
     Total: item.Total,
-    Completed: completedChartData.find(completedItem => completedItem.TaskName === item.TaskName)?.Completed || 0
+    Completed: completedChartData.find(completedItem => completedItem.TaskName === item.TaskName)?.Total || 0
   }));
 
   return (

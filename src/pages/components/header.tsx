@@ -7,15 +7,20 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 
-const HeaderComponent = ({ collapsed, onToggle }) => {
-  const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState(null);
+interface HeaderComponentProps {
+  collapsed: boolean;
+  onToggle: () => void;
+}
+
+const HeaderComponent: React.FC<HeaderComponentProps> = ({ collapsed, onToggle }) => {
+  const [userId, setUserId] = useState<number | null>(null); // Se asume que userId es un número
+  const [userName, setUserName] = useState<string | null>(null); // Se asume que userName es una cadena de texto
 
   useEffect(() => {
     // Obtener userId de localStorage al cargar la página
     const storedUserId = localStorage.getItem('userId');
     const storedUserName = localStorage.getItem('userName');
-    setUserId(storedUserId);
+    setUserId(storedUserId ? parseInt(storedUserId, 10) : null); // Se convierte a número si es posible
     setUserName(storedUserName); // Corregido a setUserName
   }, []); // El segundo parámetro [] asegura que este efecto se ejecute solo una vez al montar el componente
   

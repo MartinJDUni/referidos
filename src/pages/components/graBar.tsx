@@ -9,7 +9,7 @@ const CustomBarChart = () => {
       const response = await fetch('/api/databaseET');
       if (response.ok) {
         const result = await response.json();
-        const filteredData = result.data.filter(item => item.state === 1);
+        const filteredData = result.data.filter((item: { state: number; }) => item.state === 1);
 
         setChartData(filteredData);
       } else {

@@ -26,7 +26,7 @@ export default function DataGridPremiumDemo() {
       width: 100,
       sortable: false,
       hide: !showStateZero,
-      renderCell: (params) => (
+      renderCell: (params: { row: { id: any; state: number; }; }) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}

@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -11,15 +10,24 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { SelectChangeEvent } from '@mui/material/Select'; // Importar SelectChangeEvent
 
-export default function DataGridPremiumDemo({ onClickVerComentarios }) {
-  const [data, setData] = React.useState([]);
+interface TaskData {
+  Id: any;
+  ClientName: any;
+  StateTaskName: any;
+  date: string | number | Date;
+  state: any;
+}
+
+export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClickVerComentarios: (id: number) => void }) {
+  const [data, setData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [userId, setUserId] = useState(null);
-  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<any>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedState, setSelectedState] = useState('');
-  const [taskStates, setTaskStates] = useState([]);
+  const [taskStates, setTaskStates] = useState<any[]>([]);
   const [newEmployeeData, setNewEmployeeData] = useState({
     name: '',
     phone: '',
@@ -38,9 +46,9 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
       fetch('/api/databaseEmployeeS')
         .then((response) => response.json())
         .then((result) => {
-          const mappedData = result.statetask.map((row) => ({
+          const mappedData = result.statetask.map((row: TaskData) => ({
             id: row.Id,
-            state: row.State,
+            state: row.StateTaskName,
           }));
           console.log('Datos obtenidos de la API:', mappedData);
           setTaskStates(mappedData);
@@ -53,7 +61,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
     fetchData();
   }, []);
 
-  const handleEditRow = (id) => {
+  const handleEditRow = (id: any) => {
     console.log('Editar fila con ID:', id);
     setSelectedRowId(id);
     setOpenDialog(true);
@@ -63,7 +71,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
     setOpenDialog(false);
   };
 
-  const handleStateChange = (event) => {
+  const handleStateChange = (event: SelectChangeEvent<string>) => { // Corregir tipo de evento
     setSelectedState(event.target.value);
   };
 
@@ -104,7 +112,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
 
   const handleAddEmployee = async () => {
     try {
-      const addEmployeeUrl = '/api/databaseEmployeeS'; // Ruta para agregar empleado, asegúrate de que sea la correcta
+      const addEmployeeUrl = '/api/databaseEmployeeS';
       const response = await fetch(addEmployeeUrl, {
         method: 'POST',
         headers: {
@@ -115,10 +123,9 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
   
       if (response.ok) {
         const responseData = await response.json();
-        const clientId = responseData.clientId; // Extrae el ID del cliente de la respuesta
+        const clientId = responseData.clientId;
   
-        // Llama a la segunda API para agregar la relación en la otra tabla
-        const addRelationshipUrl = '/api/databaseClientID'; // Ruta para la segunda API, ajústala según sea necesario
+        const addRelationshipUrl = '/api/databaseClientID';
         const relationshipResponse = await fetch(addRelationshipUrl, {
           method: 'POST',
           headers: {
@@ -127,9 +134,9 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
           body: JSON.stringify({
             Idclient: clientId,
             Idemployee: userId,
-            Idstatetask: 3, // Valor por defecto para Idstatetask
-            state: 1, // Valor por defecto para state
-            date: new Date().toISOString().split('T')[0], // Fecha de hoy
+            Idstatetask: 3,
+            state: 1,
+            date: new Date().toISOString().split('T')[0],
           }),
         });
   
@@ -149,7 +156,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
   };
   
 
-  const handleNewEmployeeDataChange = (event) => {
+  const handleNewEmployeeDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setNewEmployeeData((prevData) => ({
       ...prevData,
@@ -166,7 +173,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
     fetch(`/api/dbTaskPer?employeeId=${userId}`)
       .then((response) => response.json())
       .then((result) => {
-        const mappedData = result.data.map((row) => ({
+        const mappedData = result.data.map((row: TaskData) => ({
           id: row.Id,
           client: row.ClientName,
           statetask: row.StateTaskName,
@@ -194,34 +201,26 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
     };
   }, [userId]);
 
-  const columns = [
+  const columns: GridColDef[] = [
     {
       field: 'actions',
-      headerAlign: 'center',
-      align: 'center',
       headerName: 'Acciones',
       width: 120,
-      sortable: false,
       renderCell: (params) => (
         <div>
           <EditIcon
             style={{ cursor: 'pointer', marginRight: '8px' }}
             onClick={() => handleEditRow(params.row.id)}
           />
-          <DeleteIcon
-            style={{ cursor: 'pointer', color: 'red'}}
-            onClick={() => handleDeleteRow(params.row.id)}
-          />
+          
         </div>
       ),
     },
-    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center' },
-    { field: 'client', headerName: 'Cliente', headerAlign: 'center', align: 'center', width: 150 },
+    { field: 'id', headerName: 'Id', width: 50 },
+    { field: 'client', headerName: 'Cliente', width: 150 },
     {
       field: 'statetask',
       headerName: 'Estado de la tarea',
-      headerAlign: 'center',
-      align: 'center',
       width: 200,
       cellClassName: (params) => {
         switch (params.value) {
@@ -250,8 +249,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
     },
     {
       field: 'start',
-      headerAlign: 'center',
-      align: 'center',
       headerName: 'Fecha de inicio',
       width: 150,
       valueFormatter: (params) => {
@@ -262,11 +259,9 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }) {
         return `${year}-${month}-${day}`;
       },
     },
-    { field: 'state', headerName: 'Estado', headerAlign: 'center', align: 'center', width: 100 },
+    { field: 'state', headerName: 'Estado', width: 100 },
     {
       field: 'customAction',
-      headerAlign: 'center',
-      align: 'center',
       headerName: 'Ver comentarios',
       width: 200,
       renderCell: (params) => (
