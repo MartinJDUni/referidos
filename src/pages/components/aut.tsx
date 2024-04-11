@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
@@ -44,3 +43,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthContext; // Exporta el contexto por defecto

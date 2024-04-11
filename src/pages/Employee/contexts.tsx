@@ -51,3 +51,5 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAppContext = () => {
   return useContext(AppContext);
 };
+
+export default AppContext; // Exporta el contexto por defecto
