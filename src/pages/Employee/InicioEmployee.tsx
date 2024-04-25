@@ -19,6 +19,7 @@ const Inicio: React.FC = () => {
       <Layout>
         <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
         <Content
+        id='Ag3'
           style={{
             margin: '24px 16px',
             padding: 24,

@@ -172,12 +172,13 @@ const Graphic: React.FC = () => {
             >
               <div style={fieldStyle}>
                 <label>Meta:</label>
-                <Input value={goal} onChange={(e) => setGoal(e.target.value)} />
+                <Input id='meta' value={goal} onChange={(e) => setGoal(e.target.value)} />
                 <span style={{ color: 'red' }}>{error.goal}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Empleado:</label>
                 <Select
+                id='Emplo'
                   style={{ width: 200 }}
                   value={selectedEmployee}
                   onChange={(value) => setSelectedEmployee(value)}
@@ -196,6 +197,7 @@ const Graphic: React.FC = () => {
               <div style={fieldStyle}>
                 <label>Nombre de la tarea:</label>
                 <Select
+                id='Tareas'
                   style={{ width: 200 }}
                   value={selectedTask}
                   onChange={(value) => setSelectedTask(value)}
@@ -213,12 +215,12 @@ const Graphic: React.FC = () => {
               </div>
               <div style={fieldStyle}>
                 <label>Fecha de inicio:</label>
-                <DatePicker value={startDate} onChange={(date) => setStartDate(date)} />
+                <DatePicker id='iniI' value={startDate} onChange={(date) => setStartDate(date)} />
                 <span style={{ color: 'red' }}>{error.startDate}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Fecha final:</label>
-                <DatePicker value={endDate} onChange={(date) => setEndDate(date)} />
+                <DatePicker id='iniF' value={endDate} onChange={(date) => setEndDate(date)} />
                 <span style={{ color: 'red' }}>{error.endDate}</span>
               </div>
             </Modal>

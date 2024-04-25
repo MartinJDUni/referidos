@@ -30,6 +30,7 @@ const Cometarios: React.FC = () => {
       <Layout>
         <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
         <Content
+        id='Ag2'
           style={{
             margin: '24px 16px',
             padding: 24,
