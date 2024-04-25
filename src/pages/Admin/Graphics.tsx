@@ -173,7 +173,7 @@ const Graphic: React.FC = () => {
               <div style={fieldStyle}>
                 <label>Meta:</label>
                 <Input id='meta' value={goal} onChange={(e) => setGoal(e.target.value)} />
-                <span style={{ color: 'red' }}>{error.goal}</span>
+                <span id='ini10' style={{ color: 'red' }}>{error.goal}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Empleado:</label>
@@ -192,7 +192,7 @@ const Graphic: React.FC = () => {
                     </Option>
                   ))}
                 </Select>
-                <span style={{ color: 'red' }}>{error.selectedEmployee}</span>
+                <span id='ini9' style={{ color: 'red' }}>{error.selectedEmployee}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Nombre de la tarea:</label>
@@ -211,7 +211,7 @@ const Graphic: React.FC = () => {
                     </Option>
                   ))}
                 </Select>
-                <span style={{ color: 'red' }}>{error.selectedTask}</span>
+                <span id='ini6' style={{ color: 'red' }}>{error.selectedTask}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Fecha de inicio:</label>
