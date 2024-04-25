@@ -216,12 +216,12 @@ const Graphic: React.FC = () => {
               <div style={fieldStyle}>
                 <label>Fecha de inicio:</label>
                 <DatePicker id='iniI' value={startDate} onChange={(date) => setStartDate(date)} />
-                <span style={{ color: 'red' }}>{error.startDate}</span>
+                <span id='ini2' style={{ color: 'red' }}>{error.startDate}</span>
               </div>
               <div style={fieldStyle}>
                 <label>Fecha final:</label>
                 <DatePicker id='iniF' value={endDate} onChange={(date) => setEndDate(date)} />
-                <span style={{ color: 'red' }}>{error.endDate}</span>
+                <span id='ini3' style={{ color: 'red' }}>{error.endDate}</span>
               </div>
             </Modal>
           </div>
