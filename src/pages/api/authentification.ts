@@ -10,10 +10,10 @@ interface User {
 export async function connectToDatabase() {
   try {
     const connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni',
-      database: 'referidos',
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'refb',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
     return connection;
@@ -37,7 +37,7 @@ export default async (req: { method: string; body: { email: any; password: any; 
       connection = await connectToDatabase();
 
       const [userRows, _fields] = await connection.execute<RowDataPacket[]>(
-        'SELECT Id, Name, Idrole FROM employee WHERE email = ? AND password = ?',
+        'SELECT id, name, idRol FROM employee WHERE email = ? AND password = ?',
         [email, password]
       );
 
@@ -46,9 +46,9 @@ export default async (req: { method: string; body: { email: any; password: any; 
       }
 
       const authenticatedUser: User = {
-        id: userRows[0].Id,
-        name: userRows[0].Name,
-        role: userRows[0].Idrole,
+        id: userRows[0].id,
+        name: userRows[0].name,
+        role: userRows[0].idRol,
       };
 
       console.log('Usuario autenticado:', authenticatedUser);
