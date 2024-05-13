@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,19 +14,19 @@ interface EmployeeData {
   nameemployee: string;
   pass: string;
   email: string;
-  state: string;
+  status: string; // Cambio 'state' a 'status'
   rol: string;
 }
 
 export default function DataGridPremiumDemo() {
-  const [data, setData] = React.useState<EmployeeData[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [showStateZero, setShowStateZero] = React.useState(false);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedRowData, setSelectedRowData] = React.useState<EmployeeData | null>(null);
-  const [selectionModel, setSelectionModel] = React.useState<any[]>([]);
+  const [data, setData] = useState<EmployeeData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showStateZero, setShowStateZero] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState<EmployeeData | null>(null);
+  const [selectionModel, setSelectionModel] = useState<any[]>([]);
 
-  const columns: GridColDef[] =[
+  const columns: GridColDef[] = [
     {
       field: 'actions',
       headerAlign: 'center',
@@ -40,7 +40,7 @@ export default function DataGridPremiumDemo() {
             style={{ cursor: 'pointer', marginRight: '8px', color: '#39A7FF' }}
             onClick={() => handleOpenModal(params.row.id)}
           />
-          {params.row.state === 0 ? (
+          {params.row.status === '0' ? (
             <React.Fragment>
               <span
                 style={{ cursor: 'pointer', marginRight: '8px' }}
@@ -63,7 +63,7 @@ export default function DataGridPremiumDemo() {
     { field: 'pass', headerName: 'Contraseña', width: 150 },
     { field: 'email', headerName: 'Email', width: 250 },
     { field: 'rol', headerName: 'Rol', width: 100 },
-    { field: 'state', headerName: 'Estado', width: 75 },
+    { field: 'status', headerName: 'Estado', width: 75 }, // Cambio 'state' a 'status'
   ];
 
   const handleOpenModal = (id: any) => {
@@ -81,11 +81,11 @@ export default function DataGridPremiumDemo() {
 
   const handleSaveChanges = async (rowData: EmployeeData) => {
     try {
-      const { id, nameemployee, pass, email, state } = rowData;
+      const { id, nameemployee, pass, email, status } = rowData; // Cambio 'state' a 'status'
 
       const requestBody = { id, name: nameemployee, password: pass, email };
 
-      await fetch('/api/databaseEmployeeEdit', { // Reemplaza "nombre-de-tu-api" con la ruta correcta de tu API
+      await fetch('/api/databaseEmployeeEdit', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -101,14 +101,13 @@ export default function DataGridPremiumDemo() {
   };
 
   const handleDeleteRow = async (id: any) => {
-    console.log(id);
     try {
       await fetch('/api/databaseemployee', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, state: 0 }), // Assuming you want to set state to 0 when deleting
+        body: JSON.stringify({ id, status: '0' }), // Cambio 'state' a 'status'
       });
       fetchData();
     } catch (error) {
@@ -123,7 +122,7 @@ export default function DataGridPremiumDemo() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, state: 1 }), // Assuming you want to set state to 1 when reactivating
+        body: JSON.stringify({ id, status: '1' }), // Cambio 'state' a 'status'
       });
       fetchData();
     } catch (error) {
@@ -131,36 +130,31 @@ export default function DataGridPremiumDemo() {
     }
   };
 
-  const fetchData = () => {
-    const promises = [
-      fetch('/api/databaseemployee').then((response) => response.json()),
-    ];
-
-    Promise.all(promises)
-      .then((results) => {
-        const [result] = results;
-
-        const filteredDataET = result.data.filter((row: { state: number; }) =>
-          showStateZero ? row.state === 0 : row.state === 1
-        );
-        const mappedData = filteredDataET.map((row: { Id: any; Name: any; Password: any; Email: any; state: any; RoleName: any; }) => ({
-          id: row.Id,
-          nameemployee: row.Name,
-          pass: row.Password,
-          email: row.Email,
-          state: row.state,
-          rol: row.RoleName,
-        }));
-        setData(mappedData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error al obtener datos de la base de datos:', error);
-        setLoading(false);
-      });
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/databaseemployee');
+      if (!response.ok) {
+        throw new Error('Error al obtener datos de la API');
+      }
+      const result = await response.json();
+      const mappedData = result.data.map((row: { id: any; name: any; password: any; email: any; status: any; roleName: any; }) => ({
+        id: row.id,
+        nameemployee: row.name,
+        pass: row.password,
+        email: row.email,
+        status: row.status,
+        rol: row.roleName,
+      }));
+      setData(mappedData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error al obtener datos de la API:', error);
+      setLoading(false);
+    }
   };
 
-  React.useEffect(() => {
+
+  useEffect(() => {
     fetchData();
     const pollingInterval = setInterval(() => {
       fetchData();

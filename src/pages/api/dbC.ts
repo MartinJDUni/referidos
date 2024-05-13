@@ -13,7 +13,7 @@ export default async (req: { method: string; }, res: { status: (arg0: number) =>
             GROUP_CONCAT(DISTINCT cpe.Id) AS TaskIds
           FROM customerperemployee cpe
           INNER JOIN employee e ON cpe.Idemployee = e.Id
-          INNER JOIN statetask st ON cpe.Idstatetask = st.Id
+          INNER JOIN statusTask st ON cpe.Idstatetask = st.Id
           WHERE st.State = 'ACEPTADO'
           GROUP BY e.Id;
         `;
@@ -33,10 +33,10 @@ export async function connectToDatabase() {
 
   try {
     connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
-      database: 'referidos',
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'refb',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
     return connection;

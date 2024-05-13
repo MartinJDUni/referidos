@@ -5,10 +5,10 @@ export async function connectToDatabase() {
 
   try {
     connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni',
-      database: 'referidos',
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'refb',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
     return connection;

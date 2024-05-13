@@ -1,14 +1,14 @@
 import { createConnection } from 'mysql2/promise';
 
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
+  let connection = null; 
 
   try {
     connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
-      database: 'referidos',
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'refb',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
     return connection;

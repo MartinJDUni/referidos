@@ -5,10 +5,10 @@ export async function connectToDatabase() {
 
   try {
     connection = await createConnection({
-      host: '34.135.49.190',
-      user: 'martin',
-      password: 'pruebasUni',
-      database: 'referidos',
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'refb',
     });
     console.log('Conexión exitosa a la base de datos MySQL');
     return connection;
@@ -18,16 +18,16 @@ export async function connectToDatabase() {
   }
 }
 
-export default async (req: { method: string; body: { name?: any; password?: any; email?: any; state?: any; roleId?: any; id?: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; insertedId?: any; }): void; new(): any; }; }; }) => {
+export default async (req: { method: string; body: { name?: any; password?: any; email?: any; idRol?: any; id?: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; insertedId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
     const connection = await connectToDatabase();
 
     try {
       const query = `
-          SELECT e.Id, e.Name, e.Password, e.Email, e.state, r.Name AS RoleName
-          FROM employee e
-          INNER JOIN role r ON e.Idrole = r.Id;
-      `;
+      SELECT e.id, e.name, e.email, e.password, e.status, r.rol AS roleName
+      FROM employee e
+      INNER JOIN role r ON e.idRol = r.id;
+    `;
       const [rows] = await connection.execute(query);
       connection.end();
       res.status(200).json({ data: rows });
@@ -36,7 +36,7 @@ export default async (req: { method: string; body: { name?: any; password?: any;
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
   } else if (req.method === 'POST') {
-    const { name, password, email, state, roleId } = req.body;
+    const { name, password, email, idRol } = req.body;
 
     if (!name || !password || !email) {
       res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -46,8 +46,8 @@ export default async (req: { method: string; body: { name?: any; password?: any;
     const connection = await connectToDatabase();
 
     try {
-      const query = 'INSERT INTO employee (Name, Password, Email, state, Idrole) VALUES (?, ?, ?, ?, ?)';
-      const [result] = await connection.execute(query, [name, password, email, 1, 2]);
+      const query = 'INSERT INTO employee (name, password, email, idRol, status) VALUES (?, ?, ?, ?, ?)';
+      const [result] = await connection.execute(query, [name, password, email, idRol || 1, 1]);
       connection.end();
       if ('insertId' in result) {
         res.status(201).json({ message: 'Datos insertados correctamente', insertedId: result.insertId });
@@ -71,8 +71,8 @@ export default async (req: { method: string; body: { name?: any; password?: any;
     try {
       const updateQuery = `
         UPDATE employee
-        SET state = 0
-        WHERE Id = ?;
+        SET status = 0
+        WHERE id = ?;
       `;
       await connection.execute(updateQuery, [id]);
 

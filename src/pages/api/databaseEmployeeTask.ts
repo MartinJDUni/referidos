@@ -2,10 +2,10 @@ import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createCo
 
 export async function connectToDatabase() {
     const connection = await createConnection({
-        host: '34.135.49.190',
-        user: 'martin',
-        password: 'pruebasUni', // Reemplaza 'tu_contraseña' con la contraseña real del usuario 'martin'
-        database: 'referidos', // Cambia esto por el nombre de tu base de datos
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'refb', // Cambia esto por el nombre de tu base de datos
     });
     return connection;
 }
@@ -41,14 +41,14 @@ export default async (req: { method: string; body: { Idemployee: any; Idtask: an
         }
     } else if (req.method === 'POST') {
         const { Idemployee, Idtask, Goal, Startdate, Finaldate, state } = req.body; // Asume que estás enviando estos datos en el cuerpo de la solicitud POST.
-    
+
         if (!Idemployee || !Idtask || !Goal || !Startdate || !Finaldate || state === undefined) {
             res.status(400).json({ error: 'Faltan datos obligatorios' });
             return;
         }
-    
+
         const connection = await connectToDatabase();
-    
+
         try {
             // Parsea Startdate como un objeto Date
             const startDate = new Date(Startdate);
@@ -59,9 +59,9 @@ export default async (req: { method: string; body: { Idemployee: any; Idtask: an
                 'INSERT INTO employeespertask (Idemployee, Idtask, Goal, Startdate, Finaldate, state) VALUES (?, ?, ?, ?, ?, ?)',
                 [Idemployee, Idtask, Goal, startDate, finaldate, state]
             );
-    
+
             connection.end();
-    
+
             res.status(201).json({ message: 'Datos insertados correctamente' });
         } catch (error) {
             console.error('Error al insertar datos en la base de datos:', error);

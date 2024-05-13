@@ -1,105 +1,78 @@
-import React, { useState } from 'react';
-import { Layout, Button, Modal } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Layout, Button, Modal, Select, Spin, Form, Input } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
 import Tabla from '../components/tableEmployee';
 
 const { Header, Content } = Layout;
+const { Option } = Select;
 
-const Worker: React.FC = () => {
+const Employee: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [isAddWorkerModalVisible, setIsAddWorkerModalVisible] = useState(false);
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [nameError, setNameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [form] = Form.useForm();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch('/api/roles');
+      const data = await response.json();
+      if (data) {
+        const rolesData = data.map((role: any) => ({ id: role.id, name: role.rol }));
+        setRoles(rolesData);
+      }
+    } catch (error) {
+      console.error('Error al obtener roles:', error);
+    }
+  };
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
-  const handleShowAddWorkerModal = () => {
-    setIsAddWorkerModalVisible(true);
+  const handleShowModal = () => {
+    setModalVisible(true);
   };
 
-  const handleHideAddWorkerModal = () => {
-    setIsAddWorkerModalVisible(false);
-    setError("");
-    setNameError("");
-    setPasswordError("");
-    setEmailError("");
+  const handleHideModal = () => {
+    setModalVisible(false);
+    form.resetFields();
+    setError(null);
+    setSuccessMessage(null);
   };
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-    setNameError("");
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    setPasswordError("");
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    setEmailError("");
-  };
-
-  const handleSaveWorker = () => {
-    // Validación de campos obligatorios
-    if (!name || !password || !email) {
-      setError('Por favor, completa todos los campos obligatorios.');
-      return;
-    }
-
-    // Validación de formato de correo electrónico
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(email)) {
-      setEmailError('El correo electrónico ingresado no es válido.');
-      return;
-    }
-
-    // Otras validaciones necesarias...
-
-    const workerData = {
-      name,
-      password,
-      email,
-    };
-
-    fetch('/api/databaseemployee', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(workerData),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        // Actualizar la tabla
-        console.log('Tarea guardada exitosamente:', result);
-        setSuccessMessage('Trabajador añadido exitosamente.');
-
-        // Limpiar campos y mostrar mensaje de éxito después de 2 segundos
-        setTimeout(() => {
-          setName("");
-          setPassword("");
-          setEmail("");
-          setError("");
-          setNameError("");
-          setPasswordError("");
-          setEmailError("");
-          setSuccessMessage("");
-          handleHideAddWorkerModal();
-        }, 2000);
-      })
-      .catch((error) => {
-        console.error('Error al guardar la tarea:', error);
+  const handleSaveEmployee = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+      const response = await fetch('/api/databaseemployee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
+      const result = await response.json();
+      console.log('Trabajador guardado exitosamente:', result);
+      setSuccessMessage('Trabajador añadido exitosamente.');
+    } catch (error) {
+      console.error('Error al guardar el trabajador:', error);
+      setError('Error al guardar el trabajador. Inténtalo de nuevo más tarde.');
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSuccessMessage(null);
+        setError(null);
+        handleHideModal();
+      }, 2000);
+    }
   };
 
   return (
@@ -119,53 +92,65 @@ const Worker: React.FC = () => {
           <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
             <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px' }}>Personal</h1>
             <Button
-              onClick={handleShowAddWorkerModal}
+              onClick={handleShowModal}
               type="primary"
               style={{ background: '#1890ff', borderColor: '#1890ff', marginRight: '16px' }}
             >
-              Agregar trabajador
+              Agregar empleado
             </Button>
           </div>
           <Tabla />
 
           <Modal
             title="Agregar Trabajador"
-            visible={isAddWorkerModalVisible}
-            onOk={handleSaveWorker}
-            onCancel={handleHideAddWorkerModal}
+            visible={modalVisible}
+            onOk={handleSaveEmployee}
+            onCancel={handleHideModal}
             footer={[
-              <Button key="back" onClick={handleHideAddWorkerModal}>
+              <Button key="back" onClick={handleHideModal}>
                 Cancelar
               </Button>,
-              <Button key="submit" type="primary" onClick={handleSaveWorker}>
+              <Button key="submit" type="primary" onClick={handleSaveEmployee} loading={loading}>
                 Guardar
               </Button>,
             ]}
           >
-            <form>
-              <div style={{ marginBottom: '16px' }}>
-                {error && <p style={{ color: 'red', marginBottom: '8px' }}>{error}</p>}
-                {successMessage && <p style={{ color: 'green', marginBottom: '8px' }}>{successMessage}</p>}
-
-                <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px' }}>Nombre:</label>
-                  <input type="text" value={name} onChange={handleNameChange} />
-                  {nameError && <p style={{ color: 'red', marginTop: '4px' }}>{nameError}</p>}
-                </div>
-
-                <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px' }}>Contraseña:</label>
-                  <input type="password" value={password} onChange={handlePasswordChange} />
-                  {passwordError && <p style={{ color: 'red', marginTop: '4px' }}>{passwordError}</p>}
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px' }}>Correo Electrónico:</label>
-                  <input type="email" value={email} onChange={handleEmailChange} />
-                  {emailError && <p style={{ color: 'red', marginTop: '4px' }}>{emailError}</p>}
-                </div>
-              </div>
-            </form>
+            <Form form={form} layout="vertical">
+              {error && <p style={{ color: 'red', marginBottom: '8px' }}>{error}</p>}
+              {successMessage && <p style={{ color: 'green', marginBottom: '8px' }}>{successMessage}</p>}
+              <Form.Item
+                name="name"
+                label="Nombre"
+                rules={[{ required: true, message: 'Por favor ingresa el nombre del empleado' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label="Contraseña"
+                rules={[{ required: true, message: 'Por favor ingresa la contraseña' }]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                name="idRol"
+                label="Rol del Empleado"
+                rules={[{ required: true, message: 'Por favor selecciona el rol del empleado' }]}
+              >
+                <Select placeholder="Selecciona un rol">
+                  {roles.map(roleOption => (
+                    <Option key={roleOption.id} value={roleOption.id}>{roleOption.name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="email"
+                label="Correo Electrónico"
+                rules={[{ required: true, message: 'Por favor ingresa el correo electrónico' }]}
+              >
+                <Input type="email" />
+              </Form.Item>
+            </Form>
           </Modal>
         </Content>
       </Layout>
@@ -173,4 +158,4 @@ const Worker: React.FC = () => {
   );
 };
 
-export default Worker;
+export default Employee;
