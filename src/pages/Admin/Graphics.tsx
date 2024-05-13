@@ -81,7 +81,7 @@ const Graphic: React.FC = () => {
     return valid;
   };
 
-  const handleOk = async () => {
+  /*const handleOk = async () => {
     if (validateForm()) {
       try {
         const response = await fetch('/api/databaseEmployeeTask', {
@@ -110,13 +110,13 @@ const Graphic: React.FC = () => {
 
       setIsModalVisible(false);
     }
-  };
+  };*/
 
   const handleToggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/databaseEmployeeTask');
@@ -133,7 +133,7 @@ const Graphic: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, []);*/
 
   const fieldStyle = {
     marginBottom: '15px',
@@ -151,80 +151,6 @@ const Graphic: React.FC = () => {
             minHeight: 280,
           }}
         >
-
-          <div>
-            <div>
-              <BarChart />
-            </div>
-            <div>
-              <CustomBarChart />
-            </div>
-          </div>
-          <div className="charts-container">
-            <Button type="primary" style={{ float: 'right' }} onClick={showModal}>
-              Asignar meta
-            </Button>
-            <Modal
-              title="Asignar meta"
-              visible={isModalVisible}
-              onOk={handleOk}
-              onCancel={handleCancel}
-            >
-              <div style={fieldStyle}>
-                <label>Meta:</label>
-                <Input id='meta' value={goal} onChange={(e) => setGoal(e.target.value)} />
-                <span id='ini10' style={{ color: 'red' }}>{error.goal}</span>
-              </div>
-              <div style={fieldStyle}>
-                <label>Empleado:</label>
-                <Select
-                id='Emplo'
-                  style={{ width: 200 }}
-                  value={selectedEmployee}
-                  onChange={(value) => setSelectedEmployee(value)}
-                >
-                  <Option value="" disabled>
-                    Selecciona un empleado
-                  </Option>
-                  {employeeOptions.map((employee) => (
-                    <Option key={employee.Id} value={employee.Id.toString()}>
-                      {employee.Name}
-                    </Option>
-                  ))}
-                </Select>
-                <span id='ini9' style={{ color: 'red' }}>{error.selectedEmployee}</span>
-              </div>
-              <div style={fieldStyle}>
-                <label>Nombre de la tarea:</label>
-                <Select
-                id='Tareas'
-                  style={{ width: 200 }}
-                  value={selectedTask}
-                  onChange={(value) => setSelectedTask(value)}
-                >
-                  <Option value="" disabled>
-                    Selecciona una tarea
-                  </Option>
-                  {taskOptions.map((task, index) => (
-                    <Option key={index} value={task.Id}>
-                      {task.Name}
-                    </Option>
-                  ))}
-                </Select>
-                <span id='ini6' style={{ color: 'red' }}>{error.selectedTask}</span>
-              </div>
-              <div style={fieldStyle}>
-                <label>Fecha de inicio:</label>
-                <DatePicker id='iniI' value={startDate} onChange={(date) => setStartDate(date)} />
-                <span id='ini2' style={{ color: 'red' }}>{error.startDate}</span>
-              </div>
-              <div style={fieldStyle}>
-                <label>Fecha final:</label>
-                <DatePicker id='iniF' value={endDate} onChange={(date) => setEndDate(date)} />
-                <span id='ini3' style={{ color: 'red' }}>{error.endDate}</span>
-              </div>
-            </Modal>
-          </div>
           <div className="data-grid" style={{ marginTop: '70px', padding: '50px', backgroundColor: 'white', marginBottom: '10px' }}>
             <DataGridPremiumDemo />
           </div>
