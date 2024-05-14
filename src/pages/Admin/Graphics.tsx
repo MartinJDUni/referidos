@@ -6,7 +6,7 @@ import DataGridPremiumDemo from '@/pages/components/tablaET';
 import BarChart from '../components/graBarTotal';
 import CustomLineChart from '../components/graDate';
 import PieChartComponent from '../components/graPie';
-import ProgressBarChart from '../components/ToPro';
+import CustomProgressBar from '../components/ToPro';
 import dayjs, { Dayjs } from 'dayjs';
 
 
@@ -140,43 +140,44 @@ const Graphic: React.FC = () => {
     marginBottom: '15px',
   };
 
-return (
-  <Layout style={{ minHeight: '100vh', display: 'flex' }}>
-    <SidebarComponent collapsed={collapsed} />
-    <Layout>
-      <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
-      <div>
-        <CustomLineChart/>
-      </div>
-      <Content
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          justifyContent: 'flex-start',
-          margin: '24px 16px',
-          padding: 24,
-          minHeight: 280,
-          overflow: 'auto',
-        }}
-      >
-        <div className="data-grid" style={{flex: 1, marginRight: '20px', padding: '20px', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
-          <DataGridPremiumDemo />
+  return (
+    <Layout style={{ minHeight: '100vh', display: 'flex' }}>
+      <SidebarComponent collapsed={collapsed} />
+      <Layout>
+        <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',width:'100%'}}>
+          <CustomProgressBar />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column',}}>
-          <div style={{ marginBottom: '10px'}}>
-            <BarChart />
-          </div>
-          <div>
-            <PieChartComponent/>
-          </div>
+        <div>
+          <CustomLineChart />
         </div>
-      </Content>
+        <Content
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+            overflow: 'auto',
+          }}
+        >
+          <div className="data-grid" style={{ flex: 1, marginRight: '20px', padding: '20px', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+            <DataGridPremiumDemo />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', }}>
+            <div style={{ marginBottom: '10px' }}>
+              <BarChart />
+            </div>
+            <div>
+              <PieChartComponent />
+            </div>
+          </div>
+        </Content>
+      </Layout>
     </Layout>
-  </Layout>
-);
-
-  
+  );
 };
 
 export default Graphic;

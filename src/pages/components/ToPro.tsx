@@ -1,79 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
-// Define la interfaz para describir la estructura de los objetos en el array
-interface ProgressData {
-  name: string;
-  value: number;
-}
+const ProgressBars = () => {
+  const [totalAceptados, setTotalAceptados] = useState(0);
+  const [totalColumnaTotal, setTotalColumnaTotal] = useState(0);
 
-interface GoalData {
-  state: number;
-  Goal: number;
-  // Otros campos si existen
-}
+  const fetchData = React.useCallback(() => {
+    fetch('/api/graPro')
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Error al obtener los datos de la API');
+      })
+      .then(responseData => {
+        const { data } = responseData;
+        const { total_aceptados, total_columna_total } = data[0];
+        setTotalAceptados(total_aceptados);
+        setTotalColumnaTotal(total_columna_total);
+      })
+      .catch(error => {
+        console.error('Error al obtener datos de la API:', error);
+      });
+  }, []);
 
-const ProgressBarChart = () => {
-  const [progressData, setProgressData] = useState<ProgressData[]>([]); // Define el tipo de progressData como ProgressData[]
-
-  const fetchData = async () => {
-    try {
-      // Obtener los datos de las metas totales con estado 1
-      const totalResponse = await fetch('/api/databaseET');
-      const totalResult = await totalResponse.json();
-      
-      // Filtrar el array usando la interfaz GoalData
-      const totalData = totalResult.data.filter((item: GoalData) => item.state === 1);
-      
-      // Obtener los datos de las metas aceptadas con estado 1
-      const acceptedResponse = await fetch('/api/DB');
-      const acceptedResult = await acceptedResponse.json();
-      const acceptedData = acceptedResult.data.filter((item: GoalData) => item.state === 1);
-
-      // Calcular el porcentaje de metas aceptadas
-      const totalGoals = totalData.reduce((sum: number, item: GoalData) => sum + item.Goal, 0);
-      const acceptedGoals = acceptedData.reduce((sum: number, item: GoalData) => sum + item.state, 0);
-      const progressPercentage = totalGoals === 0 ? 0 : (acceptedGoals / totalGoals) * 100;
-
-      console.log('Total de metas:', totalGoals);
-      console.log('Metas aceptadas:', acceptedGoals);
-      console.log('Porcentaje de progreso:', progressPercentage);
-
-      setProgressData([{ name: 'Progreso', value: progressPercentage }]);
-    } catch (error) {
-      console.error('Error al procesar datos:', error);
-    }
-  };
-
-  useEffect(() => {
-    // Realizar la primera consulta al cargar el componente
+  React.useEffect(() => {
     fetchData();
 
-    // Configurar una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
     const pollingInterval = setInterval(() => {
       fetchData();
     }, 5000);
 
     return () => {
-      clearInterval(pollingInterval); // Limpiar el intervalo al desmontar el componente
+      clearInterval(pollingInterval);
     };
   }, []);
 
+  const porcentaje = (totalAceptados * 100) / totalColumnaTotal;
+  const barraColor = porcentaje < 50 ? '#f44336' : porcentaje < 80 ? '#ffc107' : '#4caf50';
+  const barraAncho = `${Math.min(porcentaje, 100)}%`;
+
   return (
-    <BarChart width={400} height={100} data={progressData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" hide />
-      <YAxis type="number" domain={[0, 100]} hide />
-      <Tooltip />
-      <Legend />
-      <Bar
-        dataKey="value"
-        fill="rgba(75, 192, 192, 0.6)"
-        label={{ position: 'insideTop', content: ({ value }) => `${value}%` }} // Envuelve el contenido dentro de una función
-        animationBegin={0}
-      />
-    </BarChart>
+    <div style={{ textAlign: 'center' }}>
+      <h4 style={{ marginBottom: '10px' }}>Progreso de Aceptados</h4>
+      <div
+        className="progress-bar"
+        style={{
+          width: '100%',
+          height: '20px',
+          border: '1px solid #ccc',
+          borderRadius: '5px',
+          backgroundColor: '#f0f0f0',
+          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <div
+          className="progress"
+          style={{
+            width: barraAncho,
+            height: '100%',
+            borderRadius: '5px',
+            backgroundColor: barraColor,
+          }}
+        ></div>
+      </div>
+      <p style={{ marginTop: '5px' }}>{`${porcentaje.toFixed(2)}%`}</p>
+    </div>
   );
+  
 };
 
-export default ProgressBarChart;
+export default ProgressBars;

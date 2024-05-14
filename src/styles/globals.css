@@ -122,3 +122,16 @@ body {
   font-size: 16px;
   line-height: 1.4;
 }
+
+.progress-bar {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.progress {
+  height: 20px;
+  background-color: #007bff;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
