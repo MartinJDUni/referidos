@@ -45,7 +45,7 @@ const CustomBarChart = () => {
       flexDirection: 'column', alignItems: 'center', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
     }}>
       <div style={{ textAlign: 'center' }}>
-        <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de empleado por tarea</h3>
+        <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de tarea por puesto</h3>
       </div>
       <div style={{ width: '100%', maxWidth: '600px' }}>
         <BarChart width={300} height={190} data={chartData}>

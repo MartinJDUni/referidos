@@ -41,7 +41,7 @@ const ProgressBars = () => {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <h4 style={{ marginBottom: '10px' }}>Progreso de Aceptados</h4>
+      <h4 style={{ marginBottom: '10px' }}>Progreso de Sede</h4>
       <div
         className="progress-bar"
         style={{
