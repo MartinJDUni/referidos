@@ -1,10 +1,9 @@
 import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createConnection } from 'mysql2/promise';
 
+// Función para conectarse a la base de datos
 export async function connectToDatabase() {
-  let connection = null; // Variable definida fuera del bloque try
-
   try {
-    connection = await createConnection({
+    const connection = await createConnection({
       host: 'localhost',
       user: 'root',
       password: '',
@@ -17,14 +16,12 @@ export async function connectToDatabase() {
     throw new Error('Error al conectar con la base de datos');
   }
 }
-
-
-export default async (req: { method: string; body: { name: any; description: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; insertedId?: any; }): void; new(): any; }; }; }) => {
+// Endpoint principal
+export default async (req: { method: string; body: { task: any; description: any; status: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { data?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; insertedId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'GET') {
-    const connection = await connectToDatabase();
-    
+    // Manejo de solicitud GET
     try {
-      // Realiza la consulta SQL deseada
+      const connection = await connectToDatabase();
       const [rows] = await connection.execute('SELECT * FROM task');
       connection.end();
       res.status(200).json({ data: rows });
@@ -33,26 +30,28 @@ export default async (req: { method: string; body: { name: any; description: any
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
   } else if (req.method === 'POST') {
-    const { name, description } = req.body; // Asume que estás enviando datos de nombre y descripción en el cuerpo de la solicitud POST.
+    // Manejo de solicitud POST
+    const { task, description, status } = req.body;
 
-    if (!name || !description) {
-      res.status(400).json({ error: 'Faltan datos obligatorios' });
+    if (!task || !description) {
+      res.status(400).json({ error: 'Faltan datos obligatorios: task y description son obligatorios' });
       return;
     }
 
-    const connection = await connectToDatabase();
-
     try {
-      // Realiza la inserción de datos en la base de datos
+      const connection = await connectToDatabase();
       const [result] = await connection.execute(
-        'INSERT INTO task (Name, Descrition,state) VALUES (?, ?, ?)',
-        [name, description,1]
+        'INSERT INTO task (task, description, status) VALUES (?, ?, ?)',
+        [task, description, status || 1] // Utilizamos status o establecemos 1 como valor predeterminado
       );
       connection.end();
-      res.status(201);
+      res.status(201).json({ message: 'Tarea creada exitosamente', insertedId: result.insertId });
     } catch (error) {
       console.error('Error al insertar datos en la base de datos:', error);
       res.status(500).json({ error: 'Error al insertar datos en la base de datos' });
     }
+  } else {
+    // Manejo de otros métodos HTTP no soportados
+    res.status(405).json({ error: 'Método HTTP no permitido' });
   }
 };

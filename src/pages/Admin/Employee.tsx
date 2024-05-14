@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Button, Modal, Select, Spin, Form, Input } from 'antd';
+import { Layout, Button, Modal, Select, Spin, Form, Input, message } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
 import Tabla from '../components/tableEmployee';
@@ -61,7 +61,7 @@ const Employee: React.FC = () => {
       });
       const result = await response.json();
       console.log('Trabajador guardado exitosamente:', result);
-      setSuccessMessage('Trabajador añadido exitosamente.');
+      message.success('Trabajador añadido exitosamente.');
     } catch (error) {
       console.error('Error al guardar el trabajador:', error);
       setError('Error al guardar el trabajador. Inténtalo de nuevo más tarde.');
