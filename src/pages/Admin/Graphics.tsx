@@ -3,8 +3,9 @@ import { Layout, Modal, Select, DatePicker, Button, Input } from 'antd';
 import HeaderComponent from "@/pages/components/header";
 import SidebarComponent from "@/pages/components/SideBars";
 import DataGridPremiumDemo from '@/pages/components/tablaET';
-import BarChart from '../components/graBar';
-import CustomBarChart from '../components/graPie';
+import BarChart from '../components/graBarTotal';
+import CustomLineChart from '../components/graDate';
+import PieChartComponent from '../components/graPie';
 import ProgressBarChart from '../components/ToPro';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -139,6 +140,7 @@ const Graphic: React.FC = () => {
     marginBottom: '15px',
   };
 
+<<<<<<< Updated upstream
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <SidebarComponent collapsed={collapsed} />
@@ -227,11 +229,45 @@ const Graphic: React.FC = () => {
           </div>
           <div className="data-grid" style={{ marginTop: '70px', padding: '50px', backgroundColor: 'white', marginBottom: '10px' }}>
             <DataGridPremiumDemo />
+=======
+return (
+  <Layout style={{ minHeight: '100vh', display: 'flex' }}>
+    <SidebarComponent collapsed={collapsed} />
+    <Layout>
+      <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
+      <div>
+        <CustomLineChart/>
+      </div>
+      <Content
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-start',
+          margin: '24px 16px',
+          padding: 24,
+          minHeight: 280,
+          overflow: 'auto',
+        }}
+      >
+        <div className="data-grid" style={{flex: 1, marginRight: '20px', padding: '20px', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+          <DataGridPremiumDemo />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column',}}>
+          <div style={{ marginBottom: '10px'}}>
+            <BarChart />
+>>>>>>> Stashed changes
           </div>
-        </Content>
-      </Layout>
+          <div>
+            <PieChartComponent/>
+          </div>
+        </div>
+      </Content>
     </Layout>
-  );
+  </Layout>
+);
+
+  
 };
 
 export default Graphic;

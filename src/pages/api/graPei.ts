@@ -23,6 +23,7 @@ export default async (req: { method: string; body: { id: any; }; }, res: { statu
     if (req.method === 'GET') {
   const connection = await connectToDatabase();
 
+<<<<<<< Updated upstream:src/pages/api/databaseET.ts
   try {
     // Realiza la consulta SQL para obtener datos de empleado y nombre del rol
     const query = `
@@ -38,6 +39,20 @@ export default async (req: { method: string; body: { id: any; }; }, res: { statu
       FROM employeespertask et
       JOIN employee e ON et.Idemployee = e.Id
       JOIN task t ON et.Idtask = t.Id;            
+=======
+    try {
+      const query = `
+        SELECT 
+            e.id AS id_empleado, 
+            e.name AS nombre_empleado, 
+            COUNT(CASE WHEN c.statusTask = 'ACEPTADO' THEN 1 ELSE NULL END) AS total_tareas_aceptadas
+        FROM 
+            employee e
+        JOIN 
+            customerperemployee c ON e.id = c.idEmployee
+        GROUP BY 
+            e.id, e.name;
+>>>>>>> Stashed changes:src/pages/api/graPei.ts
     `;
     const [rows] = await connection.execute(query);
     connection.end();
@@ -46,6 +61,7 @@ export default async (req: { method: string; body: { id: any; }; }, res: { statu
     console.error('Error al consultar la base de datos:', error);
     res.status(500).json({ error: 'Error al consultar la base de datos' });
   }
+<<<<<<< Updated upstream:src/pages/api/databaseET.ts
 }
 else if (req.method === 'PUT') {
         const { id } = req.body;
@@ -72,4 +88,6 @@ else if (req.method === 'PUT') {
           res.status(500).json({ error: 'Error al actualizar el estado en la base de datos' });
         }
       }
+=======
+>>>>>>> Stashed changes:src/pages/api/graPei.ts
 };

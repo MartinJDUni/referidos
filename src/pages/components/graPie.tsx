@@ -1,121 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Tooltip, Legend, Cell } from 'recharts';
 
-// Define tipos para los datos
-interface TaskData {
-  TaskName: string;
-  Total: number;
+// Definir el tipo de los datos
+interface PieData {
+    name: string;
+    value: number;
 }
 
-const CustomBarChart = () => {
-  const [totalChartData, setTotalChartData] = useState<TaskData[]>([]);
-  const [completedChartData, setCompletedChartData] = useState<TaskData[]>([]);
+const PieChartComponent = () => {
+    const [data, setData] = useState<PieData[]>([]); // Usar el tipo definido
 
-  const fetchData = async () => {
-    try {
-      // Obtener el total de metas por tarea
-      const totalResponse = await fetch('/api/databaseET');
-      if (totalResponse.ok) {
-        const totalResult = await totalResponse.json();
+    useEffect(() => {
+        fetchData();
+        const pollingInterval = setInterval(fetchData, 5000);
 
-        const totalData = totalResult.data;
+        return () => {
+            clearInterval(pollingInterval);
+        };
+    }, []);
 
-        // Filtrar solo los elementos con estado 1
-        const filteredTotalData = totalData.filter((item: { state: number }) => item.state === 1);
-
-        // Agrupar los datos por tarea y sumar las metas
-        const groupedTotalData = filteredTotalData.reduce((accumulator: TaskData[], current: { TaskName: string; Goal: number }) => {
-          const existingItem = accumulator.find(item => item.TaskName === current.TaskName);
-
-          if (existingItem) {
-            existingItem.Total += current.Goal;
-          } else {
-            accumulator.push({
-              TaskName: current.TaskName,
-              Total: current.Goal
-            });
-          }
-
-          return accumulator;
-        }, []);
-
-        setTotalChartData(groupedTotalData);
-      } else {
-        console.error('Error al obtener datos totales de la API');
-      }
-
-      // Obtener el total de metas completadas (estado "ACEPTADO") por tarea
-      const completedResponse = await fetch('/api/DB');
-      if (completedResponse.ok) {
-        const completedResult = await completedResponse.json();
-
-        const completedData = completedResult.data;
-
-        // Filtrar solo los elementos con estado 1
-        const filteredCompletedData = completedData.filter((item: { state: number }) => item.state === 1);
-
-        // Agrupar los datos por tarea y sumar las metas completadas
-        const groupedCompletedData = filteredCompletedData.reduce((accumulator: TaskData[], current: { TaskName: string; Goal: number }) => {
-          const existingItem = accumulator.find(item => item.TaskName === current.TaskName);
-
-          if (existingItem) {
-            existingItem.Total += current.Goal;
-          } else {
-            accumulator.push({
-              TaskName: current.TaskName,
-              Total: current.Goal
-            });
-          }
-
-          return accumulator;
-        }, []);
-
-        setCompletedChartData(groupedCompletedData);
-      } else {
-        console.error('Error al obtener datos de tareas completadas de la API');
-      }
-    } catch (error) {
-      console.error('Error al procesar datos:', error);
-    }
-  };
-
-  useEffect(() => {
-    // Realizar la primera consulta al cargar el componente
-    fetchData();
-
-    // Configurar una consulta periódica cada 5 segundos (ajusta el intervalo según tus necesidades)
-    const pollingInterval = setInterval(() => {
-      fetchData();
-    }, 5000);
-
-    return () => {
-      clearInterval(pollingInterval); // Limpiar el intervalo al desmontar el componente
+    const fetchData = async () => {
+        try {
+            const response = await fetch('/api/graPei');
+            if (response.ok) {
+                const result = await response.json();
+                const formattedData = result.data.map((item: { nombre_empleado: any; total_tareas_aceptadas: any; }) => ({
+                    name: item.nombre_empleado,
+                    value: item.total_tareas_aceptadas,
+                }));
+                setData(formattedData);
+            } else {
+                console.error('Error al obtener datos del servidor');
+            }
+        } catch (error) {
+            console.error('Error al procesar datos:', error);
+        }
     };
-  }, []);
 
-  // Combinar la información de total y completado
-  const combinedChartData = totalChartData.map(item => ({
-    TaskName: item.TaskName,
-    Total: item.Total,
-    Completed: completedChartData.find(completedItem => completedItem.TaskName === item.TaskName)?.Total || 0
-  }));
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-  return (
-    <div className="custom-chart-container" style={{ background: 'white', width: '800px', margin: '20px auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ textAlign: 'center' }}>
-        <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de meta por tarea</h3>
-      </div>
-      <BarChart width={600} height={380} data={combinedChartData}>
-        <CartesianGrid stroke="transparent" />
-        <XAxis dataKey="TaskName" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="Total" fill="#D71313" name="Total de Metas por Tarea" /> {/* Cambiar color a amarillo */}
-        <Bar dataKey="Completed" fill="#3F51B5" name="Metas Completadas por Tarea" /> {/* Cambiar color a índigo */}
-      </BarChart>
-    </div>
-  );
+    // Función para calcular el porcentaje
+    const getPercentage = (value: number) => ((value / data.reduce((acc, cur) => acc + cur.value, 0)) * 100).toFixed(2);
+
+    return (
+        <div style={{ background: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{ textAlign: 'center' }}>
+                <h3 style={{ fontSize: '20px', margin: '0' ,paddingBottom: '5px'}}>Gráfica de porcentaje por empleado</h3>
+            </div>
+            <PieChart width={300} height={230}>
+                <Pie
+                    data={data}
+                    cx={150}
+                    cy={100}
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, value }) => `(${getPercentage(value)}%)`}
+                >
+                    {data.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+            </PieChart>
+        </div>
+    );
 };
 
-export default CustomBarChart;
+export default PieChartComponent;

@@ -79,9 +79,16 @@ export default function DataGridPremiumDemo() {
       ),
     },
     { field: 'id', headerName: 'Id', width: 50 },
+<<<<<<< Updated upstream
     { field: 'Ename', headerName: 'Nombre', width: 150 },
     { field: 'Tname', headerName: 'Tarea', width: 150 },
     { field: 'goal', headerName: 'Meta', width: 80 },
+=======
+    { field: 'nombre_empleado', headerName: 'Nombre', width: 150 },
+    { field: 'rol_empleado', headerName: 'Tarea', width: 150 },
+    { field: 'total_tareas', headerName: 'Meta', width: 80 },
+    { field: 'aceptadas', headerName: 'Aceptadas', width: 80 },
+>>>>>>> Stashed changes
     {
       field: 'TaskCount',
       headerName: 'Completados',
@@ -145,50 +152,13 @@ export default function DataGridPremiumDemo() {
   ];
 
   const handleEditRow = (id: any) => {
-    setEditingRowId(id);
-    setOpen(true);
-
-    const editedRow = data.find((row) => row.id === id);
-    setEditedFields(editedRow);
   };
 
   const handleEditClose = () => {
-    setOpen(false);
-    setEditingRowId(null);
-    setEditedFields({});
   };
 
   const handleSaveEdit = async () => {
-    try {
-      const response = await fetch('/api/databaseETedit', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: editingRowId,
-          goal: editedFields.goal,
-          start: editedFields.start,
-          final: editedFields.final,
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update data: ${response.statusText}`);
-      }
-
-      setData((prevData) =>
-        prevData.map((row) =>
-          row.id === editingRowId ? { ...row, ...editedFields } : row
-        )
-      );
-
-      handleEditClose();
-
-      console.log('Changes saved successfully');
-    } catch (error) {
-      console.error('Error saving changes:', error);
-    }
   };
 
   const handleReactivateRow = async (id: any) => {
@@ -221,6 +191,7 @@ export default function DataGridPremiumDemo() {
     }
   };
 
+<<<<<<< Updated upstream
   const fetchData = () => {
     const promises = [
       fetch('/api/databaseET').then((response) => response.json()),
@@ -262,6 +233,21 @@ export default function DataGridPremiumDemo() {
         });
 
         setData(finalData);
+=======
+  const fetchData = React.useCallback(() => {
+    fetch('/api/graTabla')
+      .then((response) => response.json())
+      .then((resultET) => {
+        const mappedDataET = resultET.data.map((row: any) => ({
+          id: row.id_empleado,
+          nombre_empleado: row.nombre_empleado,
+          rol_empleado: row.rol_empleado,
+          total_tareas: row.total_tareas,
+          aceptadas: row.tareas_aceptadas,
+          tareas_aceptadas: row.tareas_aceptadas/(row.total_tareas/0.8)*100,
+        }));
+        setData(mappedDataET);
+>>>>>>> Stashed changes
         setLoading(false);
       })
       .catch((error) => {
@@ -270,15 +256,18 @@ export default function DataGridPremiumDemo() {
       });
   };
 
+
   React.useEffect(() => {
     fetchData();
+  
     const pollingInterval = setInterval(() => {
       fetchData();
     }, 5000);
-
+  
     return () => {
       clearInterval(pollingInterval);
     };
+<<<<<<< Updated upstream
   }, [showStateZero]);
 
   return (
@@ -291,6 +280,13 @@ export default function DataGridPremiumDemo() {
           {showStateZero ? ' Ver Activos' : 'Ver Inactivos'}
         </button>
       </div>
+=======
+  }, []); 
+  
+
+  return (
+    <Box sx={{ height: 520, width: '100%' ,borderRadius: '10px',boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'}}>
+>>>>>>> Stashed changes
       <DataGrid
         rows={data}
         columns={columns}
