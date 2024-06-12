@@ -11,13 +11,14 @@ const Login: FC = () => {
   useEffect(() => {
     // Verifica si el usuario está autenticado al cargar la página
     const storedUserId = localStorage.getItem('userId');
-    const storedUserRole = localStorage.getItem('userRole'); // Cambiado a 'userRole'
+    const storedUserRole = localStorage.getItem('userRole'); 
 
     if (storedUserId) {
-      if (storedUserRole === '2') { // Comparación con cadena '2'
-        router.push('/Employee/InicioEmployee');
-      } else {
+      if (storedUserRole === '9') { 
         router.push('/Admin/Graphics');
+        
+      } else {
+        router.push('/Employee/InicioEmployee');
       }
     }
   }, []);

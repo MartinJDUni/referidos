@@ -44,27 +44,29 @@ const PieChartComponent = () => {
 
     return (
         <div style={{ background: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
-            <div style={{ textAlign: 'center' }}>
-                <h3 style={{ fontSize: '20px', margin: '0' ,paddingBottom: '5px'}}>Gráfica de porcentaje por empleado</h3>
+            <div style={{ padding: '20px' }}>
+                <div style={{ textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de porcentaje por empleado</h3>
+                </div>
+                <PieChart width={300} height={230}>
+                    <Pie
+                        data={data}
+                        cx={150}
+                        cy={100}
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, value }) => `(${getPercentage(value)}%)`}
+                    >
+                        {data.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                </PieChart>
             </div>
-            <PieChart width={300} height={230}>
-                <Pie
-                    data={data}
-                    cx={150}
-                    cy={100}
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, value }) => `(${getPercentage(value)}%)`}
-                >
-                    {data.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-            </PieChart>
         </div>
     );
 };

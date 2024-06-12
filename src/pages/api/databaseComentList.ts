@@ -10,7 +10,6 @@ export async function connectToDatabase() {
       password: '',
       database: 'refb',
     });
-    console.log('Conexión exitosa a la base de datos MySQL');
     return connection;
   } catch (error) {
     console.error('Error al conectar con la base de datos:', error);
@@ -30,7 +29,7 @@ export default async (req: { method: string; body: { id: any; newComment: any; }
   
       try {
         const addCommentQuery = `
-          INSERT INTO commentperemployee (Idcustomerperemployee, comment, state)
+          INSERT INTO commentperemployee (idEmpClie, comment, stateView)
           VALUES (?, ?, ?);
         `;
         const [addResult] = await connection.execute(addCommentQuery, [id, newComment, 1]);

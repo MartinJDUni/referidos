@@ -145,7 +145,7 @@ const Graphic: React.FC = () => {
       <SidebarComponent collapsed={collapsed} />
       <Layout>
         <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',width:'100%'}}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           <CustomProgressBar />
         </div>
         <div>

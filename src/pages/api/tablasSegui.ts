@@ -24,13 +24,11 @@ export default async (req: { method: string; }, res: { status: (arg0: number) =>
     const connection = await connectToDatabase();
 
     try {
-      // Realiza una consulta SQL que incluye uniones para obtener los nombres
       const query = `
-        SELECT cpe.Id, cl.Name AS ClientName, e.Name AS EmployeeName, st.State AS StateTaskName, cpe.state, cpe.date
+        SELECT cpe.id, cl.name AS ClientName, e.Name AS EmployeeName, cpe.statusTask, cpe.date,cpe.status
         FROM customerperemployee cpe
         INNER JOIN client cl ON cpe.Idclient = cl.Id
-        INNER JOIN employee e ON cpe.Idemployee = e.Id
-        INNER JOIN statetask st ON cpe.Idstatetask = st.Id;
+        INNER JOIN employee e ON cpe.idEmployee = e.id;
       `;
       const [rows] = await connection.execute(query);
       connection.end();

@@ -32,11 +32,10 @@ export default async (req: { method: string; query: { id: any; }; body: { commen
     try {
       // Realiza la consulta SQL para obtener los comentarios relacionados con el ID proporcionado
       const query = `
-        SELECT c.Id, c.Idcustomerperemployee, c.comment, c.state
+        SELECT c.Id, c.comment, c.stateView
         FROM commentperemployee c
-        WHERE c.Idcustomerperemployee = ?;
+        WHERE c.idEmpClie = ?;
       `;
-
       const [rows] = await connection.execute(query, [id]);
       connection.end();
       res.status(200).json({ data: rows });
@@ -57,7 +56,7 @@ export default async (req: { method: string; query: { id: any; }; body: { commen
       // Realiza la consulta SQL para actualizar el estado del comentario
       const updateQuery = `
         UPDATE commentperemployee
-        SET state = ?
+        SET stateView = ?
         WHERE Id = ?;
       `;
 

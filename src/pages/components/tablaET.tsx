@@ -76,7 +76,7 @@ export default function DataGridPremiumDemo() {
     },
     { field: 'id', headerName: 'Id', width: 50 },
     { field: 'nombre_empleado', headerName: 'Nombre', width: 150 },
-    { field: 'rol_empleado', headerName: 'Tarea', width: 150 },
+    { field: 'rol_empleado', headerName: 'Rol', width: 150 },
     { field: 'total_tareas', headerName: 'Meta', width: 80 },
     { field: 'aceptadas', headerName: 'Aceptadas', width: 80 },
     {
@@ -94,7 +94,7 @@ export default function DataGridPremiumDemo() {
               variant="determinate"
               value={params.value || 0}
               sx={{
-                width: '100%',
+                width: '80%',
                 height: 20,
                 borderRadius: 4,
                 backgroundColor: background,
@@ -162,7 +162,7 @@ export default function DataGridPremiumDemo() {
           rol_empleado: row.rol_empleado,
           total_tareas: row.total_tareas,
           aceptadas: row.tareas_aceptadas,
-          tareas_aceptadas: row.tareas_aceptadas/(row.total_tareas/0.8)*100,
+          tareas_aceptadas: row.tareas_aceptadas*100/row.total_tareas,
         }));
         setData(mappedDataET);
         setLoading(false);

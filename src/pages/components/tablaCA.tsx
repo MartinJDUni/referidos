@@ -9,6 +9,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
   const [data, setData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [showStateZero, setShowStateZero] = React.useState(false);
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<any[]>([]);
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'Id', width: 50 },
@@ -26,10 +27,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
                   return 'cancelledCell';
               case 'ACEPTADO':
                   return 'acceptedCell';
-              case 'EN PROCESO':
-                  return 'inProcessCell';
-              case 'RECHAZADO':
-                  return 'rejectedCell';
               default:
                   return '';
           }
@@ -62,24 +59,26 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
 
   const fetchData = () => {
     const promises = [
-      fetch('/api/databaseEC').then((response) => response.json()),
+      fetch('/api/tablasSegui').then((response) => response.json()),
     ];
 
     Promise.all(promises)
       .then((results) => {
         const [result] = results;
+        console.log(results);
 
-        const filteredDataET = result.data.filter((row: { state: number; }) =>
-          showStateZero ? row.state === 0 : row.state === 1
+        const filteredDataET = result.data.filter((row: { status: number; }) =>
+          showStateZero ? row.status === 0 : row.status === 1
         );
-        const mappedData = filteredDataET.map((row: { Id: any; ClientName: any; EmployeeName: any; StateTaskName: any; date: string | number | Date; state: any; }) => ({
-          id: row.Id,
+        const mappedData = filteredDataET.map((row: { id: any; ClientName: any; EmployeeName: any; statusTask: any; date: string | number | Date; status: any; }) => ({
+          id: row.id,
           client: row.ClientName,
           emp: row.EmployeeName,
-          statetask: row.StateTaskName,
+          statetask: row.statusTask,
           start: new Date(row.date),
-          state: row.state,
+          state: row.status,
         }));
+        console.log(mappedData);
         setData(mappedData);
         setLoading(false);
       })
@@ -100,8 +99,8 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
     };
   }, [showStateZero]);
   return (
-    <Box sx={{ height: 520, width: '100%' }}>
-      <div>
+    <Box sx={{ height: '90%', width: '100%' }}>
+      <div style={{padding:'20px'}}>
         <button onClick={() => setShowStateZero(!showStateZero)}>
           {showStateZero ? ' Ver Activos' : 'Ver no activo'}
         </button>
@@ -110,6 +109,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
         rows={data}
         columns={columns}
         loading={loading}
+        rowSelectionModel={rowSelectionModel}
         components={{
           Toolbar: (props) => (
             <div>
@@ -117,6 +117,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
             </div>
           ),
         }}
+        getRowId={(row) => row.id}
       />
     </Box>
   );

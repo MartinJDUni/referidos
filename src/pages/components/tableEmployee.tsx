@@ -81,7 +81,7 @@ export default function DataGridPremiumDemo() {
 
   const handleSaveChanges = async (rowData: EmployeeData) => {
     try {
-      const { id, nameemployee, pass, email, status } = rowData; // Cambio 'state' a 'status'
+      const { id, nameemployee, pass, email, status } = rowData;
 
       const requestBody = { id, name: nameemployee, password: pass, email };
 
@@ -166,15 +166,7 @@ export default function DataGridPremiumDemo() {
   }, [showStateZero]);
 
   return (
-    <Box sx={{ height: 520, width: '100%' }}>
-      <div>
-        <button
-          onClick={() => setShowStateZero(!showStateZero)}
-          style={{ backgroundColor: showStateZero ? 'green' : 'red', color: 'white' }}
-        >
-          {showStateZero ? ' Ver Activos' : 'Ver Inactivos'}
-        </button>
-      </div>
+    <Box sx={{ height: '100%', width: '100%' ,borderRadius: '10px',boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'}}>
       <DataGrid
         rows={data}
         columns={columns}

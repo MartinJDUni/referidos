@@ -13,7 +13,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 interface Comment {
   Id: number;
   hidden: boolean;
-  state: number;
+  stateView: number;
   senderName: string;
   timestamp: string;
   comment: string;
@@ -26,19 +26,18 @@ const CommentList = ({ id }: { id: number }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`/api/databaseCEP?id=${id}`);
+      const data = await response.json();
+      setComments(data.data);
+    } catch (error) {
+      console.error('Error al obtener datos de la API:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/databaseCEP?id=${id}`);
-        const data = await response.json();
-        setComments(data.data);
-      } catch (error) {
-        console.error('Error al obtener datos de la API:', error);
-      }
-    };
-
     fetchData();
-
     const intervalId = setInterval(() => {
       fetchData();
     }, 3000);
@@ -49,18 +48,13 @@ const CommentList = ({ id }: { id: number }) => {
   }, [id]);
 
   const toggleSelectComment = (commentId: number) => {
-    const isSelected = selectedComments.includes(commentId);
     setSelectedComments((prevSelected) =>
-      isSelected ? prevSelected.filter((id) => id !== commentId) : [...prevSelected, commentId]
+      prevSelected.includes(commentId) ? prevSelected.filter((id) => id !== commentId) : [...prevSelected, commentId]
     );
   };
 
   const toggleSelectAll = () => {
-    if (allSelected) {
-      setSelectedComments([]);
-    } else {
-      setSelectedComments(comments.map((comment) => comment.Id));
-    }
+    setSelectedComments(allSelected ? [] : comments.map((comment) => comment.Id));
     setAllSelected(!allSelected);
   };
 
@@ -77,6 +71,7 @@ const CommentList = ({ id }: { id: number }) => {
           });
         })
       );
+      fetchData(); // Refresh comments after marking them
     } catch (error) {
       console.error('Error al marcar comentarios:', error);
     }
@@ -94,9 +89,6 @@ const CommentList = ({ id }: { id: number }) => {
 
   const agregarComentarioYCerrarModal = async () => {
     try {
-      // Limpiar el campo de texto antes de realizar la solicitud para agregar el nuevo comentario
-      setNewComment('');
-
       await fetch(`/api/databaseComentList`, {
         method: 'POST',
         headers: {
@@ -105,12 +97,8 @@ const CommentList = ({ id }: { id: number }) => {
         body: JSON.stringify({ id, newComment }),
       });
 
-      // Obtener la lista actualizada de comentarios después de agregar uno nuevo
-      const response = await fetch(`/api/databaseCEP?id=${id}`);
-      const data = await response.json();
-      setComments(data.data);
-
-      // Cierra el modal después de agregar el comentario
+      setNewComment('');
+      fetchData(); // Refresh comments after adding new one
       closeModal();
     } catch (error) {
       console.error('Error al agregar comentario:', error);
@@ -118,8 +106,6 @@ const CommentList = ({ id }: { id: number }) => {
   };
 
   const handleBack = () => {
-    // Lógica para retroceder, por ejemplo, redirigir a otra página o ejecutar alguna acción de retroceso
-    // Puedes personalizar esta función según tus necesidades
     console.log("Atrás");
   };
 
@@ -144,38 +130,42 @@ const CommentList = ({ id }: { id: number }) => {
       <Button onClick={openModal}>Agregar Comentario</Button>
       <Button onClick={handleBack}>Ir al listado de tareas</Button>
       <ul className="comment-list">
-        {comments.map((comment) => (
-          <li
-            key={comment.Id}
-            className={`comment ${comment.hidden ? 'hidden' : ''} ${
-              comment.state === 0 ? 'read-comment' : 'unread-comment'
-            }`}
-          >
-            <div className={`comment-header ${comment.state === 1 ? 'bold-text' : ''}`}>
-              <div className="comment-sender">
-                <strong>{comment.senderName}</strong> <span>{comment.timestamp}</span>
+        {comments && comments.length > 0 ? (
+          comments.map((comment) => (
+            <li
+              key={comment.Id}
+              className={`comment ${comment.hidden ? 'hidden' : ''} ${
+                comment.stateView === 0 ? 'read-comment' : 'unread-comment'
+              }`}
+            >
+              <div className={`comment-header ${comment.stateView === 1 ? 'bold-text' : ''}`}>
+                <div className="comment-sender">
+                  <strong>{comment.senderName}</strong> <span>{comment.timestamp}</span>
+                </div>
+                <div className="comment-actions">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selectedComments.includes(comment.Id)}
+                        onChange={() => toggleSelectComment(comment.Id)}
+                      />
+                    }
+                    label=""
+                  />
+                </div>
               </div>
-              <div className="comment-actions">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedComments.includes(comment.Id)}
-                      onChange={() => toggleSelectComment(comment.Id)}
-                    />
-                  }
-                  label=""
-                />
-              </div>
-            </div>
-            <div className="comment-body">{comment.comment}</div>
-          </li>
-        ))}
+              <div className="comment-body">{comment.comment}</div>
+            </li>
+          ))
+        ) : (
+          <li>No hay comentarios disponibles</li>
+        )}
       </ul>
 
       <Modal open={isModalOpen} onClose={closeModal}>
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
           <TextField
-            id='Ag'
+            id='newComment'
             label="Nuevo Comentario"
             multiline
             rows={4}

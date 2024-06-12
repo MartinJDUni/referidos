@@ -46,13 +46,16 @@ export default async (req: { method: string; body: { id: any; }; },
         SELECT 
             SUM(total) AS total_columna_total
         FROM 
-            employeespertask;  
+            employeespertask a
+        JOIN
+            subtask b ON a.idSubTask = b.id
+        WHERE
+            a.status = 1 AND b.status = 1;  
       `;
       const [rowsTotalColumnaTotal] = await connection.execute<RowDataPacket[]>(queryTotalColumnaTotal);
       const total_columna_total = rowsTotalColumnaTotal[0]?.total_columna_total || 0;
 
       connection.end();
-
       res.status(200).json({ data: [{ total_aceptados, total_columna_total }] });
     } catch (error) {
       console.error('Error al consultar la base de datos:', error);
