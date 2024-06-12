@@ -44,9 +44,8 @@ export default function DataGridPremiumDemo() {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Id', width: 50 },
-    { field: 'nombre_empleado', headerName: 'Nombre', width: 150 },
-    { field: 'rol_empleado', headerName: 'Rol', width: 150 },
+    { field: 'id', headerName: 'Id', width: 60 },
+    { field: 'subtarea', headerName: 'SubTarea', width: 350 },
     { field: 'total_tareas', headerName: 'Meta', width: 80 },
     { field: 'aceptadas', headerName: 'Aceptadas', width: 80 },
     {
@@ -90,9 +89,8 @@ export default function DataGridPremiumDemo() {
       .then((response) => response.json())
       .then((resultET) => {
         const mappedDataET = resultET.data.map((row: any) => ({
-          id: row.id_empleado,
-          nombre_empleado: row.nombre_empleado,
-          rol_empleado: row.rol_empleado,
+          id: row.id_EmpPerTask,
+          subtarea: row.subtareas,
           total_tareas: row.total_tareas,
           aceptadas: row.tareas_aceptadas,
           tareas_aceptadas: row.tareas_aceptadas * 100 / row.total_tareas,

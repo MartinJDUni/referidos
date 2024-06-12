@@ -53,6 +53,7 @@ export default async (
       const queryTotalTareas = `
         SELECT 
           e.id AS id_empleado,
+          ep.id AS name_Sub,
           e.name AS nombre_empleado,
           s.subTask AS subtask,
           r.rol AS rol_empleado,
@@ -98,8 +99,8 @@ export default async (
           (tasks) => tasks.sub_tarea === employee.subtask
         );
         return {
-          id_EmpPerTask: employee.id_empleado,
-          subtareas: employee.nombre_empleado,
+          id_EmpPerTask: employee.name_Sub,
+          subtareas: employee.subtask,
           total_tareas: employee.total_tareas,
           tareas_aceptadas: matchingTasks ? matchingTasks.total_aceptados : 0,
         };
