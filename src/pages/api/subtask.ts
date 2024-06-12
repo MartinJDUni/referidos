@@ -18,7 +18,7 @@ export async function connectToDatabase() {
   }
 }
 
-export default async (req, res) => {
+export default async (req: { method: string; body: { idTask: any; subTask: any; total: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; insertedId?: number; }): void; new(): any; }; }; }) => {
   if (req.method === 'POST') {
     const { idTask, subTask, total } = req.body;
 
