@@ -38,7 +38,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<any>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedState, setSelectedState] = useState('');
+  const [selectedState, setSelectedState] = useState<any>();
   const [taskStates, setTaskStates] = useState<TaskState[]>([]);
   const [newEmployeeData, setNewEmployeeData] = useState({
     name: '',
