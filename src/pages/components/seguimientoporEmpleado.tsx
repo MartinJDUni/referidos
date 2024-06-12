@@ -38,7 +38,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<any>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedState, setSelectedState] = useState<any>();
+  const [selectedState, setSelectedState] = useState('');
   const [taskStates, setTaskStates] = useState<TaskState[]>([]);
   const [newEmployeeData, setNewEmployeeData] = useState({
     name: '',
@@ -88,7 +88,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
 
   const handleSaveChanges = async () => {
     try {
-      const isValidState = taskStates.some(state => state.id === selectedState);
+      const isValidState = taskStates.some(state => state.id === parseInt(selectedState));
       console.log(isValidState);
       if (!isValidState) {
         console.error('El estado seleccionado no es válido.');
