@@ -28,15 +28,22 @@ const Inicio: React.FC = () => {
         <HeaderComponent collapsed={collapsed} onToggle={handleToggleSidebar} />
         <Content
           style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
             margin: '24px 16px',
             padding: 24,
             minHeight: 280,
+            overflow: 'auto',
           }}
         >
           {mostrarOtroComponente && selectedCommentId !== null ? (
             <CommentList id={selectedCommentId} />
           ) : (
-            <DataGridPremiumDemo onClickVerComentarios={handleVerComentariosClick} />
+            <div className="data-grid" style={{ height:'100%',flex: 1, marginRight: '20px', padding: '20px', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+              <DataGridPremiumDemo onClickVerComentarios={handleVerComentariosClick} />
+            </div>
           )}
         </Content>
       </Layout>

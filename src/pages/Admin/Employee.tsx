@@ -99,8 +99,9 @@ const Employee: React.FC = () => {
               Agregar empleado
             </Button>
           </div>
-          <Tabla />
-
+          <div className="data-grid" style={{ flex: 1, marginRight: '20px', padding: '20px', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+            <Tabla />
+          </div>
           <Modal
             title="Agregar Trabajador"
             visible={modalVisible}
