@@ -25,18 +25,19 @@ export default async (req: { method: string; }, res: { status: (arg0: number) =>
     try {
       const query = `
         SELECT
-            r.id AS idRol,
-            r.rol AS nombreRol,
+            e.id AS idRol,
+            e.rol AS nombreRol,
             SUM(et.total) AS totalTareas
         FROM
-            employee e
+            role e
         JOIN
-            employeespertask et ON e.id = et.idEmployee
+            task t ON e.id = t.idRol
         JOIN
-            role r ON e.idRol = r.id
+            subTask et ON t.id = et.idTask
+        WHERE
+	          et.status = 1 
         GROUP BY
-            r.id, r.rol;
-  
+            e.id, e.rol;
       `;
       const [rows] = await connection.execute(query);
       connection.end();

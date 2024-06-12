@@ -42,15 +42,15 @@ const CustomBarChart = () => {
   return (
     <div className="custom-chart-container" style={{
       background: '#FFFFFF', width: '100%', maxWidth: '800px', margin: '0 auto', display: 'flex',
-      flexDirection: 'column', alignItems: 'center', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
+      flexDirection: 'column', alignItems: 'center',  borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
     }}>
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: 'center', padding: '5px' }}>
         <h3 style={{ fontSize: '20px', margin: '0' }}>Gráfica de tarea por puesto</h3>
       </div>
-      <div style={{ width: '100%', maxWidth: '600px' }}>
+      <div style={{ width: '100%',textAlign: 'center' }}>
         <BarChart width={300} height={190} data={chartData}>
-          <CartesianGrid stroke="transparent" />
-          <XAxis dataKey="nombreRol" />
+          <CartesianGrid />
+          <XAxis dataKey="nombreRol" tick={false}/>
           <YAxis />
           <Tooltip />
           <Legend />

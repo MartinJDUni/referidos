@@ -37,8 +37,9 @@ export default async (req: { method: string; body: { id: any; }; },
             customerperemployee
         WHERE
             statusTask = 'ACEPTADO'
+            AND YEAR(date) = YEAR(CURDATE()) -- Filtra por el año actual
         GROUP BY
-            date; 
+            date;
     `;
       const [rows] = await connection.execute(query);
       connection.end();
