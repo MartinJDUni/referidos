@@ -7,6 +7,12 @@ import Tabla from '../components/tablaTask';
 const { Header, Content } = Layout;
 const { Option } = Select;
 
+// Define la interfaz para los roles
+interface Role {
+  id: number;
+  rol: string;
+}
+
 const Task: React.FC = () => {
 
   const [collapsed, setCollapsed] = useState(false);
@@ -15,14 +21,13 @@ const Task: React.FC = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    // Función para cargar roles desde la API
     const fetchRoles = async () => {
       try {
-        const response = await fetch('/api/roles'); // Asegúrate de que la API de roles esté correctamente configurada
+        const response = await fetch('/api/roles');
         if (!response.ok) {
           throw new Error('Error al cargar los roles');
         }
-        const data = await response.json();
+        const data: Role[] = await response.json(); // Asegúrate de que data sea de tipo Role[]
         setRoles(data);
       } catch (error) {
         console.error('Error al cargar los roles:', error);
@@ -49,7 +54,6 @@ const Task: React.FC = () => {
   const handleSaveTask = async () => {
     try {
       const values = await form.validateFields();
-      // Realizar solicitud HTTP POST al servidor
       const response = await fetch('/api/database', {
         method: 'POST',
         headers: {
@@ -57,8 +61,8 @@ const Task: React.FC = () => {
         },
         body: JSON.stringify({
           task: values.task,
-          idRol: values.role, // Enviar el id del rol
-          status: 1, // Puedes ajustar el status aquí si es necesario
+          idRol: values.role,
+          status: 1,
           percentages: values.percentage,
         }),
       });
@@ -146,7 +150,7 @@ const Task: React.FC = () => {
                   min={0}
                   max={100}
                   formatter={value => `${value}%`}
-                  parser={value => (value ? value.replace('%', '') : '0')} // Manejar el caso de 'value' siendo 'undefined'
+                  // Elimina `parser`
                   style={{ width: '100%' }}
                 />
               </Form.Item>
