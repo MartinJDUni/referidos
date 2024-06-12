@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -13,10 +13,8 @@ const theme = createTheme({
 });
 
 export default function DataGridPremiumDemo() {
-  const [data, setData] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [showStateZero, setShowStateZero] = React.useState(false);
-
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
   const getProgressColor = (value: number) => {
@@ -46,13 +44,16 @@ export default function DataGridPremiumDemo() {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Id', width: 50, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
-    { field: 'Tname', headerName: 'Tarea', width: 150, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
-    { field: 'goal', headerName: 'Meta', width: 80, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
+    { field: 'id', headerName: 'Id', width: 50 },
+    { field: 'nombre_empleado', headerName: 'Nombre', width: 150 },
+    { field: 'rol_empleado', headerName: 'Rol', width: 150 },
+    { field: 'total_tareas', headerName: 'Meta', width: 80 },
+    { field: 'aceptadas', headerName: 'Aceptadas', width: 80 },
     {
-      field: 'TaskCount',
-      headerAlign: 'center',
+      field: 'tareas_aceptadas',
       headerName: 'Completados',
+      headerAlign: 'center',
+      align: 'center',
       width: 200,
       renderCell: (params) => {
         const { background, bar } = getProgressColor(params.value || 0);
@@ -63,121 +64,61 @@ export default function DataGridPremiumDemo() {
               variant="determinate"
               value={params.value || 0}
               sx={{
-                width: '100%',
+                width: '80%',
                 height: 20,
-                borderRadius: 4, // Bordes redondeados
+                borderRadius: 4,
                 backgroundColor: background,
                 '& .MuiLinearProgress-bar': {
                   backgroundColor: bar,
                 },
               }}
             />
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{ marginLeft: 1, fontWeight: 'bold' }}
-            >
-              {`${params.value.toFixed(2)}%`}
+            <Typography variant="body2" color="textSecondary" sx={{ marginLeft: 1 }}>
+              {typeof params.value === 'number' ? `${params.value.toFixed(2)}%` : ''}
             </Typography>
           </Box>
         );
       },
-      cellClassName: 'bold-cell',
     },
-    {
-      field: 'start',
-      headerAlign: 'center',
-      align: 'center',
-      headerName: 'Fecha de inicio',
-      width: 150,
-      valueFormatter: (params) => {
-        const date = new Date(params.value);
-        const year = date.getFullYear();
-        const month = `0${date.getMonth() + 1}`.slice(-2);
-        const day = `0${date.getDate()}`.slice(-2);
-        return `${year}-${month}-${day}`;
-      },
-      cellClassName: 'bold-cell',
-    },
-    {
-      field: 'final',
-      headerAlign: 'center',
-      align: 'center',
-      headerName: 'Fecha de final',
-      width: 150,
-      valueFormatter: (params) => {
-        const date = new Date(params.value);
-        const year = date.getFullYear();
-        const month = `0${date.getMonth() + 1}`.slice(-2);
-        const day = `0${date.getDate()}`.slice(-2);
-        return `${year}-${month}-${day}`;
-      },
-      cellClassName: 'bold-cell',
-    },
-    { field: 'state', headerName: 'Estado', width: 100, headerAlign: 'center', align: 'center', cellClassName: 'bold-cell' },
   ];
 
-  const [selectionModel, setSelectionModel] = React.useState([]);
+  const fetchData = useCallback(() => {
+    if (!userId) return;
 
-  const fetchData = () => {
-    const promises = [
-      fetch(`/api/dbprogres?employeeId=${userId}`).then((response) => response.json()),
-      fetch('/api/dbC').then((response) => response.json()),
-    ];
-
-    Promise.all(promises)
-      .then((results) => {
-        const [resultET, resultOtherAPI] = results;
-
-        const filteredDataET = resultET.data.filter((row: { state: number; }) =>
-          showStateZero ? row.state === 0 : row.state === 1
-        );
-
-        const mappedDataET = filteredDataET.map((row: { Id: any; EmployeeId: any; EmployeeName: any; TaskName: any; Goal: any; Startdate: string | number | Date; Finaldate: string | number | Date; state: any; }) => ({
-          id: row.Id,
-          EmployeeId: row.EmployeeId,
-          Ename: row.EmployeeName,
-          Tname: row.TaskName,
-          goal: row.Goal,
-          start: new Date(row.Startdate),
-          final: new Date(row.Finaldate),
-          state: row.state,
+    setLoading(true);
+    fetch(`/api/dbprogres?employeeId=${userId}`)
+      .then((response) => response.json())
+      .then((resultET) => {
+        const mappedDataET = resultET.data.map((row: any) => ({
+          id: row.id_empleado,
+          nombre_empleado: row.nombre_empleado,
+          rol_empleado: row.rol_empleado,
+          total_tareas: row.total_tareas,
+          aceptadas: row.tareas_aceptadas,
+          tareas_aceptadas: row.tareas_aceptadas * 100 / row.total_tareas,
         }));
-
-        const finalData = mappedDataET.map((rowET: { EmployeeId: any; goal: number; }) => {
-          const matchingOtherData = resultOtherAPI.data.find((otherRow: { EmployeeId: any; }) => {
-            return otherRow.EmployeeId === rowET.EmployeeId;
-          });
-
-          const taskCount = matchingOtherData?.TaskCount || 0;
-          const goal = rowET.goal || 1;
-
-          return {
-            ...rowET,
-            TaskCount: (taskCount / goal) * 100,
-            TaskIds: matchingOtherData?.TaskIds || [],
-          };
-        });
-
-        setData(finalData);
+        setData(mappedDataET);
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error al obtener datos de la base de datos:', error);
         setLoading(false);
       });
-  };
+  }, [userId]);
 
   useEffect(() => {
-    const pollingInterval = setInterval(() => {
-      console.log("Intervalo ejecutado");
+    if (userId) {
       fetchData();
-    }, 3000);
+      const pollingInterval = setInterval(() => {
+        console.log("Intervalo ejecutado");
+        fetchData();
+      }, 5000);
 
-    return () => {
-      clearInterval(pollingInterval);
-    };
-  }, [userId]);
+      return () => {
+        clearInterval(pollingInterval);
+      };
+    }
+  }, [userId, fetchData]);
 
   return (
     <ThemeProvider theme={theme}>

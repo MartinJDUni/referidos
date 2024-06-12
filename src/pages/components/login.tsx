@@ -16,7 +16,6 @@ const Login: FC = () => {
     if (storedUserId) {
       if (storedUserRole === '9') { 
         router.push('/Admin/Graphics');
-        
       } else {
         router.push('/Employee/InicioEmployee');
       }
@@ -48,10 +47,10 @@ const Login: FC = () => {
         localStorage.setItem('userRole', userData.authenticatedUser.role);
         localStorage.setItem('userName', userData.authenticatedUser.name);
 
-        if (userData.authenticatedUser.role === 2) {
-          router.push('/Employee/InicioEmployee');
-        } else {
+        if (userData.authenticatedUser.role === 9) {
           router.push('/Admin/Graphics');
+        } else {
+          router.push('/Employee/InicioEmployee');
         }
       } else {
         // Verificar si la respuesta es JSON antes de intentar analizarla
