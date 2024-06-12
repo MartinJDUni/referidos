@@ -8,9 +8,10 @@ const { Header, Content } = Layout;
 const { Option } = Select;
 
 const Task: React.FC = () => {
+
   const [collapsed, setCollapsed] = useState(false);
   const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
-  const [roles, setRoles] = useState([]);
+  const [roles, setRoles] = useState<any[]>([]);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -145,7 +146,7 @@ const Task: React.FC = () => {
                   min={0}
                   max={100}
                   formatter={value => `${value}%`}
-                  parser={value => value?.replace('%', '')}
+                  parser={value => (value ? value.replace('%', '') : '0')} // Manejar el caso de 'value' siendo 'undefined'
                   style={{ width: '100%' }}
                 />
               </Form.Item>

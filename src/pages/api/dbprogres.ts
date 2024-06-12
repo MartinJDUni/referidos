@@ -3,6 +3,7 @@ import { OkPacket, ProcedureCallPacket, ResultSetHeader, RowDataPacket, createCo
 interface EmployeeData {
   id_EmpPerTask: number;
   subtareas: string;
+  tareas: string;
   total_tareas: number;
   tareas_aceptadas: number;
 }
@@ -57,7 +58,8 @@ export default async (
           e.name AS nombre_empleado,
           s.subTask AS subtask,
           r.rol AS rol_empleado,
-          s.total AS total_tareas
+          s.total AS total_tareas,
+          m.task AS tarea
         FROM 
           employee e
         JOIN 
@@ -66,6 +68,8 @@ export default async (
           employeespertask ep ON e.id = ep.idEmployee
         JOIN 
           subtask s ON ep.idSubTask = s.id
+        JOIN 
+          task m ON s.idTask = m.id
         WHERE 
           e.id = ? AND
           e.status = 1 AND 
@@ -100,6 +104,7 @@ export default async (
         );
         return {
           id_EmpPerTask: employee.name_Sub,
+          tareas: employee.tarea,
           subtareas: employee.subtask,
           total_tareas: employee.total_tareas,
           tareas_aceptadas: matchingTasks ? matchingTasks.total_aceptados : 0,
