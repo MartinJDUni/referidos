@@ -38,10 +38,6 @@ const Login: FC = () => {
       if (response.ok) {
         // La autenticación fue exitosa
         const userData = await response.json();
-
-        console.log('Respuesta del servidor:', userData);
-        console.log('ID del Usuario:', userData.authenticatedUser.id);
-
         // Guarda userId y role en localStorage
         localStorage.setItem('userId', userData.authenticatedUser.id);
         localStorage.setItem('userRole', userData.authenticatedUser.role);

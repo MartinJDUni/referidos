@@ -18,9 +18,9 @@ export async function connectToDatabase() {
   }
 }
 
-export default async (req: { method: string; body: { Idclient: any; Idemployee: any; Idstatetask?: 3 | undefined; state?: 1 | undefined; date?: string | undefined; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; clientId?: any; }): void; new(): any; }; }; }) => {
+export default async (req: { method: string; body: {idEmpTask:any, Idclient: any; Idemployee: any; statetask: any | undefined; state?: 1 | undefined; date?: string | undefined; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; clientId?: any; }): void; new(): any; }; }; }) => {
   if (req.method === 'POST') {
-    const { Idclient, Idemployee, Idstatetask = 3, state = 1, date = new Date().toISOString() } = req.body;
+    const { Idclient, Idemployee, statetask='ACEPTADO', state = 1, date = new Date().toISOString(), idEmpTask } = req.body;
 
     if (!Idclient || !Idemployee) {
       return res.status(400).json({ error: 'Los campos Idclient e Idemployee son obligatorios.' });
@@ -30,10 +30,10 @@ export default async (req: { method: string; body: { Idclient: any; Idemployee: 
 
     try {
       const addEmployeeQuery = `
-        INSERT INTO customerperemployee (Idclient, Idemployee, Idstatetask, state, date)
+        INSERT INTO customerperemployee (Idclient, date, statusTask, status,idEmployee,idEmpTask )
         VALUES (?, ?, ?, ?, ?);
       `;
-      const [addResult] = await connection.execute(addEmployeeQuery, [Idclient, Idemployee, Idstatetask, state, date]);
+      const [addResult] = await connection.execute(addEmployeeQuery, [Idclient, date,  statetask, state, Idemployee,idEmpTask]);
 
       if ('affectedRows' in addResult && addResult.affectedRows > 0) {
         const clientId = addResult.insertId;

@@ -104,7 +104,7 @@ export default function DataGridPremiumDemo() {
               }}
             />
             <Typography variant="body2" color="textSecondary" sx={{ marginLeft: 1 }}>
-            {typeof params.value === 'number' ? `${params.value.toFixed(2)}%` : ''}
+              {typeof params.value === 'number' ? `${params.value.toFixed(2)}%` : ''}
             </Typography>
           </Box>
         );
@@ -162,7 +162,7 @@ export default function DataGridPremiumDemo() {
           rol_empleado: row.rol_empleado,
           total_tareas: row.total_tareas,
           aceptadas: row.tareas_aceptadas,
-          tareas_aceptadas: row.tareas_aceptadas*100/row.total_tareas,
+          tareas_aceptadas: row.tareas_aceptadas * 100 / row.total_tareas,
         }));
         setData(mappedDataET);
         setLoading(false);
@@ -176,19 +176,23 @@ export default function DataGridPremiumDemo() {
 
   React.useEffect(() => {
     fetchData();
-  
+
     const pollingInterval = setInterval(() => {
       fetchData();
     }, 5000);
-  
+
     return () => {
       clearInterval(pollingInterval);
     };
-  }, []); 
-  
+  }, []);
+
 
   return (
-    <Box sx={{ height: 520, width: '100%' ,borderRadius: '10px',boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'}}>
+    <div>
+      <div style={{ textAlign: 'center' }}>
+        <h3 style={{ fontSize: '20px', margin: '0' , padding:'5px'}}>Tabla de prpogres por trabajador</h3>
+      </div>
+      <Box sx={{ height: 500, width: '100%', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
       <DataGrid
         rows={data}
         columns={columns}
@@ -204,5 +208,6 @@ export default function DataGridPremiumDemo() {
         getRowId={(row) => row.id}
       />
     </Box>
+    </div>
   );
 }

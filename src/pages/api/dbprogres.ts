@@ -110,7 +110,6 @@ export default async (
           tareas_aceptadas: matchingTasks ? matchingTasks.total_aceptados : 0,
         };
       });
-      console.log({ data: combinedData });
       res.status(200).json({ data: combinedData });
     } catch (error) {
       console.error('Error al consultar la base de datos:', error);

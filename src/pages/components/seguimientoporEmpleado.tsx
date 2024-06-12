@@ -11,29 +11,43 @@ import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { SelectChangeEvent } from '@mui/material/Select'; // Importar SelectChangeEvent
+import { Form } from 'antd';
+import form from 'antd/es/form';
+import subtask from '../api/subtask';
 
 interface TaskData {
-  Id: any;
+  id: any;
   ClientName: any;
-  StateTaskName: any;
+  statusTask: any;
   date: string | number | Date;
-  state: any;
+  status: any;
+}
+interface subtask {
+  id: number;
+  task: string;
+}
+
+interface TaskState {
+  id: number;
+  state: string;
 }
 
 export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClickVerComentarios: (id: number) => void }) {
-  const [data, setData] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [data, setData] = useState<TaskData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<any>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedState, setSelectedState] = useState('');
-  const [taskStates, setTaskStates] = useState<any[]>([]);
+  const [taskStates, setTaskStates] = useState<TaskState[]>([]);
   const [newEmployeeData, setNewEmployeeData] = useState({
     name: '',
     phone: '',
     idcard: '',
+    task: '',
   });
   const [openAddEmployeeDialog, setOpenAddEmployeeDialog] = useState(false);
+  const [task, settask] = useState<subtask[]>([]); 
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
@@ -42,23 +56,20 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
   }, []);
 
   useEffect(() => {
-    const fetchData = () => {
-      fetch('/api/databaseEmployeeS')
-        .then((response) => response.json())
-        .then((result) => {
-          const mappedData = result.statetask.map((row: TaskData) => ({
-            id: row.Id,
-            state: row.StateTaskName,
-          }));
-          console.log('Datos obtenidos de la API:', mappedData);
-          setTaskStates(mappedData);
-        })
-        .catch((error) => {
-          console.error('Error al obtener datos de la base de datos:', error);
-        });
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch(`/api/databaseEmployeeS?employeeId=${userId}`);
+        if (!response.ok) {
+          throw new Error('Error al cargar los roles');
+        }
+        const data: subtask[] = await response.json();
+        settask(data);
+      } catch (error) {
+        console.error('Error al cargar los roles:', error);
+      }
     };
 
-    fetchData();
+    fetchRoles();
   }, []);
 
   const handleEditRow = (id: any) => {
@@ -71,7 +82,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
     setOpenDialog(false);
   };
 
-  const handleStateChange = (event: SelectChangeEvent<string>) => { // Corregir tipo de evento
+  const handleStateChange = (event: SelectChangeEvent<string>) => {
     setSelectedState(event.target.value);
   };
 
@@ -120,11 +131,11 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
         },
         body: JSON.stringify(newEmployeeData),
       });
-  
+
       if (response.ok) {
         const responseData = await response.json();
         const clientId = responseData.clientId;
-  
+
         const addRelationshipUrl = '/api/databaseClientID';
         const relationshipResponse = await fetch(addRelationshipUrl, {
           method: 'POST',
@@ -134,12 +145,12 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
           body: JSON.stringify({
             Idclient: clientId,
             Idemployee: userId,
-            Idstatetask: 3,
+            idEmpTask: newEmployeeData.task,
             state: 1,
             date: new Date().toISOString().split('T')[0],
           }),
         });
-  
+
         if (relationshipResponse.ok) {
           console.log('Relación agregada correctamente.');
           fetchData();
@@ -154,7 +165,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
       console.error('Error al agregar empleado:', error);
     }
   };
-  
 
   const handleNewEmployeeDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -174,11 +184,11 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
       .then((response) => response.json())
       .then((result) => {
         const mappedData = result.data.map((row: TaskData) => ({
-          id: row.Id,
+          id: row.id,
           client: row.ClientName,
-          statetask: row.StateTaskName,
+          statetask: row.statusTask,
           start: new Date(row.date),
-          state: row.state,
+          state: row.status,
         }));
         console.log(mappedData);
         setData(mappedData);
@@ -212,7 +222,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
             style={{ cursor: 'pointer', marginRight: '8px' }}
             onClick={() => handleEditRow(params.row.id)}
           />
-          
         </div>
       ),
     },
@@ -227,11 +236,6 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
           case 'CANCELADO':
             return 'cancelledCell';
           case 'ACEPTADO':
-            return 'acceptedCell';
-          case 'EN PROCESO':
-            return 'inProcessCell';
-          case 'RECHAZADO':
-            return 'rejectedCell';
           default:
             return '';
         }
@@ -249,7 +253,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
     },
     {
       field: 'start',
-      headerName: 'Fecha de inicio',
+      headerName: 'Fecha',
       width: 150,
       valueFormatter: (params) => {
         const date = new Date(params.value);
@@ -280,11 +284,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
         columns={columns}
         loading={loading}
         components={{
-          Toolbar: (props) => (
-            <div>
-              <GridToolbar {...props} />
-            </div>
-          ),
+          Toolbar: GridToolbar,
         }}
       />
       <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -346,6 +346,27 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
               style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
             />
           </div>
+          <Form.Item
+            label="Tarea"
+            name="subtask"
+            rules={[{ required: true, message: 'Por favor, seleccione una tarea' }]}
+          >
+            <Select
+              placeholder="Seleccione una tarea"
+              onChange={(value: any) => {
+                setNewEmployeeData((prevData) => ({
+                  ...prevData,
+                  role: value,
+                }));
+              }}
+            >
+              {task.map((task) => (
+                <MenuItem key={task.id} value={task.id}>
+                  {task.id} - {task.task}
+                </MenuItem>
+              ))}
+            </Select>
+          </Form.Item>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAddEmployeeDialog(false)}>Cancelar</Button>

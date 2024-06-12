@@ -50,8 +50,6 @@ export default async (req: { method: string; body: { email: any; password: any; 
         name: userRows[0].name,
         role: userRows[0].idRol,
       };
-
-      console.log('Usuario autenticado:', authenticatedUser);
       res.status(200).json({ message: 'Autenticación exitosa', authenticatedUser });
     } catch (error) {
       console.error('Error al autenticar el usuario:', error);

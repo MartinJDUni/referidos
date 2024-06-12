@@ -19,26 +19,7 @@ export async function connectToDatabase() {
 }
 
 export default async (req: { method: string; body: { id?: any; newState?: any; name?: any; phone?: any; idcard?: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { statetask?: OkPacket | RowDataPacket[] | ResultSetHeader[] | RowDataPacket[][] | OkPacket[] | ProcedureCallPacket; error?: string; message?: string; clientId?: any; }): void; new(): any; }; }; }) => {
-  if (req.method === 'GET') {
-    const connection = await connectToDatabase();
-
-    try {
-      // Realiza la consulta SQL para obtener solo el ID del empleado
-      const statetaskQuery = `
-        SELECT Id, State
-        FROM statetask;
-      `;
-      const [statetaskRows] = await connection.execute(statetaskQuery);
-      console.log(statetaskRows);
-      connection.end();
-      res.status(200).json({
-        statetask: statetaskRows,
-      });
-    } catch (error) {
-      console.error('Error al consultar la base de datos:', error);
-      res.status(500).json({ error: 'Error al consultar la base de datos' });
-    }
-  } else if (req.method === 'PUT') {
+  if (req.method === 'PUT') {
     // Si la solicitud es de tipo PUT, intenta actualizar el estado de un empleado
     const { id, newState } = req.body;
 
