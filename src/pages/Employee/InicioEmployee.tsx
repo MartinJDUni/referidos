@@ -26,7 +26,6 @@ const Inicio: React.FC = () => {
             minHeight: 280,
           }}
         >
-          
           <CustomBarChart />
         </Content>
       </Layout>

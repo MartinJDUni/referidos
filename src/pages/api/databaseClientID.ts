@@ -1,10 +1,10 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import { createConnection } from 'mysql2/promise';
 
-export async function connectToDatabase() {
-  let connection = null;
-
+// Función para conectar a la base de datos
+async function connectToDatabase() {
   try {
-    connection = await createConnection({
+    const connection = await createConnection({
       host: 'localhost',
       user: 'root',
       password: '',
@@ -18,24 +18,33 @@ export async function connectToDatabase() {
   }
 }
 
-export default async (req: { method: string; body: {idEmpTask:any, Idclient: any; Idemployee: any; statetask: any | undefined; state?: 1 | undefined; date?: string | undefined; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error?: string; message?: string; clientId?: any; }): void; new(): any; }; }; }) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { Idclient, Idemployee, statetask='ACEPTADO', state = 1, date = new Date().toISOString(), idEmpTask } = req.body;
+    const { Idclient, Idemployee, statetask = 'ACEPTADO', state = 1, date = new Date().toISOString().split('T')[0], idEmpTask } = req.body;
 
-    if (!Idclient || !Idemployee) {
-      return res.status(400).json({ error: 'Los campos Idclient e Idemployee son obligatorios.' });
+    if (!Idclient || !Idemployee || !idEmpTask) {
+      return res.status(400).json({ error: 'Los campos Idclient, Idemployee e idEmpTask son obligatorios.' });
     }
 
-    const connection = await connectToDatabase();
-
+    let connection;
     try {
-      const addEmployeeQuery = `
-        INSERT INTO customerperemployee (Idclient, date, statusTask, status,idEmployee,idEmpTask )
-        VALUES (?, ?, ?, ?, ?);
-      `;
-      const [addResult] = await connection.execute(addEmployeeQuery, [Idclient, date,  statetask, state, Idemployee,idEmpTask]);
+      connection = await connectToDatabase();
 
-      if ('affectedRows' in addResult && addResult.affectedRows > 0) {
+      // Verificar si idEmpTask existe en la tabla employeespertask
+      const checkEmpTaskQuery = 'SELECT id FROM employeespertask WHERE id = ?';
+      const [taskRows]: any = await connection.execute(checkEmpTaskQuery, [idEmpTask]);
+
+      if (taskRows.length === 0) {
+        return res.status(400).json({ error: 'idEmpTask no existe en la tabla employeespertask.' });
+      }
+
+      const addEmployeeQuery = `
+        INSERT INTO customerperemployee (idClient, date, statusTask, status, idEmployee, idEmpTask)
+        VALUES (?, ?, ?, ?, ?, ?);
+      `;
+      const [addResult]: any = await connection.execute(addEmployeeQuery, [Idclient, date, statetask, state, Idemployee, idEmpTask]);
+
+      if (addResult.affectedRows > 0) {
         const clientId = addResult.insertId;
         console.log(`Registro agregado correctamente. ID del nuevo registro: ${clientId}`);
         res.status(200).json({ message: 'Registro agregado correctamente.', clientId });
@@ -47,9 +56,13 @@ export default async (req: { method: string; body: {idEmpTask:any, Idclient: any
       console.error('Error al agregar el registro:', error);
       res.status(500).json({ error: 'Error al agregar el registro.' });
     } finally {
-      connection.end();
+      if (connection) {
+        await connection.end();
+      }
     }
   } else {
     res.status(405).json({ error: 'Método no permitido.' });
   }
 };
+
+export default handler;

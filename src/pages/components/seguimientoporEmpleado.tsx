@@ -12,8 +12,6 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { SelectChangeEvent } from '@mui/material/Select'; // Importar SelectChangeEvent
 import { Form } from 'antd';
-import form from 'antd/es/form';
-import subtask from '../api/subtask';
 
 interface TaskData {
   id: any;
@@ -22,9 +20,10 @@ interface TaskData {
   date: string | number | Date;
   status: any;
 }
-interface subtask {
+
+interface Subtask {
   id: number;
-  task: string;
+  subTask: string; // Asegúrate de que el nombre coincida con el de la API
 }
 
 interface TaskState {
@@ -47,7 +46,7 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
     task: '',
   });
   const [openAddEmployeeDialog, setOpenAddEmployeeDialog] = useState(false);
-  const [task, settask] = useState<subtask[]>([]); 
+  const [subtasks, setSubtasks] = useState<Subtask[]>([]);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
@@ -56,20 +55,41 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
   }, []);
 
   useEffect(() => {
-    const fetchRoles = async () => {
+    const fetchTasks = async () => {
       try {
         const response = await fetch(`/api/databaseEmployeeS?employeeId=${userId}`);
         if (!response.ok) {
-          throw new Error('Error al cargar los roles');
+          throw new Error('Error al cargar las tareas');
         }
-        const data: subtask[] = await response.json();
-        settask(data);
+        const data: TaskData[] = await response.json();
+        setData(data);
+        setLoading(false);
       } catch (error) {
-        console.error('Error al cargar los roles:', error);
+        console.error('Error al cargar las tareas:', error);
+        setLoading(false);
       }
     };
 
-    fetchRoles();
+    if (userId) {
+      fetchTasks();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchSubtasks = async () => {
+      try {
+        const response = await fetch('/api/dbSub');
+        if (!response.ok) {
+          throw new Error('Error al cargar las subtareas');
+        }
+        const data: Subtask[] = await response.json();
+        setSubtasks(data);
+      } catch (error) {
+        console.error('Error al cargar las subtareas:', error);
+      }
+    };
+
+    fetchSubtasks();
   }, []);
 
   const handleEditRow = (id: any) => {
@@ -348,21 +368,21 @@ export default function DataGridPremiumDemo({ onClickVerComentarios }: { onClick
           </div>
           <Form.Item
             label="Tarea"
-            name="subtask"
+            name="task"
             rules={[{ required: true, message: 'Por favor, seleccione una tarea' }]}
           >
             <Select
               placeholder="Seleccione una tarea"
-              onChange={(value: any) => {
+              onChange={(event: SelectChangeEvent<any>) => {
                 setNewEmployeeData((prevData) => ({
                   ...prevData,
-                  role: value,
+                  task: event.target.value,
                 }));
               }}
             >
-              {task.map((task) => (
-                <MenuItem key={task.id} value={task.id}>
-                  {task.id} - {task.task}
+              {subtasks.map((subtask) => (
+                <MenuItem key={subtask.id} value={subtask.id}>
+                  {subtask.id} - {subtask.subTask}
                 </MenuItem>
               ))}
             </Select>

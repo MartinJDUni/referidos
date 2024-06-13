@@ -1,7 +1,5 @@
 import {
-  OkPacket,
   RowDataPacket,
-  ResultSetHeader,
   createConnection,
 } from "mysql2/promise";
 
@@ -11,6 +9,7 @@ interface EmployeeData {
   rol_empleado: string;
   total_tareas: number;
   tareas_aceptadas: number;
+  fecha: string;
 }
 
 export async function connectToDatabase() {
@@ -29,18 +28,18 @@ export async function connectToDatabase() {
 }
 
 export default async (
-  req: { method: string; body: { id: any } },
+  req: { method: string; body: { id: any; idEmployee?: number; idSubTask?: number; date?: string; status?: number } },
   res: {
     status: (arg0: number) => {
       (): any;
-      new (): any;
+      new(): any;
       json: {
         (arg0: {
           data?: EmployeeData[];
           error?: string;
           message?: string;
         }): void;
-        new (): any;
+        new(): any;
       };
     };
   }
@@ -77,18 +76,25 @@ export default async (
       const queryTareasAceptadas = `
        SELECT 
             e.id AS id_empleado, 
-            SUM(CASE WHEN c.statusTask = 'ACEPTADO' THEN 1 ELSE 0 END) AS tareas_aceptadas
+            SUM(CASE WHEN c.statusTask = 'ACEPTADO' THEN 1 ELSE 0 END) AS tareas_aceptadas,
+            MAX(ep.date) AS fecha
         FROM 
             employee e
         JOIN 
             customerperemployee c ON e.id = c.idEmployee
+        JOIN 
+            employeespertask ep ON e.id = ep.idEmployee
+        WHERE 
+            c.statusTask = 'ACEPTADO'
         GROUP BY 
             e.id;
       `;
       const [rowsTareasAceptadas] = await connection.execute<RowDataPacket[]>(
         queryTareasAceptadas
       );
+
       connection.end();
+
       const combinedData: EmployeeData[] = rowsTotalTareas.map((employee) => {
         const matchingTasks = rowsTareasAceptadas.find(
           (tasks) => tasks.id_empleado === employee.id_empleado
@@ -99,12 +105,14 @@ export default async (
           rol_empleado: employee.rol_empleado,
           total_tareas: employee.total_tareas,
           tareas_aceptadas: matchingTasks ? matchingTasks.tareas_aceptadas : 0,
+          fecha: matchingTasks ? matchingTasks.fecha : null,
         };
       });
+
       res.status(200).json({ data: combinedData });
     } catch (error) {
       console.error("Error al consultar la base de datos:", error);
       res.status(500).json({ error: "Error al consultar la base de datos" });
     }
-  }
+  } 
 };
